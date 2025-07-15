@@ -74,7 +74,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
         <div className="sr-only">
           <p id="wildcard-description">You have received a Wild Card invitation for a second chance in Blue Lock</p>
         </div>
-        <div className="relative min-h-screen flex flex-col items-center justify-center py-8 wildcard-cinematic-bg overflow-hidden">
+        <div className="relative h-full flex flex-col items-center justify-center py-8 wildcard-cinematic-bg overflow-hidden">
           {/* Cinematic background with floating elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Floating geometric shapes */}
