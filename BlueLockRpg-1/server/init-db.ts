@@ -1,5 +1,4 @@
 import { db } from './db';
-import { users, characters } from '../shared/schema';
 import { sql } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
@@ -52,9 +51,14 @@ export async function initializeDatabase() {
     // Verificar se já existe o usuário admin
     const adminCheck = await db.execute(sql`
       SELECT COUNT(*) as count FROM users WHERE username = 'mestre'
+    `);
 
-    const adminExists = adminCheck.rows[0]?.count > 0;
-    if (!adminExists) 
+    const adminCount = adminCheck.rows[0]?.count || 0;
+
+    if (adminCount === 0) {
+      // Criar usuário admin padrão
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await db.execute(sql`
         INSERT INTO users (username, password, is_admin)
         VALUES ('mestre', ${hashedPassword}, true)
       `);
