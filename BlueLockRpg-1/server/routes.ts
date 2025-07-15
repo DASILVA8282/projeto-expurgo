@@ -51,20 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
-  // Create default admin user if doesn't exist
-  const createDefaultAdmin = async () => {
-    const existingAdmin = await storage.getUserByUsername("mestre");
-    if (!existingAdmin) {
-      await storage.createUser({
-        username: "mestre",
-        password: "admin123",
-        isAdmin: true,
-      });
-      console.log("Default admin user created: mestre / admin123");
-    }
-  };
 
-  await createDefaultAdmin();
 
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
