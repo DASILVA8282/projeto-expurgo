@@ -1,14 +1,94 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/api";
+
+// Ranking Manager Component
+function RankingManager({ character, userId }: { character: any; userId: number }) {
+  const [newRank, setNewRank] = useState(character?.ranking || 299);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const updateRankMutation = useMutation({
+    mutationFn: async (rank: number) => {
+      const response = await apiRequest("PATCH", `/api/admin/character/${userId}/rank`, { newRank: rank });
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Sucesso", description: "Ranking atualizado com sucesso!" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Falha ao atualizar ranking", variant: "destructive" });
+    },
+  });
+
+  const calculateRankMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", `/api/admin/character/${userId}/calculate-rank`);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setNewRank(data.ranking);
+      toast({ 
+        title: "Ranking Calculado", 
+        description: `Novo ranking: #${data.ranking} baseado em stats e performance` 
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Falha ao calcular ranking", variant: "destructive" });
+    },
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center space-x-2">
+        <span className="text-slate-400 text-sm">Ranking atual: #{character?.ranking}</span>
+      </div>
+      
+      <div className="flex items-center space-x-2">
+        <Input
+          type="number"
+          min="1"
+          max="300"
+          value={newRank}
+          onChange={(e) => setNewRank(parseInt(e.target.value))}
+          className="w-20 bg-slate-700 border-slate-600 text-white"
+        />
+        <Button
+          size="sm"
+          onClick={() => updateRankMutation.mutate(newRank)}
+          disabled={updateRankMutation.isPending}
+          className="bg-yellow-600 hover:bg-yellow-700"
+        >
+          {updateRankMutation.isPending ? "..." : "Definir Rank"}
+        </Button>
+      </div>
+
+      <Button
+        size="sm"
+        onClick={() => calculateRankMutation.mutate()}
+        disabled={calculateRankMutation.isPending}
+        className="bg-purple-600 hover:bg-purple-700 w-full"
+      >
+        {calculateRankMutation.isPending ? "Calculando..." : "Calcular Rank Automático"}
+      </Button>
+    </div>
+  );
+}
 
 export default function Admin() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   useEffect(() => {
     if (!user?.isAdmin) {
@@ -35,6 +115,8 @@ export default function Admin() {
       await logout();
     } catch (error) {
       console.error("Logout error:", error);
+      // Force logout even if server request fails
+      window.location.href = "/";
     }
   };
 
@@ -190,12 +272,19 @@ export default function Admin() {
                     <th className="font-rajdhani font-bold text-slate-300 py-3">POSIÇÃO</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">LEVEL</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">RANKING</th>
+                    <th className="font-rajdhani font-bold text-slate-300 py-3">GOLS</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">STATUS</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">AÇÕES</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users?.map((userData) => (
+                  {users?.sort((a, b) => {
+                    // Sort by ranking: players with characters ranked by ranking, then players without characters
+                    if (!a.character && !b.character) return 0;
+                    if (!a.character) return 1;
+                    if (!b.character) return -1;
+                    return (a.character.ranking || 300) - (b.character.ranking || 300);
+                  }).map((userData) => (
                     <tr key={userData.id} className="border-b border-slate-700 hover:bg-slate-800 transition-colors">
                       <td className="py-4">
                         <div className="flex items-center space-x-3">
@@ -216,8 +305,22 @@ export default function Admin() {
                       <td className="py-4 text-green-400 font-orbitron font-bold">
                         {userData.character?.level || 1}
                       </td>
-                      <td className="py-4 text-yellow-400 font-orbitron font-bold">
-                        #{userData.character?.ranking || "N/A"}
+                      <td className="py-4">
+                        <div className="flex items-center space-x-2">
+                          <span className={`text-orbitron font-bold ${
+                            userData.character?.ranking <= 10 ? 'text-yellow-400' :
+                            userData.character?.ranking <= 50 ? 'text-blue-400' :
+                            userData.character?.ranking <= 100 ? 'text-green-400' : 'text-slate-400'
+                          }`}>
+                            #{userData.character?.ranking || "N/A"}
+                          </span>
+                          {userData.character?.ranking <= 10 && (
+                            <i className="fas fa-crown text-yellow-400 text-sm"></i>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 text-red-400 font-orbitron font-bold">
+                        {userData.character?.goals || 0}
                       </td>
                       <td className="py-4">
                         <span className={`px-3 py-1 rounded-full text-sm font-rajdhani font-semibold ${
@@ -228,9 +331,145 @@ export default function Admin() {
                       </td>
                       <td className="py-4">
                         <div className="flex space-x-2">
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold">
-                            <i className="fas fa-eye mr-1"></i>Ver
-                          </Button>
+                          {userData.character ? (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  size="sm" 
+                                  className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
+                                  onClick={() => setSelectedPlayer(userData)}
+                                >
+                                  <i className="fas fa-eye mr-1"></i>Ver Ficha
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl bg-slate-900 border-2 border-blue-600 max-h-[90vh] overflow-y-auto">
+                                <DialogHeader>
+                                  <DialogTitle className="font-orbitron text-2xl text-blue-400">
+                                    FICHA COMPLETA - {userData.character?.name}
+                                  </DialogTitle>
+                                </DialogHeader>
+                                
+                                {/* Character Sheet */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+                                  {/* Basic Info */}
+                                  <Card className="bg-slate-800 border-blue-500">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-blue-400 mb-3">INFORMAÇÕES BÁSICAS</h3>
+                                      <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Nome:</span>
+                                          <span className="text-white font-semibold">{userData.character?.name}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Usuário:</span>
+                                          <span className="text-white">{userData.username}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Posição:</span>
+                                          <Badge className="bg-blue-600">{userData.character?.position}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Idade:</span>
+                                          <span className="text-white">{userData.character?.age || 'N/A'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Altura:</span>
+                                          <span className="text-white">{userData.character?.height || 'N/A'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Arma:</span>
+                                          <span className="text-white">{userData.character?.weapon || 'N/A'}</span>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Progress Info */}
+                                  <Card className="bg-slate-800 border-green-500">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-green-400 mb-3">PROGRESSO</h3>
+                                      <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Level:</span>
+                                          <Badge className="bg-green-600 font-orbitron">{userData.character?.level}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Experiência:</span>
+                                          <span className="text-white font-bold">{userData.character?.experience} XP</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Ranking:</span>
+                                          <Badge className="bg-yellow-600 font-orbitron">#{userData.character?.ranking}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Partidas:</span>
+                                          <span className="text-white font-bold">{userData.character?.matches}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Gols:</span>
+                                          <span className="text-white font-bold">{userData.character?.goals}</span>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Stats */}
+                                  <Card className="bg-slate-800 border-purple-500 lg:col-span-2">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-purple-400 mb-4">ATRIBUTOS</h3>
+                                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        {[
+                                          { name: 'Velocidade', value: userData.character?.speed, color: 'bg-blue-500' },
+                                          { name: 'Força', value: userData.character?.strength, color: 'bg-red-500' },
+                                          { name: 'Resistência', value: userData.character?.stamina, color: 'bg-green-500' },
+                                          { name: 'Finalização', value: userData.character?.shooting, color: 'bg-yellow-500' },
+                                          { name: 'Passe', value: userData.character?.passing, color: 'bg-purple-500' },
+                                          { name: 'Drible', value: userData.character?.dribbling, color: 'bg-cyan-500' }
+                                        ].map((stat) => (
+                                          <div key={stat.name} className="bg-slate-700 p-3 rounded-lg">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="text-slate-300 text-sm">{stat.name}</span>
+                                              <span className="text-white font-bold">{stat.value}</span>
+                                            </div>
+                                            <div className="w-full bg-slate-600 rounded-full h-2">
+                                              <div 
+                                                className={`h-2 rounded-full ${stat.color}`}
+                                                style={{ width: `${(stat.value / 100) * 100}%` }}
+                                              />
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Bio */}
+                                  {userData.character?.bio && (
+                                    <Card className="bg-slate-800 border-slate-500 lg:col-span-2">
+                                      <CardContent className="p-4">
+                                        <h3 className="font-orbitron font-bold text-slate-400 mb-3">BIOGRAFIA</h3>
+                                        <p className="text-slate-300 leading-relaxed">{userData.character.bio}</p>
+                                      </CardContent>
+                                    </Card>
+                                  )}
+
+                                  {/* Admin Actions */}
+                                  <Card className="bg-slate-800 border-yellow-500 lg:col-span-2">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-yellow-400 mb-4">AÇÕES ADMINISTRATIVAS</h3>
+                                      <div className="flex flex-wrap gap-3">
+                                        <RankingManager character={userData.character} userId={userData.id} />
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <Button size="sm" disabled className="bg-gray-600 font-rajdhani font-semibold">
+                              <i className="fas fa-ban mr-1"></i>Sem Personagem
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>
