@@ -1,4 +1,4 @@
-import { users, characters, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter } from "@shared/schema";
+import { users, characters, wildCardInvitations, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -16,6 +16,14 @@ export interface IStorage {
   createCharacter(character: InsertCharacter): Promise<Character>;
   updateCharacter(userId: number, updates: UpdateCharacter): Promise<Character>;
   deleteCharacter(userId: number): Promise<void>;
+  getEliminatedCharacters(): Promise<Character[]>;
+  
+  // Wild Card operations
+  createWildCardInvitation(invitation: InsertWildCardInvitation): Promise<WildCardInvitation>;
+  getWildCardInvitation(userId: number): Promise<WildCardInvitation | undefined>;
+  updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation>;
+  getPendingWildCardInvitations(): Promise<WildCardInvitation[]>;
+  getAllWildCardInvitations(): Promise<WildCardInvitation[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -96,6 +104,62 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCharacter(userId: number): Promise<void> {
     await db.delete(characters).where(eq(characters.userId, userId));
+  }
+
+  async getEliminatedCharacters(): Promise<Character[]> {
+    const eliminatedCharacters = await db.select().from(characters).where(eq(characters.isEliminated, true));
+    return eliminatedCharacters;
+  }
+
+  // Wild Card operations
+  async createWildCardInvitation(invitation: InsertWildCardInvitation): Promise<WildCardInvitation> {
+    const [newInvitation] = await db
+      .insert(wildCardInvitations)
+      .values(invitation)
+      .returning();
+    return newInvitation;
+  }
+
+  async getWildCardInvitation(userId: number): Promise<WildCardInvitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(wildCardInvitations)
+      .where(eq(wildCardInvitations.userId, userId));
+    return invitation;
+  }
+
+  async updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation> {
+    const updateData: any = { ...updates };
+    
+    // Only set respondedAt if status is being updated to accepted/rejected
+    if (updates.status && updates.status !== "pending") {
+      updateData.respondedAt = new Date();
+    }
+    
+    // If explicitly setting respondedAt to null (for resend), keep it null
+    if (updates.respondedAt === null) {
+      updateData.respondedAt = null;
+    }
+    
+    const [updated] = await db
+      .update(wildCardInvitations)
+      .set(updateData)
+      .where(eq(wildCardInvitations.userId, userId))
+      .returning();
+    return updated;
+  }
+
+  async getPendingWildCardInvitations(): Promise<WildCardInvitation[]> {
+    const pending = await db
+      .select()
+      .from(wildCardInvitations)
+      .where(eq(wildCardInvitations.status, "pending"));
+    return pending;
+  }
+
+  async getAllWildCardInvitations(): Promise<WildCardInvitation[]> {
+    const allInvitations = await db.select().from(wildCardInvitations);
+    return allInvitations;
   }
 }
 
