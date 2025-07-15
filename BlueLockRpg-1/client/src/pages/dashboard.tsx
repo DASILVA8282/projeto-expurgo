@@ -3,14 +3,38 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { useWebSocket } from "@/hooks/useWebSocket";
+import { WildCardModal } from "@/components/WildCardModal";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const [showWildCardModal, setShowWildCardModal] = useState(false);
+  const { lastMessage } = useWebSocket();
 
   const { data: character } = useQuery({
     queryKey: ["/api/characters/me"],
     retry: false,
   });
+
+  const { data: wildCardInvitation } = useQuery({
+    queryKey: ["/api/wildcard/invitation"],
+    retry: false,
+  });
+
+  // Listen for Wild Card invitations via WebSocket
+  useEffect(() => {
+    if (lastMessage && lastMessage.type === "wildcard_invitation") {
+      setShowWildCardModal(true);
+    }
+  }, [lastMessage]);
+
+  // Check if there's a pending Wild Card invitation
+  useEffect(() => {
+    if (wildCardInvitation && wildCardInvitation.status === "pending") {
+      setShowWildCardModal(true);
+    }
+  }, [wildCardInvitation]);
 
   const handleLogout = async () => {
     try {
@@ -160,6 +184,12 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Wild Card Modal */}
+      <WildCardModal
+        isOpen={showWildCardModal}
+        onClose={() => setShowWildCardModal(false)}
+      />
     </div>
   );
 }
