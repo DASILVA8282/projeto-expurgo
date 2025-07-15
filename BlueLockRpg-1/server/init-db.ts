@@ -5,7 +5,13 @@ import bcrypt from 'bcrypt';
 export async function initializeDatabase() {
   try {
     console.log('Verificando e criando tabelas do banco...');
-    
+
+    // Corrigir estrutura se a tabela characters já existir
+    await db.execute(sql`
+      ALTER TABLE characters 
+      ADD COLUMN IF NOT EXISTS is_eliminated BOOLEAN DEFAULT FALSE NOT NULL
+    `);
+
     // Criar tabela users se não existir
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS users (
@@ -69,7 +75,6 @@ export async function initializeDatabase() {
     const adminCount = adminCheck.rows[0]?.count || 0;
 
     if (adminCount === 0) {
-      // Criar usuário admin padrão
       const hashedPassword = await bcrypt.hash('admin123', 10);
       await db.execute(sql`
         INSERT INTO users (username, password, is_admin)
