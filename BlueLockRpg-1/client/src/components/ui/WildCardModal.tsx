@@ -69,269 +69,486 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl bg-black border-0 text-white overflow-hidden p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
+      <DialogContent className="max-w-5xl w-[85vw] h-[85vh] bg-black border-0 text-white overflow-hidden p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
         <DialogTitle className="sr-only">Wild Card Invitation</DialogTitle>
         <div className="sr-only">
           <p id="wildcard-description">You have received a Wild Card invitation for a second chance in Blue Lock</p>
         </div>
-        <div className="relative min-h-[700px] flex flex-col items-center justify-center wildcard-dark-theme">
-          {/* Animated background particles */}
+        <div className="relative h-full flex flex-col items-center justify-start pt-8 wildcard-cinematic-bg overflow-hidden">
+          {/* Cinematic background with floating elements */}
           <div className="absolute inset-0 overflow-hidden">
-            {[...Array(30)].map((_, i) => (
+            {/* Floating geometric shapes */}
+            {[...Array(12)].map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute w-1 h-1 bg-blue-400 rounded-full"
+                className="absolute bg-gradient-to-r from-cyan-400/10 to-purple-400/10 rounded-full"
+                style={{
+                  width: `${20 + Math.random() * 40}px`,
+                  height: `${20 + Math.random() * 40}px`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
                 animate={{
-                  x: [0, Math.random() * 100 - 50],
-                  y: [0, Math.random() * 100 - 50],
-                  opacity: [0, 1, 0],
-                  scale: [0, 1, 0],
+                  x: [0, Math.random() * 200 - 100],
+                  y: [0, Math.random() * 200 - 100],
+                  opacity: [0, 0.3, 0],
+                  scale: [0.5, 1, 0.5],
                 }}
                 transition={{
-                  duration: 3 + Math.random() * 2,
+                  duration: 8 + Math.random() * 4,
                   repeat: Infinity,
-                  delay: Math.random() * 2,
+                  delay: Math.random() * 3,
+                  ease: "easeInOut"
                 }}
+              />
+            ))}
+            
+            {/* Electric particles */}
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={`electric-${i}`}
+                className="absolute w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_#06b6d4]"
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  scale: [0, 1.5, 0],
+                  x: [0, Math.random() * 60 - 30],
+                  y: [0, Math.random() * 60 - 30],
+                }}
+                transition={{
+                  duration: 2 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 4,
+                  ease: "easeOut"
                 }}
               />
             ))}
           </div>
 
-          {/* Smoke effects at door sides */}
+          {/* Cinematic energy wave effects */}
           <AnimatePresence>
             {doorOpened && (
               <>
-                {/* Left smoke */}
+                {/* Central energy burst */}
                 <motion.div
-                  initial={{ opacity: 0, x: -50 }}
+                  initial={{ opacity: 0, scale: 0 }}
                   animate={{ 
-                    opacity: [0, 0.6, 0.3, 0],
-                    x: [-50, -100, -150, -200],
-                    y: [0, -20, -40, -60],
-                    scale: [0.5, 1, 1.5, 2]
+                    opacity: [0, 0.8, 0.4, 0],
+                    scale: [0, 3, 6, 10],
                   }}
                   transition={{
-                    duration: 3,
+                    duration: 2.5,
                     ease: "easeOut",
-                    delay: 0.5
+                    delay: 0.3
                   }}
-                  className="absolute bottom-32 left-1/2 w-32 h-32 bg-gradient-to-t from-gray-400/20 to-transparent rounded-full blur-xl"
+                  className="absolute inset-0 bg-gradient-radial from-cyan-400/20 via-purple-400/10 to-transparent rounded-full blur-2xl"
                 />
                 
-                {/* Right smoke */}
-                <motion.div
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ 
-                    opacity: [0, 0.6, 0.3, 0],
-                    x: [50, 100, 150, 200],
-                    y: [0, -20, -40, -60],
-                    scale: [0.5, 1, 1.5, 2]
-                  }}
-                  transition={{
-                    duration: 3,
-                    ease: "easeOut",
-                    delay: 0.8
-                  }}
-                  className="absolute bottom-32 right-1/2 w-32 h-32 bg-gradient-to-t from-gray-400/20 to-transparent rounded-full blur-xl"
-                />
-                
-                {/* Additional smoke particles */}
-                {[...Array(6)].map((_, i) => (
+                {/* Expanding ring effects */}
+                {[...Array(3)].map((_, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ 
-                      opacity: [0, 0.4, 0],
-                      scale: [0, 1, 1.5],
-                      x: [0, (i % 2 === 0 ? -1 : 1) * (50 + i * 20)],
-                      y: [0, -30 - i * 10]
+                      opacity: [0, 0.6, 0],
+                      scale: [0, 2 + i * 0.8],
                     }}
                     transition={{
-                      duration: 2 + i * 0.3,
+                      duration: 1.5 + i * 0.3,
                       ease: "easeOut",
-                      delay: 1 + i * 0.2
+                      delay: 0.5 + i * 0.2
                     }}
-                    className="absolute bottom-40 left-1/2 w-16 h-16 bg-gray-300/10 rounded-full blur-md"
+                    className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 border-2 border-cyan-400/30 rounded-full"
+                  />
+                ))}
+                
+                {/* Floating debris particles */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ 
+                      opacity: [0, 0.7, 0],
+                      scale: [0, 1, 0.5],
+                      x: [0, (i % 2 === 0 ? -1 : 1) * (100 + i * 20)],
+                      y: [0, -50 - i * 15],
+                      rotate: [0, 360 + i * 45]
+                    }}
+                    transition={{
+                      duration: 3 + i * 0.2,
+                      ease: "easeOut",
+                      delay: 1 + i * 0.1
+                    }}
+                    className="absolute top-1/2 left-1/2 w-4 h-4 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)]"
                   />
                 ))}
               </>
             )}
           </AnimatePresence>
 
-          {/* Door container */}
-          <div className="relative z-10 mb-12">
+          {/* Cinematic Portal Container */}
+          <div className="relative z-10 mb-4">
             <div className="relative">
-              {/* Door glow */}
+              {/* Portal outer glow */}
               <motion.div
-                className="absolute -inset-8 bg-gradient-to-br from-blue-500/30 via-purple-500/30 to-cyan-500/30 rounded-2xl blur-2xl"
+                className="absolute -inset-12 bg-gradient-to-br from-cyan-400/20 via-purple-500/20 to-pink-400/20 rounded-full blur-3xl"
                 animate={{
-                  scale: doorOpened ? [1, 1.2, 1] : 1,
-                  opacity: doorOpened ? [0.5, 1, 0.5] : 0.3,
+                  scale: doorOpened ? [1, 1.3, 1.1] : 1,
+                  opacity: doorOpened ? [0.3, 0.8, 0.6] : 0.2,
+                  rotate: [0, 360],
                 }}
                 transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
+                  scale: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 20, repeat: Infinity, ease: "linear" },
                 }}
               />
               
-              {/* Door frame */}
-              <div className="relative w-80 h-96 bg-gradient-to-b from-slate-800 via-slate-900 to-black rounded-lg border-4 border-slate-700 shadow-2xl outline outline-2 outline-slate-600/50">
-                {/* Door panels */}
-                <div className="absolute inset-4 flex overflow-hidden rounded-md">
-{/* Left door panel */}
-<motion.div
-  className="w-1/2 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-r-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
-  animate={{
-    transform: doorOpened ? "rotateY(-90deg)" : "rotateY(0deg)",
-  }}
-  style={{
-    transformOrigin: "left center",
-  }}
-  transition={{
-    duration: 1.5,
-    ease: "easeInOut",
-  }}
->
-  <div className="absolute top-1/2 right-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
-  <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-l-md" />
-  <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
-</motion.div>
-
-{/* Right door panel */}
-<motion.div
-  className="w-1/2 bg-gradient-to-bl from-slate-700 via-slate-800 to-slate-900 border-l-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
-  animate={{
-    transform: doorOpened ? "rotateY(90deg)" : "rotateY(0deg)",
-  }}
-  style={{
-    transformOrigin: "right center",
-  }}
-  transition={{
-    duration: 1.5,
-    ease: "easeInOut",
-  }}
->
-  <div className="absolute top-1/2 left-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
-  <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-r-md" />
-  <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
-</motion.div>
-
+              {/* Portal frame - more futuristic */}
+              <div className="relative w-80 h-96 bg-gradient-to-b from-slate-800 via-slate-900 to-black rounded-2xl border-4 border-gradient-to-r from-cyan-400/50 to-purple-400/50 shadow-2xl shadow-cyan-500/20 wildcard-portal-glow">
+                {/* Hexagonal tech pattern overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(30deg,transparent_40%,rgba(6,182,212,0.1)_50%,transparent_60%)] rounded-2xl" />
+                
+                {/* Portal entrance */}
+                <div className="absolute inset-3 flex overflow-hidden rounded-xl">
+                  {/* Left portal panel */}
+                  <motion.div
+                    className="w-1/2 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-r border-cyan-400/30 relative"
+                    animate={{
+                      rotateY: doorOpened ? -120 : 0,
+                    }}
+                    style={{
+                      transformOrigin: "left center",
+                    }}
+                    transition={{
+                      duration: 1.2,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    {/* Tech details */}
+                    <div className="absolute top-4 right-4 w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#06b6d4] animate-pulse" />
+                    <div className="absolute bottom-4 right-4 w-2 h-2 bg-purple-400 rounded-full shadow-[0_0_8px_#a855f7] animate-pulse" style={{animationDelay: "0.5s"}} />
+                    <div className="absolute inset-0 bg-gradient-to-b from-cyan-400/5 to-transparent rounded-l-xl" />
+                    <div className="absolute inset-2 border border-cyan-400/20 rounded-lg" />
+                  </motion.div>
+                  
+                  {/* Right portal panel */}
+                  <motion.div
+                    className="w-1/2 bg-gradient-to-bl from-slate-700 via-slate-800 to-slate-900 border-l border-purple-400/30 relative"
+                    animate={{
+                      rotateY: doorOpened ? 120 : 0,
+                    }}
+                    style={{
+                      transformOrigin: "right center",
+                    }}
+                    transition={{
+                      duration: 1.2,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    {/* Tech details */}
+                    <div className="absolute top-4 left-4 w-3 h-3 bg-purple-400 rounded-full shadow-[0_0_10px_#a855f7] animate-pulse" />
+                    <div className="absolute bottom-4 left-4 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#06b6d4] animate-pulse" style={{animationDelay: "0.3s"}} />
+                    <div className="absolute inset-0 bg-gradient-to-b from-purple-400/5 to-transparent rounded-r-xl" />
+                    <div className="absolute inset-2 border border-purple-400/20 rounded-lg" />
+                  </motion.div>
                 </div>
                 
-                {/* Light behind door - warm golden light */}
+                {/* Portal energy core */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-amber-300/60 via-yellow-400/40 to-orange-400/60 rounded-lg"
+                  className="absolute inset-0 bg-gradient-to-br from-cyan-300/40 via-purple-400/30 to-pink-400/40 rounded-2xl"
                   animate={{
-                    opacity: doorOpened ? [0, 1, 0.8] : 0,
-                    scale: doorOpened ? [0.8, 1.1, 1] : 1,
+                    opacity: doorOpened ? [0, 0.9, 0.7] : 0,
+                    scale: doorOpened ? [0.9, 1.1, 1] : 1,
                   }}
                   transition={{
-                    duration: 2,
+                    duration: 1.5,
                     ease: "easeInOut",
                   }}
                 />
                 
-                {/* Energy burst - warm white flash */}
+                {/* Dimensional rift effect */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-white/80 via-amber-100/70 to-yellow-200/60 rounded-lg"
+                  className="absolute inset-0 bg-gradient-to-br from-white/60 via-cyan-200/50 to-purple-200/50 rounded-2xl"
                   animate={{
-                    opacity: doorOpened ? [0, 0.9, 0] : 0,
-                    scale: doorOpened ? [0.5, 1.4, 1] : 1,
+                    opacity: doorOpened ? [0, 1, 0] : 0,
+                    scale: doorOpened ? [0.8, 1.2, 1] : 1,
                   }}
                   transition={{
-                    duration: 0.3,
-                    delay: 0.8,
+                    duration: 0.4,
+                    delay: 0.6,
                     ease: "easeOut",
                   }}
                 />
+                
+                {/* Dramatic Mist/Smoke Effects after door opens */}
+                <AnimatePresence>
+                  {doorOpened && (
+                    <>
+                      {/* Left side dramatic mist */}
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={`left-mist-${i}`}
+                          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                          animate={{ 
+                            opacity: [0, 0.7, 0.4, 0],
+                            scale: [0.3, 1.5, 2.5, 3.5],
+                            x: [-150 - i * 30, -250 - i * 40, -350 - i * 50],
+                            y: [10 + i * 5, -20 - i * 15, -50 - i * 25],
+                          }}
+                          transition={{
+                            duration: 4 + i * 0.3,
+                            ease: "easeOut",
+                            delay: 1.2 + i * 0.1
+                          }}
+                          className="absolute bottom-0 left-1/2 w-24 h-24 bg-gradient-to-t from-gray-300/20 via-gray-400/15 to-transparent rounded-full blur-xl"
+                        />
+                      ))}
+                      
+                      {/* Right side dramatic mist */}
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={`right-mist-${i}`}
+                          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                          animate={{ 
+                            opacity: [0, 0.7, 0.4, 0],
+                            scale: [0.3, 1.5, 2.5, 3.5],
+                            x: [150 + i * 30, 250 + i * 40, 350 + i * 50],
+                            y: [10 + i * 5, -20 - i * 15, -50 - i * 25],
+                          }}
+                          transition={{
+                            duration: 4 + i * 0.3,
+                            ease: "easeOut",
+                            delay: 1.4 + i * 0.1
+                          }}
+                          className="absolute bottom-0 right-1/2 w-24 h-24 bg-gradient-to-t from-gray-300/20 via-gray-400/15 to-transparent rounded-full blur-xl"
+                        />
+                      ))}
+                      
+                      {/* Central rising mist */}
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={`center-mist-${i}`}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ 
+                            opacity: [0, 0.5, 0.3, 0],
+                            scale: [0.5, 2, 3, 4],
+                            y: [0, -80 - i * 20, -150 - i * 30],
+                          }}
+                          transition={{
+                            duration: 3.5 + i * 0.2,
+                            ease: "easeOut",
+                            delay: 1.6 + i * 0.15
+                          }}
+                          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gradient-to-t from-white/10 via-gray-200/8 to-transparent rounded-full blur-2xl"
+                        />
+                      ))}
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
 
-          {/* Content */}
+          {/* Cinematic Content */}
           <AnimatePresence>
             {showContent && (
               <motion.div
-                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                initial={{ opacity: 0, y: 100, scale: 0.8 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -50, scale: 0.8 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="relative z-10 text-center max-w-3xl mx-auto px-8"
+                exit={{ opacity: 0, y: -100, scale: 0.8 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="relative z-10 text-center max-w-4xl mx-auto px-6 flex-1 flex flex-col justify-center"
               >
-                {/* Wild Card Title */}
+                {/* Cinematic Wild Card Title */}
                 <motion.div
-                  className="mb-8 relative"
-                  animate={{
-                    textShadow: [
-                      "0 0 15px rgba(59, 130, 246, 0.6)",
-                      "0 0 25px rgba(147, 51, 234, 0.6)",
-                      "0 0 35px rgba(6, 182, 212, 0.6)",
-                      "0 0 25px rgba(147, 51, 234, 0.6)",
-                      "0 0 15px rgba(59, 130, 246, 0.6)",
-                    ],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                  className="mb-6 relative"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                  <h1 className="text-8xl font-black mb-2 tracking-wider relative">
-                    <span className="bg-gradient-to-r from-cyan-400 via-blue-500 via-purple-500 via-pink-500 to-red-400 bg-clip-text text-transparent outline-text">
-                      WILD
-                    </span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 via-purple-500 via-pink-500 to-red-400 bg-clip-text text-transparent opacity-50 blur-sm">
-                      WILD
-                    </span>
-                  </h1>
-                  <h1 className="text-8xl font-black tracking-wider relative">
-                    <span className="bg-gradient-to-r from-red-400 via-pink-500 via-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent outline-text">
-                      CARD
-                    </span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-red-400 via-pink-500 via-purple-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent opacity-50 blur-sm">
-                      CARD
-                    </span>
-                  </h1>
+                  <div className="relative">
+                    {/* Glowing background effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-purple-500/20 to-pink-400/20 rounded-3xl blur-3xl"
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.3, 0.6, 0.3],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    
+                    {/* Epic Blue Lock Style Title */}
+                    <div className="relative">
+                      {/* Dramatic background glow */}
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-yellow-500/20 rounded-full blur-3xl scale-150"
+                        animate={{
+                          scale: [1.2, 1.8, 1.2],
+                          opacity: [0.3, 0.7, 0.3],
+                        }}
+                        transition={{
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      />
+                      
+                      <h1 className="text-8xl md:text-9xl font-black mb-1 tracking-wider relative">
+                        <motion.span 
+                          className="bg-gradient-to-r from-red-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent relative z-10 font-orbitron"
+                          style={{
+                            textShadow: "0 0 30px rgba(239, 68, 68, 0.8), 0 0 60px rgba(251, 146, 60, 0.6)",
+                            WebkitTextStroke: "2px rgba(0, 0, 0, 0.8)"
+                          }}
+                          animate={{
+                            textShadow: [
+                              "0 0 30px rgba(239, 68, 68, 0.8), 0 0 60px rgba(251, 146, 60, 0.6)",
+                              "0 0 50px rgba(239, 68, 68, 1), 0 0 100px rgba(251, 146, 60, 0.8)",
+                              "0 0 30px rgba(239, 68, 68, 0.8), 0 0 60px rgba(251, 146, 60, 0.6)",
+                            ],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                        >
+                          WILD
+                        </motion.span>
+                      </h1>
+                      <h1 className="text-8xl md:text-9xl font-black tracking-wider relative">
+                        <motion.span 
+                          className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-400 bg-clip-text text-transparent relative z-10 font-orbitron"
+                          style={{
+                            textShadow: "0 0 30px rgba(251, 191, 36, 0.8), 0 0 60px rgba(239, 68, 68, 0.6)",
+                            WebkitTextStroke: "2px rgba(0, 0, 0, 0.8)"
+                          }}
+                          animate={{
+                            textShadow: [
+                              "0 0 30px rgba(251, 191, 36, 0.8), 0 0 60px rgba(239, 68, 68, 0.6)",
+                              "0 0 50px rgba(251, 191, 36, 1), 0 0 100px rgba(239, 68, 68, 0.8)",
+                              "0 0 30px rgba(251, 191, 36, 0.8), 0 0 60px rgba(239, 68, 68, 0.6)",
+                            ],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: 0.3,
+                          }}
+                        >
+                          CARD
+                        </motion.span>
+                      </h1>
+                    </div>
+                    
+                    {/* Subtitle effect */}
+                    <motion.div
+                      className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 text-xs tracking-[0.3em] text-cyan-400/60 font-mono"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1, duration: 0.8 }}
+                    >
+                      PROJECT WILD CARD
+                    </motion.div>
+                  </div>
                 </motion.div>
                 
-                {/* Description */}
+                {/* Dramatic Blue Lock Description */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 1 }}
-                  className="mb-10 space-y-4"
-                >
-                  <p className="text-2xl text-gray-300 font-semibold">
-                    Projeto Wild Card
-                  </p>
-                  <p className="text-lg text-gray-400">
-                    Os jogadores eliminados têm uma segunda e última chance no Blue Lock
-                  </p>
-                  <p className="text-xl text-yellow-400 font-bold">
-                    Apenas um jogador permanecerá de pé e seguirá para a Fase Dois
-                  </p>
-                </motion.div>
-                
-                {/* Action buttons */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1, duration: 0.8 }}
-                  className="flex gap-8 justify-center"
+                  transition={{ delay: 0.8, duration: 1 }}
+                  className="mb-6 space-y-6"
+                >
+                  <div className="relative">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 rounded-2xl blur-xl"
+                      animate={{
+                        opacity: [0.3, 0.7, 0.3],
+                        scale: [1, 1.1, 1],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    <div className="relative z-10 p-6 space-y-4">
+                      <motion.p 
+                        className="text-2xl text-red-400 font-bold tracking-wide font-orbitron"
+                        animate={{
+                          textShadow: [
+                            "0 0 10px rgba(239, 68, 68, 0.6)",
+                            "0 0 20px rgba(239, 68, 68, 0.8)",
+                            "0 0 10px rgba(239, 68, 68, 0.6)",
+                          ],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        PROJETO WILD CARD
+                      </motion.p>
+                      <p className="text-lg text-gray-300 leading-relaxed">
+                        A última chance dos eliminados. Uma oportunidade final para provar seu valor no Blue Lock.
+                      </p>
+                      <motion.p 
+                        className="text-xl text-transparent bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text font-bold font-orbitron"
+                        style={{
+                          textShadow: "0 0 20px rgba(251, 191, 36, 0.8)"
+                        }}
+                        animate={{
+                          textShadow: [
+                            "0 0 20px rgba(251, 191, 36, 0.8)",
+                            "0 0 30px rgba(251, 146, 60, 0.8)",
+                            "0 0 40px rgba(239, 68, 68, 0.8)",
+                            "0 0 30px rgba(251, 146, 60, 0.8)",
+                            "0 0 20px rgba(251, 191, 36, 0.8)",
+                          ],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        APENAS UM SOBREVIVERÁ
+                      </motion.p>
+                      <p className="text-base text-gray-400 italic">
+                        "Devore ou seja devorado. Esta é a essência do Blue Lock."
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+                
+                {/* Epic Blue Lock Action Buttons */}
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2, duration: 0.8 }}
+                  className="flex flex-col sm:flex-row gap-8 justify-center items-center"
                 >
                   <Button 
                     onClick={() => handleResponse("accepted")}
                     disabled={isLoading}
-                    className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-500 hover:to-emerald-600 text-white px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-green-500/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-2 border-2 border-green-400/50 outline outline-2 outline-green-400/30 wildcard-button-glow relative overflow-hidden"
+                    className="relative group bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white px-12 py-5 text-xl font-bold shadow-2xl hover:shadow-green-500/60 transition-all duration-500 transform hover:scale-110 hover:-translate-y-2 border-4 border-green-400/60 rounded-2xl overflow-hidden font-orbitron"
                   >
+                    {/* Intense energy sweep */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-400/20"
+                      className="absolute inset-0 bg-gradient-to-r from-green-300/40 via-emerald-300/40 to-teal-300/40"
                       animate={{
-                        x: [-100, 100],
+                        x: [-300, 300],
                         opacity: [0, 1, 0],
                       }}
                       transition={{
@@ -340,20 +557,41 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                         ease: "easeInOut",
                       }}
                     />
-                    <span className="relative z-10">
-                      {isLoading ? "Processando..." : "✓ ACEITAR DESAFIO"}
+                    
+                    {/* Pulsing border effect */}
+                    <motion.div
+                      className="absolute inset-0 border-4 border-green-400/0 rounded-2xl"
+                      animate={{
+                        borderColor: ["rgba(34, 197, 94, 0)", "rgba(34, 197, 94, 1)", "rgba(34, 197, 94, 0)"],
+                        boxShadow: [
+                          "0 0 0px rgba(34, 197, 94, 0)",
+                          "0 0 40px rgba(34, 197, 94, 0.8), 0 0 80px rgba(34, 197, 94, 0.4)",
+                          "0 0 0px rgba(34, 197, 94, 0)"
+                        ],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    
+                    <span className="relative z-10 flex items-center gap-3">
+                      <span className="text-3xl">⚡</span>
+                      {isLoading ? "PROCESSANDO..." : "ACEITAR DESAFIO"}
                     </span>
                   </Button>
                   
                   <Button 
                     onClick={() => handleResponse("rejected")}
                     disabled={isLoading}
-                    className="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white px-12 py-6 text-xl font-bold shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 hover:-translate-y-2 border-2 border-red-400/50 outline outline-2 outline-red-400/30 wildcard-button-glow relative overflow-hidden"
+                    className="relative group bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 hover:from-red-500 hover:via-rose-500 hover:to-pink-500 text-white px-12 py-5 text-xl font-bold shadow-2xl hover:shadow-red-500/60 transition-all duration-500 transform hover:scale-110 hover:-translate-y-2 border-4 border-red-400/60 rounded-2xl overflow-hidden font-orbitron"
                   >
+                    {/* Intense energy sweep */}
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-rose-400/20"
+                      className="absolute inset-0 bg-gradient-to-r from-red-300/40 via-rose-300/40 to-pink-300/40"
                       animate={{
-                        x: [-100, 100],
+                        x: [-300, 300],
                         opacity: [0, 1, 0],
                       }}
                       transition={{
@@ -363,8 +601,29 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                         delay: 1,
                       }}
                     />
-                    <span className="relative z-10">
-                      ✗ RECUSAR E DESISTIR
+                    
+                    {/* Pulsing border effect */}
+                    <motion.div
+                      className="absolute inset-0 border-4 border-red-400/0 rounded-2xl"
+                      animate={{
+                        borderColor: ["rgba(248, 113, 113, 0)", "rgba(248, 113, 113, 1)", "rgba(248, 113, 113, 0)"],
+                        boxShadow: [
+                          "0 0 0px rgba(248, 113, 113, 0)",
+                          "0 0 40px rgba(248, 113, 113, 0.8), 0 0 80px rgba(248, 113, 113, 0.4)",
+                          "0 0 0px rgba(248, 113, 113, 0)"
+                        ],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 0.5,
+                      }}
+                    />
+                    
+                    <span className="relative z-10 flex items-center gap-3">
+                      <span className="text-3xl">💀</span>
+                      DESISTIR E MORRER
                     </span>
                   </Button>
                 </motion.div>
