@@ -50,14 +50,11 @@ export async function initializeDatabase() {
     console.log('Tabelas criadas/verificadas com sucesso!');
 
     // Verificar se já existe o usuário admin
-    const adminExists = await db.execute(sql`
-      SELECT id FROM users WHERE username = 'mestre' LIMIT 1
-    `);
+    const adminCheck = await db.execute(sql`
+      SELECT COUNT(*) as count FROM users WHERE username = 'mestre'
 
-    if (adminExists.rows.length === 0) {
-      // Criar usuário admin padrão
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      await db.execute(sql`
+    const adminExists = adminCheck.rows[0]?.count > 0;
+    if (!adminExists) 
         INSERT INTO users (username, password, is_admin)
         VALUES ('mestre', ${hashedPassword}, true)
       `);
