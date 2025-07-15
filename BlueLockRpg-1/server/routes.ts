@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertUserSchema, insertCharacterSchema, updateCharacterSchema } from "@shared/schema";
+import { insertUserSchema, insertCharacterSchema, updateCharacterSchema, insertWildCardInvitationSchema, updateWildCardInvitationSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -265,6 +266,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Wild Card routes
+  app.get("/api/admin/eliminated-characters", requireAdmin, async (req, res) => {
+    try {
+      const eliminatedCharacters = await storage.getEliminatedCharacters();
+      res.json(eliminatedCharacters);
+    } catch (error) {
+      console.error("Get eliminated characters error:", error);
+      res.status(500).json({ message: "Failed to get eliminated characters" });
+    }
+  });
+
+  app.post("/api/admin/wildcard/invite", requireAdmin, async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      // Check if user exists and has an eliminated character
+      const user = await storage.getUserWithCharacter(userId);
+      if (!user || !user.character || !user.character.isEliminated) {
+        return res.status(400).json({ message: "User not found or character not eliminated" });
+      }
+
+      let invitation;
+      
+      // Check if invitation already exists
+      const existingInvitation = await storage.getWildCardInvitation(userId);
+      if (existingInvitation) {
+        // Update existing invitation to pending status (resend)
+        invitation = await storage.updateWildCardInvitation(userId, { 
+          status: "pending",
+          respondedAt: null 
+        });
+      } else {
+        // Create new invitation
+        invitation = await storage.createWildCardInvitation({ userId, status: "pending" });
+      }
+      
+      // Send WebSocket notification to the user
+      broadcastToUser(userId, {
+        type: "wildcard_invitation",
+        message: "Você foi convidado para o Wild Card!"
+      });
+
+      res.json(invitation);
+    } catch (error) {
+      console.error("Create wild card invitation error:", error);
+      res.status(500).json({ message: "Failed to create invitation" });
+    }
+  });
+
+  app.post("/api/wildcard/respond", requireAuth, async (req, res) => {
+    try {
+      const { response } = req.body; // "accepted" or "rejected"
+      
+      if (!response || !["accepted", "rejected"].includes(response)) {
+        return res.status(400).json({ message: "Invalid response" });
+      }
+
+      const invitation = await storage.getWildCardInvitation(req.session.userId!);
+      if (!invitation) {
+        return res.status(404).json({ message: "No invitation found" });
+      }
+
+      if (invitation.status !== "pending") {
+        return res.status(400).json({ message: "Invitation already responded to" });
+      }
+
+      const updatedInvitation = await storage.updateWildCardInvitation(req.session.userId!, { status: response });
+      res.json(updatedInvitation);
+    } catch (error) {
+      console.error("Respond to wild card invitation error:", error);
+      res.status(500).json({ message: "Failed to respond to invitation" });
+    }
+  });
+
+  app.get("/api/wildcard/invitation", requireAuth, async (req, res) => {
+    try {
+      const invitation = await storage.getWildCardInvitation(req.session.userId!);
+      res.json(invitation);
+    } catch (error) {
+      console.error("Get wild card invitation error:", error);
+      res.status(500).json({ message: "Failed to get invitation" });
+    }
+  });
+
+  app.get("/api/admin/wildcard/invitations", requireAdmin, async (req, res) => {
+    try {
+      const invitations = await storage.getAllWildCardInvitations();
+      res.json(invitations);
+    } catch (error) {
+      console.error("Get all wild card invitations error:", error);
+      res.status(500).json({ message: "Failed to get invitations" });
+    }
+  });
+
+  app.patch("/api/admin/character/:userId/eliminate", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Check if character exists
+      const character = await storage.getCharacter(userId);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+      
+      // Check if already eliminated
+      if (character.isEliminated) {
+        return res.status(400).json({ message: "Character already eliminated" });
+      }
+      
+      const updatedCharacter = await storage.updateCharacter(userId, { isEliminated: true });
+      res.json(updatedCharacter);
+    } catch (error) {
+      console.error("Eliminate character error:", error);
+      res.status(500).json({ message: "Failed to eliminate character" });
+    }
+  });
+
   const httpServer = createServer(app);
+  
+  // WebSocket setup
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Store WebSocket connections by user ID
+  const userConnections = new Map<number, WebSocket>();
+  
+  wss.on('connection', (ws, req) => {
+    console.log('New WebSocket connection');
+    
+    ws.on('message', (message) => {
+      try {
+        const data = JSON.parse(message.toString());
+        
+        if (data.type === 'auth' && data.userId) {
+          userConnections.set(data.userId, ws);
+          console.log(`User ${data.userId} connected via WebSocket`);
+        }
+      } catch (error) {
+        console.error('WebSocket message error:', error);
+      }
+    });
+    
+    ws.on('close', () => {
+      // Remove connection from map when user disconnects
+      for (const [userId, connection] of userConnections.entries()) {
+        if (connection === ws) {
+          userConnections.delete(userId);
+          break;
+        }
+      }
+    });
+  });
+  
+  // Function to broadcast message to specific user
+  function broadcastToUser(userId: number, message: any) {
+    const connection = userConnections.get(userId);
+    if (connection && connection.readyState === WebSocket.OPEN) {
+      connection.send(JSON.stringify(message));
+    }
+  }
+  
   return httpServer;
 }
