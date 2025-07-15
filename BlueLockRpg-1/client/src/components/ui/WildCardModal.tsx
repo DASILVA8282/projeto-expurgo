@@ -69,12 +69,12 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl w-[85vw] h-[85vh] bg-black border-0 text-white overflow-hidden p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
+      <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] bg-black border-0 text-white overflow-y-auto p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
         <DialogTitle className="sr-only">Wild Card Invitation</DialogTitle>
         <div className="sr-only">
           <p id="wildcard-description">You have received a Wild Card invitation for a second chance in Blue Lock</p>
         </div>
-        <div className="relative h-full flex flex-col items-center justify-start pt-8 wildcard-cinematic-bg overflow-hidden">
+        <div className="relative min-h-screen flex flex-col items-center justify-center py-8 wildcard-cinematic-bg overflow-hidden">
           {/* Cinematic background with floating elements */}
           <div className="absolute inset-0 overflow-hidden">
             {/* Floating geometric shapes */}
@@ -190,7 +190,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
           </AnimatePresence>
 
           {/* Cinematic Portal Container */}
-          <div className="relative z-10 mb-4">
+          <div className="relative z-10 mb-6">
             <div className="relative">
               {/* Portal outer glow */}
               <motion.div
@@ -208,7 +208,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
               />
               
               {/* Portal frame - more futuristic */}
-              <div className="relative w-80 h-96 bg-gradient-to-b from-slate-800 via-slate-900 to-black rounded-2xl border-4 border-gradient-to-r from-cyan-400/50 to-purple-400/50 shadow-2xl shadow-cyan-500/20 wildcard-portal-glow">
+              <div className="relative w-72 h-80 bg-gradient-to-b from-slate-800 via-slate-900 to-black rounded-2xl border-4 border-gradient-to-r from-cyan-400/50 to-purple-400/50 shadow-2xl shadow-cyan-500/20 wildcard-portal-glow">
                 {/* Hexagonal tech pattern overlay */}
                 <div className="absolute inset-0 bg-[linear-gradient(30deg,transparent_40%,rgba(6,182,212,0.1)_50%,transparent_60%)] rounded-2xl" />
                 
@@ -361,7 +361,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -100, scale: 0.8 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="relative z-10 text-center max-w-4xl mx-auto px-6 flex-1 flex flex-col justify-center"
+                className="relative z-10 text-center max-w-4xl mx-auto px-6"
               >
                 {/* Cinematic Wild Card Title */}
                 <motion.div
@@ -401,7 +401,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                         }}
                       />
                       
-                      <h1 className="text-8xl md:text-9xl font-black mb-1 tracking-wider relative">
+                      <h1 className="text-6xl md:text-7xl font-black mb-1 tracking-wider relative">
                         <motion.span 
                           className="bg-gradient-to-r from-red-400 via-orange-500 to-yellow-400 bg-clip-text text-transparent relative z-10 font-orbitron"
                           style={{
@@ -424,7 +424,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                           WILD
                         </motion.span>
                       </h1>
-                      <h1 className="text-8xl md:text-9xl font-black tracking-wider relative">
+                      <h1 className="text-6xl md:text-7xl font-black tracking-wider relative">
                         <motion.span 
                           className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-400 bg-clip-text text-transparent relative z-10 font-orbitron"
                           style={{
@@ -467,7 +467,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8, duration: 1 }}
-                  className="mb-6 space-y-6"
+                  className="mb-4 space-y-4"
                 >
                   <div className="relative">
                     <motion.div
@@ -482,7 +482,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                         ease: "easeInOut",
                       }}
                     />
-                    <div className="relative z-10 p-6 space-y-4">
+                    <div className="relative z-10 p-4 space-y-3">
                       <motion.p 
                         className="text-2xl text-red-400 font-bold tracking-wide font-orbitron"
                         animate={{
@@ -537,12 +537,12 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2, duration: 0.8 }}
-                  className="flex flex-col sm:flex-row gap-8 justify-center items-center"
+                  className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-4"
                 >
                   <Button 
                     onClick={() => handleResponse("accepted")}
                     disabled={isLoading}
-                    className="relative group bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white px-12 py-5 text-xl font-bold shadow-2xl hover:shadow-green-500/60 transition-all duration-500 transform hover:scale-110 hover:-translate-y-2 border-4 border-green-400/60 rounded-2xl overflow-hidden font-orbitron"
+                    className="relative group bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 text-white px-8 py-4 text-lg font-bold shadow-2xl hover:shadow-green-500/60 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 border-3 border-green-400/60 rounded-xl overflow-hidden font-orbitron"
                   >
                     {/* Intense energy sweep */}
                     <motion.div
@@ -576,8 +576,8 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                       }}
                     />
                     
-                    <span className="relative z-10 flex items-center gap-3">
-                      <span className="text-3xl">⚡</span>
+                    <span className="relative z-10 flex items-center gap-2">
+                      <span className="text-2xl">⚡</span>
                       {isLoading ? "PROCESSANDO..." : "ACEITAR DESAFIO"}
                     </span>
                   </Button>
@@ -585,7 +585,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                   <Button 
                     onClick={() => handleResponse("rejected")}
                     disabled={isLoading}
-                    className="relative group bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 hover:from-red-500 hover:via-rose-500 hover:to-pink-500 text-white px-12 py-5 text-xl font-bold shadow-2xl hover:shadow-red-500/60 transition-all duration-500 transform hover:scale-110 hover:-translate-y-2 border-4 border-red-400/60 rounded-2xl overflow-hidden font-orbitron"
+                    className="relative group bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 hover:from-red-500 hover:via-rose-500 hover:to-pink-500 text-white px-8 py-4 text-lg font-bold shadow-2xl hover:shadow-red-500/60 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 border-3 border-red-400/60 rounded-xl overflow-hidden font-orbitron"
                   >
                     {/* Intense energy sweep */}
                     <motion.div
@@ -621,8 +621,8 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
                       }}
                     />
                     
-                    <span className="relative z-10 flex items-center gap-3">
-                      <span className="text-3xl">💀</span>
+                    <span className="relative z-10 flex items-center gap-2">
+                      <span className="text-2xl">💀</span>
                       DESISTIR E MORRER
                     </span>
                   </Button>
