@@ -27,6 +27,7 @@ export const characters = pgTable("characters", {
   matches: integer("matches").default(0).notNull(),
   goals: integer("goals").default(0).notNull(),
   ranking: integer("ranking").default(299).notNull(),
+  isEliminated: boolean("is_eliminated").default(false).notNull(),
   // Stats
   speed: integer("speed").default(50).notNull(),
   strength: integer("strength").default(50).notNull(),
@@ -36,6 +37,14 @@ export const characters = pgTable("characters", {
   dribbling: integer("dribbling").default(50).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const wildCardInvitations = pgTable("wild_card_invitations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  status: varchar("status", { length: 20 }).default("pending").notNull(), // pending, accepted, rejected
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  respondedAt: timestamp("responded_at"),
 });
 
 export const usersRelations = relations(users, ({ one }) => ({
@@ -48,6 +57,13 @@ export const usersRelations = relations(users, ({ one }) => ({
 export const charactersRelations = relations(characters, ({ one }) => ({
   user: one(users, {
     fields: [characters.userId],
+    references: [users.id],
+  }),
+}));
+
+export const wildCardInvitationsRelations = relations(wildCardInvitations, ({ one }) => ({
+  user: one(users, {
+    fields: [wildCardInvitations.userId],
     references: [users.id],
   }),
 }));
@@ -68,11 +84,24 @@ export const updateCharacterSchema = insertCharacterSchema.partial().omit({
   userId: true,
 });
 
+export const insertWildCardInvitationSchema = createInsertSchema(wildCardInvitations).omit({
+  id: true,
+  createdAt: true,
+  respondedAt: true,
+});
+
+export const updateWildCardInvitationSchema = insertWildCardInvitationSchema.partial().omit({
+  userId: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
 export type UpdateCharacter = z.infer<typeof updateCharacterSchema>;
 export type Character = typeof characters.$inferSelect;
+export type InsertWildCardInvitation = z.infer<typeof insertWildCardInvitationSchema>;
+export type UpdateWildCardInvitation = z.infer<typeof updateWildCardInvitationSchema>;
+export type WildCardInvitation = typeof wildCardInvitations.$inferSelect;
 
 export type UserWithCharacter = User & {
   character?: Character;
