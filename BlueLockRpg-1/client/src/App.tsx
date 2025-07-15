@@ -9,6 +9,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Character from "@/pages/character";
 import Admin from "@/pages/admin";
+import Match from "@/pages/match";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/character" component={Character} />
           <Route path="/admin" component={Admin} />
+          <Route path="/match" component={Match} />
         </>
       )}
       <Route component={NotFound} />
