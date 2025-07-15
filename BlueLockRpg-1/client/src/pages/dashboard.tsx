@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useState, useEffect } from "react";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { WildCardModal } from "@/components/ui/WildCardModal";
+import { WildCardModal } from "@/components/WildCardModal";
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -68,6 +68,11 @@ export default function Dashboard() {
               <Link href="/character">
                 <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
                   <i className="fas fa-user-edit mr-2"></i>Meu Personagem
+                </button>
+              </Link>
+              <Link href="/match">
+                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
+                  <i className="fas fa-futbol mr-2"></i>Partida
                 </button>
               </Link>
               {user?.isAdmin && (
