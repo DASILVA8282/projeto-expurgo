@@ -182,45 +182,44 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
               <div className="relative w-80 h-96 bg-gradient-to-b from-slate-800 via-slate-900 to-black rounded-lg border-4 border-slate-700 shadow-2xl outline outline-2 outline-slate-600/50">
                 {/* Door panels */}
                 <div className="absolute inset-4 flex overflow-hidden rounded-md">
-                  {/* Left door panel */}
-                  <motion.div
-                    className="w-1/2 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-r-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
-                    animate={{
-                      rotateY: doorOpened ? -90 : 0,
-                    }}
-                    style={{
-                      transformOrigin: "left center",
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <div className="absolute top-1/2 right-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-l-md" />
-                    {/* Door panel details */}
-                    <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
-                  </motion.div>
-                  
-                  {/* Right door panel */}
-                  <motion.div
-                    className="w-1/2 bg-gradient-to-bl from-slate-700 via-slate-800 to-slate-900 border-l-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
-                    animate={{
-                      rotateY: doorOpened ? 90 : 0,
-                    }}
-                    style={{
-                      transformOrigin: "right center",
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <div className="absolute top-1/2 left-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-r-md" />
-                    {/* Door panel details */}
-                    <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
-                  </motion.div>
+{/* Left door panel */}
+<motion.div
+  className="w-1/2 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-r-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
+  animate={{
+    transform: doorOpened ? "rotateY(-90deg)" : "rotateY(0deg)",
+  }}
+  style={{
+    transformOrigin: "left center",
+  }}
+  transition={{
+    duration: 1.5,
+    ease: "easeInOut",
+  }}
+>
+  <div className="absolute top-1/2 right-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
+  <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-l-md" />
+  <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
+</motion.div>
+
+{/* Right door panel */}
+<motion.div
+  className="w-1/2 bg-gradient-to-bl from-slate-700 via-slate-800 to-slate-900 border-l-2 border-slate-600 relative outline outline-1 outline-slate-500/30"
+  animate={{
+    transform: doorOpened ? "rotateY(90deg)" : "rotateY(0deg)",
+  }}
+  style={{
+    transformOrigin: "right center",
+  }}
+  transition={{
+    duration: 1.5,
+    ease: "easeInOut",
+  }}
+>
+  <div className="absolute top-1/2 left-4 w-4 h-4 bg-amber-400 rounded-full shadow-lg outline outline-1 outline-amber-300/50" />
+  <div className="absolute inset-0 bg-gradient-to-b from-slate-600/10 to-transparent rounded-r-md" />
+  <div className="absolute inset-2 border border-slate-600/30 rounded-sm" />
+</motion.div>
+
                 </div>
                 
                 {/* Light behind door - warm golden light */}
