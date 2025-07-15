@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/api";
+import { WildCardAdmin } from "@/components/WildCardAdmin";
 
 // Ranking Manager Component
 function RankingManager({ character, userId }: { character: any; userId: number }) {
@@ -88,6 +90,7 @@ function RankingManager({ character, userId }: { character: any; userId: number 
 export default function Admin() {
   const { user, logout } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   useEffect(() => {
@@ -109,6 +112,31 @@ export default function Admin() {
     queryKey: ["/api/admin/stats"],
     enabled: !!user?.isAdmin,
   });
+
+  const eliminatePlayerMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      return apiRequest("PATCH", `/api/admin/character/${userId}/eliminate`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "Jogador Eliminado",
+        description: "O jogador foi eliminado com sucesso",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Eliminate player error:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Falha ao eliminar o jogador",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEliminatePlayer = async (userId: number) => {
+    eliminatePlayerMutation.mutate(userId);
+  };
 
   const handleLogout = async () => {
     try {
@@ -259,10 +287,21 @@ export default function Admin() {
           </Card>
         </div>
 
-        {/* Players List */}
-        <Card className="bg-slate-900 border-2 border-slate-700">
-          <CardContent className="p-6">
-            <h3 className="font-orbitron text-xl font-bold text-yellow-400 mb-6">LISTA DE JOGADORES</h3>
+        {/* Admin Tabs */}
+        <Tabs defaultValue="players" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-2 border-slate-700">
+            <TabsTrigger value="players" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+              <i className="fas fa-users mr-2"></i>Jogadores
+            </TabsTrigger>
+            <TabsTrigger value="wildcard" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+              <i className="fas fa-bolt mr-2"></i>Wild Card
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="players" className="mt-6">
+            <Card className="bg-slate-900 border-2 border-slate-700">
+              <CardContent className="p-6">
+                <h3 className="font-orbitron text-xl font-bold text-yellow-400 mb-6">LISTA DE JOGADORES</h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -323,25 +362,30 @@ export default function Admin() {
                         {userData.character?.goals || 0}
                       </td>
                       <td className="py-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-rajdhani font-semibold ${
-                          userData.character ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-                        }`}>
-                          {userData.character ? 'ATIVO' : 'INATIVO'}
-                        </span>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-3 py-1 rounded-full text-sm font-rajdhani font-semibold ${
+                            userData.character?.isEliminated ? 'bg-red-500 text-white' :
+                            userData.character ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
+                          }`}>
+                            {userData.character?.isEliminated ? 'ELIMINADO' : 
+                             userData.character ? 'ATIVO' : 'INATIVO'}
+                          </span>
+                        </div>
                       </td>
                       <td className="py-4">
                         <div className="flex space-x-2">
                           {userData.character ? (
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button 
-                                  size="sm" 
-                                  className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
-                                  onClick={() => setSelectedPlayer(userData)}
-                                >
-                                  <i className="fas fa-eye mr-1"></i>Ver Ficha
-                                </Button>
-                              </DialogTrigger>
+                            <>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    size="sm" 
+                                    className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
+                                    onClick={() => setSelectedPlayer(userData)}
+                                  >
+                                    <i className="fas fa-eye mr-1"></i>Ver Ficha
+                                  </Button>
+                                </DialogTrigger>
                               <DialogContent className="max-w-4xl bg-slate-900 border-2 border-blue-600 max-h-[90vh] overflow-y-auto">
                                 <DialogHeader>
                                   <DialogTitle className="font-orbitron text-2xl text-blue-400">
@@ -465,6 +509,18 @@ export default function Admin() {
                                 </div>
                               </DialogContent>
                             </Dialog>
+                            
+                            {!userData.character.isEliminated && (
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleEliminatePlayer(userData.id)}
+                                className="bg-red-600 hover:bg-red-700 font-rajdhani font-semibold"
+                              >
+                                <i className="fas fa-user-times mr-1"></i>Eliminar
+                              </Button>
+                            )}
+                          </>
                           ) : (
                             <Button size="sm" disabled className="bg-gray-600 font-rajdhani font-semibold">
                               <i className="fas fa-ban mr-1"></i>Sem Personagem
@@ -486,6 +542,12 @@ export default function Admin() {
             </div>
           </CardContent>
         </Card>
+      </TabsContent>
+
+      <TabsContent value="wildcard" className="mt-6">
+        <WildCardAdmin />
+      </TabsContent>
+    </Tabs>
       </div>
     </div>
   );
