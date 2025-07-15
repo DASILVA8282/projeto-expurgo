@@ -217,6 +217,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin rank management
+  app.patch("/api/admin/character/:userId/rank", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const { newRank } = req.body;
+
+      if (!newRank || newRank < 1 || newRank > 300) {
+        return res.status(400).json({ message: "Rank deve ser entre 1 e 300" });
+      }
+
+      const character = await storage.updateCharacter(userId, { ranking: newRank });
+      res.json(character);
+    } catch (error) {
+      console.error("Update rank error:", error);
+      res.status(500).json({ message: "Failed to update rank" });
+    }
+  });
+
+  // Auto-rank calculation based on stats
+  app.post("/api/admin/character/:userId/calculate-rank", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const character = await storage.getCharacter(userId);
+      
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+
+      // Calculate rank based on total stats, level, goals, etc.
+      const totalStats = character.speed + character.strength + character.stamina + 
+                        character.shooting + character.passing + character.dribbling;
+      const levelBonus = character.level * 10;
+      const goalBonus = character.goals * 5;
+      const matchBonus = character.matches * 2;
+      
+      const score = totalStats + levelBonus + goalBonus + matchBonus;
+      
+      // Convert score to ranking (higher score = lower ranking number)
+      let newRank = Math.max(1, Math.min(300, 300 - Math.floor(score / 20)));
+      
+      const updatedCharacter = await storage.updateCharacter(userId, { ranking: newRank });
+      res.json(updatedCharacter);
+    } catch (error) {
+      console.error("Calculate rank error:", error);
+      res.status(500).json({ message: "Failed to calculate rank" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
