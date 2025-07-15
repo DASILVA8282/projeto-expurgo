@@ -41,6 +41,19 @@ export async function initializeDatabase() {
         shooting INTEGER DEFAULT 50 NOT NULL,
         passing INTEGER DEFAULT 50 NOT NULL,
         dribbling INTEGER DEFAULT 50 NOT NULL,
+        is_eliminated BOOLEAN DEFAULT FALSE NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      )
+    `);
+
+    // Criar tabela wild_card_invitations se não existir
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS wild_card_invitations (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) NOT NULL UNIQUE,
+        status VARCHAR(20) DEFAULT 'pending' NOT NULL,
+        responded_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       )
