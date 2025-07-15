@@ -47,6 +47,29 @@ export const wildCardInvitations = pgTable("wild_card_invitations", {
   respondedAt: timestamp("responded_at"),
 });
 
+export const matches = pgTable("matches", {
+  id: serial("id").primaryKey(),
+  teamV: varchar("team_v", { length: 100 }).notNull(),
+  teamZ: varchar("team_z", { length: 100 }).notNull(),
+  scoreV: integer("score_v").default(0).notNull(),
+  scoreZ: integer("score_z").default(0).notNull(),
+  status: varchar("status", { length: 20 }).default("preparing").notNull(), // preparing, active, finished
+  startTime: timestamp("start_time"),
+  endTime: timestamp("end_time"),
+  currentMinute: integer("current_minute").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const goals = pgTable("goals", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => matches.id).notNull(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  team: varchar("team", { length: 1 }).notNull(), // V or Z
+  minute: integer("minute").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const usersRelations = relations(users, ({ one }) => ({
   character: one(characters, {
     fields: [users.id],
@@ -64,6 +87,21 @@ export const charactersRelations = relations(characters, ({ one }) => ({
 export const wildCardInvitationsRelations = relations(wildCardInvitations, ({ one }) => ({
   user: one(users, {
     fields: [wildCardInvitations.userId],
+    references: [users.id],
+  }),
+}));
+
+export const matchesRelations = relations(matches, ({ many }) => ({
+  goals: many(goals),
+}));
+
+export const goalsRelations = relations(goals, ({ one }) => ({
+  match: one(matches, {
+    fields: [goals.matchId],
+    references: [matches.id],
+  }),
+  player: one(users, {
+    fields: [goals.playerId],
     references: [users.id],
   }),
 }));
@@ -94,6 +132,19 @@ export const updateWildCardInvitationSchema = insertWildCardInvitationSchema.par
   userId: true,
 });
 
+export const insertMatchSchema = createInsertSchema(matches).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const updateMatchSchema = insertMatchSchema.partial();
+
+export const insertGoalSchema = createInsertSchema(goals).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
@@ -105,4 +156,14 @@ export type WildCardInvitation = typeof wildCardInvitations.$inferSelect;
 
 export type UserWithCharacter = User & {
   character?: Character;
+};
+
+export type InsertMatch = z.infer<typeof insertMatchSchema>;
+export type UpdateMatch = z.infer<typeof updateMatchSchema>;
+export type Match = typeof matches.$inferSelect;
+export type InsertGoal = z.infer<typeof insertGoalSchema>;
+export type Goal = typeof goals.$inferSelect;
+
+export type MatchWithGoals = Match & {
+  goals: (Goal & { player: User })[];
 };
