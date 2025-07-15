@@ -17,6 +17,8 @@ export default function Dashboard() {
       await logout();
     } catch (error) {
       console.error("Logout error:", error);
+      // Force logout even if server request fails
+      window.location.href = "/";
     }
   };
 
