@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { insertUserSchema, insertCharacterSchema, updateCharacterSchema, insertWildCardInvitationSchema, updateWildCardInvitationSchema } from "@shared/schema";
+import { insertUserSchema, insertCharacterSchema, updateCharacterSchema, insertWildCardInvitationSchema, updateWildCardInvitationSchema, insertMatchSchema, updateMatchSchema, insertGoalSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -199,6 +199,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get users with characters only (for match player selection)
+  app.get("/api/admin/users-with-characters", requireAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsersWithCharacters();
+      // Filter only users with characters and remove passwords
+      const usersWithCharacters = users
+        .filter(user => user.character)
+        .map(({ password, ...user }) => user);
+      res.json(usersWithCharacters);
+    } catch (error) {
+      console.error("Get users with characters error:", error);
+      res.status(500).json({ message: "Failed to get users with characters" });
+    }
+  });
+
   app.get("/api/admin/stats", requireAdmin, async (req, res) => {
     try {
       const users = await storage.getAllUsersWithCharacters();
@@ -384,6 +399,194 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Eliminate character error:", error);
       res.status(500).json({ message: "Failed to eliminate character" });
+    }
+  });
+
+  // Match routes
+  app.get("/api/matches", requireAuth, async (req, res) => {
+    try {
+      const matches = await storage.getAllMatches();
+      res.json(matches);
+    } catch (error) {
+      console.error("Get matches error:", error);
+      res.status(500).json({ message: "Failed to get matches" });
+    }
+  });
+
+  app.get("/api/matches/finished", requireAuth, async (req, res) => {
+    try {
+      const matches = await storage.getAllMatches();
+      const finishedMatches = matches.filter(m => m.status === "finished").slice(-10); // Últimas 10 partidas
+      res.json(finishedMatches);
+    } catch (error) {
+      console.error("Get finished matches error:", error);
+      res.status(500).json({ message: "Failed to get finished matches" });
+    }
+  });
+
+
+
+  app.get("/api/matches/active", requireAuth, async (req, res) => {
+    try {
+      const activeMatch = await storage.getActiveMatch();
+      if (!activeMatch) {
+        return res.status(404).json({ message: "No active match" });
+      }
+      
+      const matchWithGoals = await storage.getMatchWithGoals(activeMatch.id);
+      res.json(matchWithGoals);
+    } catch (error) {
+      console.error("Get active match error:", error);
+      res.status(500).json({ message: "Failed to get active match" });
+    }
+  });
+
+  app.get("/api/matches/:id", requireAuth, async (req, res) => {
+    try {
+      const matchId = parseInt(req.params.id);
+      const match = await storage.getMatchWithGoals(matchId);
+      
+      if (!match) {
+        return res.status(404).json({ message: "Match not found" });
+      }
+      
+      res.json(match);
+    } catch (error) {
+      console.error("Get match error:", error);
+      res.status(500).json({ message: "Failed to get match" });
+    }
+  });
+
+  // Admin match management
+  app.post("/api/admin/matches", requireAdmin, async (req, res) => {
+    try {
+      const matchData = insertMatchSchema.parse(req.body);
+      const newMatch = await storage.createMatch(matchData);
+      res.json(newMatch);
+    } catch (error) {
+      console.error("Create match error:", error);
+      res.status(500).json({ message: "Failed to create match" });
+    }
+  });
+
+  app.patch("/api/admin/matches/:id", requireAdmin, async (req, res) => {
+    try {
+      const matchId = parseInt(req.params.id);
+      const updates = updateMatchSchema.parse(req.body);
+      
+      const updatedMatch = await storage.updateMatch(matchId, updates);
+      res.json(updatedMatch);
+    } catch (error) {
+      console.error("Update match error:", error);
+      res.status(500).json({ message: "Failed to update match" });
+    }
+  });
+
+  app.post("/api/admin/matches/:id/start", requireAdmin, async (req, res) => {
+    try {
+      const matchId = parseInt(req.params.id);
+      const updatedMatch = await storage.updateMatch(matchId, {
+        status: "active",
+        startTime: new Date(),
+        currentMinute: 0
+      });
+      res.json(updatedMatch);
+    } catch (error) {
+      console.error("Start match error:", error);
+      res.status(500).json({ message: "Failed to start match" });
+    }
+  });
+
+  app.post("/api/admin/matches/:id/finish", requireAdmin, async (req, res) => {
+    try {
+      const matchId = parseInt(req.params.id);
+      
+      // Verifica se a partida existe e não está finalizada
+      const match = await storage.getMatch(matchId);
+      if (!match) {
+        return res.status(404).json({ message: "Match not found" });
+      }
+      
+      if (match.status === "finished") {
+        return res.status(400).json({ message: "Match already finished" });
+      }
+      
+      // Atualiza o status da partida
+      const updatedMatch = await storage.updateMatch(matchId, {
+        status: "finished",
+        endTime: new Date()
+      });
+      
+      // Busca todos os gols da partida para atualizar estatísticas
+      const matchWithGoals = await storage.getMatchWithGoals(matchId);
+      if (matchWithGoals?.goals) {
+        // Agrupa gols por jogador
+        const playerGoals = matchWithGoals.goals.reduce((acc, goal) => {
+          acc[goal.playerId] = (acc[goal.playerId] || 0) + 1;
+          return acc;
+        }, {} as Record<number, number>);
+        
+        // Atualiza estatísticas de cada jogador
+        for (const [playerId, goalCount] of Object.entries(playerGoals)) {
+          const character = await storage.getCharacter(parseInt(playerId));
+          if (character) {
+            await storage.updateCharacter(parseInt(playerId), {
+              goals: character.goals + goalCount,
+              matches: character.matches + 1
+            });
+          }
+        }
+        
+        // Atualiza matches para todos os outros jogadores que participaram mas não fizeram gols
+        const allUsers = await storage.getAllUsersWithCharacters();
+        const playersWithGoals = new Set(Object.keys(playerGoals).map(id => parseInt(id)));
+        
+        for (const user of allUsers) {
+          if (user.character && !playersWithGoals.has(user.id)) {
+            await storage.updateCharacter(user.id, {
+              matches: user.character.matches + 1
+            });
+          }
+        }
+      }
+      
+      // Notificar todos os usuários conectados que a partida foi finalizada
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            type: "match_finished",
+            message: "A partida foi finalizada! Redirecionando para o dashboard..."
+          }));
+        }
+      });
+      
+      res.json(updatedMatch);
+    } catch (error) {
+      console.error("Finish match error:", error);
+      res.status(500).json({ message: "Failed to finish match" });
+    }
+  });
+
+  // Goal routes
+  app.post("/api/admin/goals", requireAdmin, async (req, res) => {
+    try {
+      const goalData = insertGoalSchema.parse(req.body);
+      const newGoal = await storage.createGoal(goalData);
+      
+      // Update match score
+      const match = await storage.getMatch(goalData.matchId);
+      if (match) {
+        const updates = goalData.team === "V" 
+          ? { scoreV: match.scoreV + 1 }
+          : { scoreZ: match.scoreZ + 1 };
+        
+        await storage.updateMatch(goalData.matchId, updates);
+      }
+      
+      res.json(newGoal);
+    } catch (error) {
+      console.error("Create goal error:", error);
+      res.status(500).json({ message: "Failed to create goal" });
     }
   });
 
