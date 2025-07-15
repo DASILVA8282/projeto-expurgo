@@ -1,6 +1,6 @@
-import { users, characters, wildCardInvitations, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation } from "@shared/schema";
+import { users, characters, wildCardInvitations, matches, goals, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, or, desc } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -24,6 +24,18 @@ export interface IStorage {
   updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation>;
   getPendingWildCardInvitations(): Promise<WildCardInvitation[]>;
   getAllWildCardInvitations(): Promise<WildCardInvitation[]>;
+  
+  // Match operations
+  createMatch(match: InsertMatch): Promise<Match>;
+  getMatch(id: number): Promise<Match | undefined>;
+  getMatchWithGoals(id: number): Promise<MatchWithGoals | undefined>;
+  updateMatch(id: number, updates: UpdateMatch): Promise<Match>;
+  getAllMatches(): Promise<Match[]>;
+  getActiveMatch(): Promise<Match | undefined>;
+  
+  // Goal operations
+  createGoal(goal: InsertGoal): Promise<Goal>;
+  getGoalsForMatch(matchId: number): Promise<(Goal & { player: User })[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -160,6 +172,116 @@ export class DatabaseStorage implements IStorage {
   async getAllWildCardInvitations(): Promise<WildCardInvitation[]> {
     const allInvitations = await db.select().from(wildCardInvitations);
     return allInvitations;
+  }
+
+  // Match operations
+  async createMatch(match: InsertMatch): Promise<Match> {
+    const [newMatch] = await db
+      .insert(matches)
+      .values(match)
+      .returning();
+    return newMatch;
+  }
+
+  async getMatch(id: number): Promise<Match | undefined> {
+    const [match] = await db.select().from(matches).where(eq(matches.id, id));
+    return match;
+  }
+
+  async getMatchWithGoals(id: number): Promise<MatchWithGoals | undefined> {
+    const match = await this.getMatch(id);
+    if (!match) return undefined;
+    
+    const matchGoals = await this.getGoalsForMatch(id);
+    return {
+      ...match,
+      goals: matchGoals
+    };
+  }
+
+  async updateMatch(id: number, updates: UpdateMatch): Promise<Match> {
+    const [updatedMatch] = await db
+      .update(matches)
+      .set(updates)
+      .where(eq(matches.id, id))
+      .returning();
+    return updatedMatch;
+  }
+
+  async getAllMatches(): Promise<Match[]> {
+    return await db.select().from(matches);
+  }
+
+  async getActiveMatch(): Promise<Match | undefined> {
+    const [match] = await db.select().from(matches).where(
+      or(eq(matches.status, "active"), eq(matches.status, "preparing"))
+    ).orderBy(desc(matches.createdAt));
+    return match;
+  }
+
+  // Goal operations
+  async createGoal(goal: InsertGoal): Promise<Goal> {
+    const [newGoal] = await db
+      .insert(goals)
+      .values(goal)
+      .returning();
+    return newGoal;
+  }
+
+  async getGoalsForMatch(matchId: number): Promise<(Goal & { player: User & { character?: Character } })[]> {
+    return await db
+      .select({
+        id: goals.id,
+        matchId: goals.matchId,
+        playerId: goals.playerId,
+        team: goals.team,
+        minute: goals.minute,
+        createdAt: goals.createdAt,
+        player: {
+          id: users.id,
+          username: users.username,
+          isAdmin: users.isAdmin,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+          password: users.password
+        },
+        character: {
+          id: characters.id,
+          name: characters.name,
+          position: characters.position,
+          age: characters.age,
+          height: characters.height,
+          bio: characters.bio,
+          weapon: characters.weapon,
+          avatar: characters.avatar,
+          level: characters.level,
+          experience: characters.experience,
+          matches: characters.matches,
+          goals: characters.goals,
+          ranking: characters.ranking,
+          speed: characters.speed,
+          strength: characters.strength,
+          stamina: characters.stamina,
+          shooting: characters.shooting,
+          passing: characters.passing,
+          dribbling: characters.dribbling,
+          isEliminated: characters.isEliminated,
+          userId: characters.userId,
+          createdAt: characters.createdAt,
+          updatedAt: characters.updatedAt
+        }
+      })
+      .from(goals)
+      .innerJoin(users, eq(goals.playerId, users.id))
+      .leftJoin(characters, eq(users.id, characters.userId))
+      .where(eq(goals.matchId, matchId))
+      .then(rows => rows.map(row => ({
+        ...row,
+        player: {
+          ...row.player,
+          character: row.character
+        }
+      })));
   }
 }
 
