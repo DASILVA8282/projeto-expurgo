@@ -38,8 +38,14 @@ export function useAuth() {
     onSuccess: () => {
       queryClient.setQueryData(["/api/auth/user"], null);
       queryClient.clear();
-      // Force page reload to ensure clean state
-      window.location.reload();
+      // Navigate to landing page and force reload
+      window.location.href = "/";
+    },
+    onError: () => {
+      // Even if logout fails on server, clear local state
+      queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.clear();
+      window.location.href = "/";
     },
   });
 
