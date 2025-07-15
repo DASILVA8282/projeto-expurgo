@@ -1,0 +1,1027 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import { Edit3, Play, Square, Plus, Timer, Trophy } from "lucide-react";
+import type { Match, MatchWithGoals, User } from "@shared/schema";
+import { useWebSocket } from "@/hooks/useWebSocket";
+
+export default function Match() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
+  const { lastMessage } = useWebSocket();
+  
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [goalPlayer, setGoalPlayer] = useState<string>("");
+  const [goalTeam, setGoalTeam] = useState<"V" | "Z">("V");
+  const [goalMinute, setGoalMinute] = useState<number>(0);
+  const [lastGoal, setLastGoal] = useState<any>(null);
+  const [showGoalAnimation, setShowGoalAnimation] = useState(false);
+  const [editingTeamV, setEditingTeamV] = useState(false);
+  const [editingTeamZ, setEditingTeamZ] = useState(false);
+  const [tempTeamVName, setTempTeamVName] = useState("");
+  const [tempTeamZName, setTempTeamZName] = useState("");
+
+  // Atualiza o tempo atual a cada segundo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Escuta notificações WebSocket para redirecionamento automático
+  useEffect(() => {
+    if (lastMessage?.type === "match_finished") {
+      toast({ title: "Partida finalizada!", description: lastMessage.message });
+      // Só redireciona jogadores não-admin para o dashboard
+      if (!user?.isAdmin) {
+        setTimeout(() => {
+          setLocation("/");
+        }, 2000);
+      }
+    }
+  }, [lastMessage, toast, setLocation, user]);
+
+  // Busca a partida ativa
+  const { data: match, isLoading, error, isFetched } = useQuery<MatchWithGoals>({
+    queryKey: ["/api/matches/active"],
+    refetchInterval: 2000, // Atualiza a cada 2 segundos
+    retry: false, // Não tenta novamente se não há partida ativa
+    throwOnError: false, // Não lança erro quando retorna 404
+  });
+
+  // Busca usuários com personagens para seleção de jogador
+  const { data: usersWithCharacters } = useQuery<any[]>({
+    queryKey: ["/api/admin/users-with-characters"],
+    enabled: user?.isAdmin,
+  });
+
+  // Busca o personagem do usuário atual (para verificar se pode participar)
+  const { data: currentUserCharacter } = useQuery<any>({
+    queryKey: ["/api/characters/me"],
+    enabled: !user?.isAdmin, // Só busca se não for admin
+    retry: false,
+    throwOnError: false,
+  });
+
+  // Busca partidas finalizadas para histórico
+  const { data: finishedMatches } = useQuery<Match[]>({
+    queryKey: ["/api/matches/finished"],
+    enabled: !match, // Só busca quando não há partida ativa
+  });
+
+  // Mutação para criar nova partida
+  const createMatchMutation = useMutation({
+    mutationFn: async (matchData: { teamV: string; teamZ: string }) => {
+      return await apiRequest("POST", "/api/admin/matches", matchData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      toast({ title: "Partida criada com sucesso!" });
+    },
+    onError: (error) => {
+      console.error("Erro ao criar partida:", error);
+      toast({ title: "Erro ao criar partida", variant: "destructive" });
+    },
+  });
+
+  // Mutação para iniciar partida
+  const startMatchMutation = useMutation({
+    mutationFn: async (matchId: number) => {
+      return await apiRequest("POST", `/api/admin/matches/${matchId}/start`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      toast({ title: "Partida iniciada!" });
+    },
+  });
+
+  // Mutação para finalizar partida
+  const finishMatchMutation = useMutation({
+    mutationFn: async (matchId: number) => {
+      return await apiRequest("POST", `/api/admin/matches/${matchId}/finish`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/finished"] });
+      toast({ title: "Partida finalizada!" });
+      // Admin permanece na página de partidas para criar nova
+      // Jogadores são redirecionados via WebSocket
+    },
+  });
+
+  // Mutação para editar nomes dos times
+  const updateTeamNameMutation = useMutation({
+    mutationFn: async ({ matchId, teamV, teamZ }: { matchId: number; teamV?: string; teamZ?: string }) => {
+      return await apiRequest("PATCH", `/api/admin/matches/${matchId}`, { teamV, teamZ });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      setEditingTeamV(false);
+      setEditingTeamZ(false);
+      toast({ title: "Nome do time atualizado!" });
+    },
+  });
+
+  // Mutação para adicionar gol
+  const addGoalMutation = useMutation({
+    mutationFn: async (goalData: { matchId: number; playerId: number; team: "V" | "Z"; minute: number }) => {
+      return await apiRequest("POST", "/api/admin/goals", goalData);
+    },
+    onSuccess: (newGoal) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      setLastGoal(newGoal);
+      setShowGoalAnimation(true);
+      setTimeout(() => setShowGoalAnimation(false), 3000);
+      
+      const selectedPlayer = usersWithCharacters?.find(u => u.id.toString() === goalPlayer);
+      const playerName = selectedPlayer?.character?.name || "Jogador";
+      toast({ title: "Gol marcado!", description: `${playerName} marcou um gol!` });
+    },
+  });
+
+  // Calcula o tempo decorrido da partida
+  const getMatchTime = () => {
+    if (!match || !match.startTime) return "00:00";
+    const start = new Date(match.startTime);
+    const now = new Date();
+    const diffMs = now.getTime() - start.getTime();
+    const minutes = Math.floor(diffMs / 60000);
+    const seconds = Math.floor((diffMs % 60000) / 1000);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleCreateMatch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const teamV = formData.get("teamV") as string;
+    const teamZ = formData.get("teamZ") as string;
+    
+    if (!teamV || !teamZ) {
+      toast({ title: "Erro", description: "Preencha os nomes dos times", variant: "destructive" });
+      return;
+    }
+    
+    createMatchMutation.mutate({ teamV, teamZ });
+  };
+
+  const handleAddGoal = () => {
+    if (!match || !goalPlayer || !goalMinute) {
+      toast({ title: "Erro", description: "Preencha todos os campos", variant: "destructive" });
+      return;
+    }
+
+    const selectedPlayer = usersWithCharacters?.find(u => u.id.toString() === goalPlayer);
+    if (!selectedPlayer || !selectedPlayer.character) {
+      toast({ title: "Erro", description: "Jogador selecionado não tem personagem", variant: "destructive" });
+      return;
+    }
+
+    const playerId = parseInt(goalPlayer);
+    addGoalMutation.mutate({
+      matchId: match?.id || 0,
+      playerId,
+      team: goalTeam,
+      minute: goalMinute,
+    });
+  };
+
+  const handleTeamNameEdit = (team: "V" | "Z") => {
+    if (!match) return;
+    
+    if (team === "V") {
+      if (editingTeamV && tempTeamVName.trim()) {
+        updateTeamNameMutation.mutate({ 
+          matchId: match?.id || 0, 
+          teamV: tempTeamVName.trim() 
+        });
+      } else {
+        setEditingTeamV(true);
+        setTempTeamVName(match?.teamV || "");
+      }
+    } else {
+      if (editingTeamZ && tempTeamZName.trim()) {
+        updateTeamNameMutation.mutate({ 
+          matchId: match?.id || 0, 
+          teamZ: tempTeamZName.trim() 
+        });
+      } else {
+        setEditingTeamZ(true);
+        setTempTeamZName(match?.teamZ || "");
+      }
+    }
+  };
+
+  const cancelEdit = (team: "V" | "Z") => {
+    if (team === "V") {
+      setEditingTeamV(false);
+      setTempTeamVName("");
+    } else {
+      setEditingTeamZ(false);
+      setTempTeamZName("");
+    }
+  };
+
+  // Verifica se o jogador não-admin tem personagem
+  if (!user?.isAdmin && currentUserCharacter === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center p-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full"
+        >
+          <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-red-500/50 backdrop-blur-xl shadow-2xl">
+            <CardHeader className="text-center">
+              <div className="w-20 h-20 mx-auto mb-4 bg-red-500/20 rounded-full flex items-center justify-center">
+                <Timer className="w-10 h-10 text-red-500" />
+              </div>
+              <CardTitle className="text-2xl font-bold text-white">
+                Acesso Negado
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <p className="text-gray-300">
+                Você precisa criar seu personagem antes de participar de partidas!
+              </p>
+              <p className="text-cyan-400 text-sm">
+                Vá para a página de personagem e crie sua ficha completa.
+              </p>
+              <Button 
+                onClick={() => setLocation("/character")}
+                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500"
+              >
+                Criar Personagem
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Só mostra loading no primeiro carregamento, não quando não há partida ativa
+  if (isLoading && !isFetched) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="relative mb-8">
+            <div className="w-20 h-20 mx-auto rounded-full border-4 border-cyan-500 border-t-transparent animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Timer className="w-8 h-8 text-cyan-500" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Carregando Sistema de Partidas</h2>
+          <p className="text-gray-400">Conectando ao Blue Lock...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+      {/* Fundo estilo estádio Blue Lock */}
+      <div className="absolute inset-0 opacity-15">
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
+        
+        {/* Centro do campo */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 border-2 border-cyan-500/30 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-cyan-500/50 rounded-full bg-cyan-500/10" />
+        
+        {/* Áreas do gol */}
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
+        <div className="absolute top-1/2 right-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
+      </div>
+
+      {/* Partículas animadas */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-500/30 rounded-full"
+            animate={{
+              x: [0, Math.random() * window.innerWidth],
+              y: [0, Math.random() * window.innerHeight],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{
+              left: Math.random() * window.innerWidth,
+              top: Math.random() * window.innerHeight,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Animação de Gol */}
+      <AnimatePresence>
+        {showGoalAnimation && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.3, rotate: -10 }}
+            animate={{ 
+              opacity: 1, 
+              scale: [0.3, 1.2, 1], 
+              rotate: [0, 5, 0],
+              y: [0, -20, 0]
+            }}
+            exit={{ opacity: 0, scale: 0.3, y: -50 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          >
+            <div className="relative">
+              <motion.div
+                animate={{ 
+                  boxShadow: [
+                    "0 0 20px #fbbf24", 
+                    "0 0 40px #f59e0b", 
+                    "0 0 60px #d97706",
+                    "0 0 40px #f59e0b", 
+                    "0 0 20px #fbbf24"
+                  ]
+                }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black text-8xl font-black p-8 rounded-3xl transform rotate-3"
+              >
+                GOOOOOL!
+              </motion.div>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [0, 1.5, 0] }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="absolute inset-0 border-4 border-yellow-400 rounded-3xl"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="relative z-10 p-6">
+        {!match && isFetched ? (
+          // Tela de criação de partida - Design melhorado
+          <div className="flex items-center justify-center min-h-screen">
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="max-w-lg w-full mx-4"
+            >
+              <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-cyan-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+                {/* Header com gradiente animado */}
+                <div className="relative bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 p-6">
+                  <motion.div
+                    animate={{ 
+                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] 
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30"
+                    style={{ backgroundSize: "200% 200%" }}
+                  />
+                  <div className="relative z-10 text-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, ease: "linear", repeat: Infinity }}
+                      className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center"
+                    >
+                      <Trophy className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Nova Partida</h2>
+                    <p className="text-cyan-100">Configure os times para começar</p>
+                  </div>
+                </div>
+
+                <CardContent className="p-8">
+                  <form onSubmit={handleCreateMatch} className="space-y-6">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <Label htmlFor="teamV" className="text-white text-lg font-semibold flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        Team V
+                      </Label>
+                      <Input
+                        id="teamV"
+                        name="teamV"
+                        placeholder="Digite o nome do Team V"
+                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-cyan-400 focus:ring-cyan-400/20"
+                        required
+                      />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <Label htmlFor="teamZ" className="text-white text-lg font-semibold flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                        Team Z
+                      </Label>
+                      <Input
+                        id="teamZ"
+                        name="teamZ"
+                        placeholder="Digite o nome do Team Z"
+                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-cyan-400 focus:ring-cyan-400/20"
+                        required
+                      />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <Button
+                        type="submit"
+                        disabled={createMatchMutation.isPending}
+                        className="w-full h-14 text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25"
+                      >
+                        {createMatchMutation.isPending ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Criando Partida...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Play className="w-5 h-5" />
+                            Criar Partida
+                          </div>
+                        )}
+                      </Button>
+                    </motion.div>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Histórico de Partidas */}
+            {finishedMatches && finishedMatches.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="max-w-lg w-full mx-4 mt-8"
+              >
+                <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-cyan-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 p-4">
+                    <h3 className="text-xl font-bold text-white text-center flex items-center justify-center gap-2">
+                      <Trophy className="w-5 h-5" />
+                      Últimas Partidas
+                    </h3>
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
+                      {finishedMatches.map((finishedMatch) => (
+                        <div 
+                          key={finishedMatch.id}
+                          className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-cyan-500/50 transition-all duration-200"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="text-white font-semibold">
+                              {finishedMatch.teamV} vs {finishedMatch.teamZ}
+                            </div>
+                            <div className="text-cyan-400 font-mono text-lg">
+                              {finishedMatch.scoreV} - {finishedMatch.scoreZ}
+                            </div>
+                          </div>
+                          <div className="text-gray-400 text-sm mt-1">
+                            {finishedMatch.endTime ? new Date(finishedMatch.endTime).toLocaleDateString('pt-BR') : 'Finalizada'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </div>
+        ) : match ? (
+          // Tela principal da partida
+          <div className="space-y-8">
+            {/* HUD Principal estilo Blue Lock - Baseado na imagem */}
+            <motion.div 
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex justify-center"
+            >
+              <div className="relative">
+                {/* Cronômetro estilo estádio */}
+                <motion.div 
+                  animate={{ 
+                    boxShadow: [
+                      "0 0 20px rgba(6, 182, 212, 0.5)",
+                      "0 0 30px rgba(6, 182, 212, 0.8)",
+                      "0 0 20px rgba(6, 182, 212, 0.5)"
+                    ]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-black border-4 border-cyan-500 rounded-lg px-6 py-4 z-20"
+                >
+                  <div className="text-center">
+                    <div className="text-green-400 text-sm font-bold mb-1">TEMPO</div>
+                    <div className="text-white text-3xl font-mono font-black tracking-wider">
+                      {match?.status === "active" ? getMatchTime() : "00:00"}
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Placar principal - estilo da imagem Blue Lock */}
+                <div className="bg-gradient-to-b from-gray-100 to-white border-8 border-gray-800 rounded-xl shadow-2xl min-w-[800px] overflow-hidden">
+                  {/* Header com status */}
+                  <div className="bg-gray-800 text-white py-3 px-6 flex justify-between items-center">
+                    <Badge 
+                      variant={match?.status === "active" ? "default" : "secondary"}
+                      className={`text-lg px-4 py-2 font-bold ${
+                        match?.status === "active" 
+                          ? "bg-red-600 hover:bg-red-700 animate-pulse" 
+                          : match?.status === "preparing"
+                          ? "bg-yellow-600 hover:bg-yellow-700"
+                          : "bg-gray-600"
+                      }`}
+                    >
+                      {match?.status === "preparing" && "PREPARANDO"}
+                      {match?.status === "active" && "• AO VIVO •"}
+                      {match?.status === "finished" && "FINALIZADA"}
+                    </Badge>
+                    <div className="text-gray-300 font-mono">BLUE LOCK STADIUM</div>
+                  </div>
+
+                  {/* Placar - estilo display de estádio */}
+                  <div className="flex items-center justify-between p-8 bg-gradient-to-b from-gray-50 to-gray-100">
+                    {/* Team V */}
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      className="text-center flex-1 relative"
+                    >
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <div className="text-4xl font-black text-gray-800 tracking-wider">
+                          TEAM
+                        </div>
+                        {user?.isAdmin && match?.status !== "finished" && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleTeamNameEdit("V")}
+                            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </motion.button>
+                        )}
+                      </div>
+                      
+                      {editingTeamV ? (
+                        <div className="flex items-center gap-2 justify-center">
+                          <Input
+                            value={tempTeamVName}
+                            onChange={(e) => setTempTeamVName(e.target.value)}
+                            className="text-center text-3xl font-black bg-white border-2 border-blue-500 w-32"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleTeamNameEdit("V");
+                              if (e.key === "Escape") cancelEdit("V");
+                            }}
+                            autoFocus
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleTeamNameEdit("V")}
+                            className="bg-green-500 hover:bg-green-600"
+                          >
+                            ✓
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => cancelEdit("V")}
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="text-6xl font-black text-gray-900 mb-4 tracking-wider">
+                          {match?.teamV || "TEAM V"}
+                        </div>
+                      )}
+                      
+                      {/* Pontuação estilo display digital */}
+                      <div className="relative">
+                        <div className="text-[8rem] font-black text-gray-800 leading-none font-mono tracking-tighter relative">
+                          {match?.scoreV || 0}
+                          <div className="absolute inset-0 text-[8rem] font-black text-blue-600/20 transform translate-x-1 translate-y-1">
+                            {match?.scoreV || 0}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    {/* Separador central */}
+                    <div className="text-center mx-8 relative">
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="text-6xl font-black text-gray-600 mb-4"
+                      >
+                        VS
+                      </motion.div>
+                      <div className="w-2 h-32 bg-gradient-to-b from-gray-400 to-gray-600 mx-auto rounded-full"></div>
+                    </div>
+                    
+                    {/* Team Z */}
+                    <motion.div 
+                      whileHover={{ scale: 1.02 }}
+                      className="text-center flex-1 relative"
+                    >
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <div className="text-4xl font-black text-gray-800 tracking-wider">
+                          TEAM
+                        </div>
+                        {user?.isAdmin && match?.status !== "finished" && (
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleTeamNameEdit("Z")}
+                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </motion.button>
+                        )}
+                      </div>
+                      
+                      {editingTeamZ ? (
+                        <div className="flex items-center gap-2 justify-center">
+                          <Input
+                            value={tempTeamZName}
+                            onChange={(e) => setTempTeamZName(e.target.value)}
+                            className="text-center text-3xl font-black bg-white border-2 border-red-500 w-32"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleTeamNameEdit("Z");
+                              if (e.key === "Escape") cancelEdit("Z");
+                            }}
+                            autoFocus
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => handleTeamNameEdit("Z")}
+                            className="bg-green-500 hover:bg-green-600"
+                          >
+                            ✓
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => cancelEdit("Z")}
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="text-6xl font-black text-gray-900 mb-4 tracking-wider">
+                          {match?.teamZ || "TEAM Z"}
+                        </div>
+                      )}
+                      
+                      {/* Pontuação estilo display digital */}
+                      <div className="relative">
+                        <div className="text-[8rem] font-black text-gray-800 leading-none font-mono tracking-tighter relative">
+                          {match?.scoreZ || 0}
+                          <div className="absolute inset-0 text-[8rem] font-black text-red-600/20 transform translate-x-1 translate-y-1">
+                            {match?.scoreZ || 0}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Barra inferior com detalhes */}
+                  <div className="bg-gray-800 text-white py-2 px-6 flex justify-between items-center text-sm">
+                    <div className="flex items-center gap-4">
+                      <span className="font-mono">MATCH #{match?.id || 0}</span>
+                      <span>•</span>
+                      <span>GOLS TOTAL: {(match?.goals?.length || 0)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="font-mono">SISTEMA BLUE LOCK</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Últimos gols - Design melhorado */}
+            {match?.goals && match.goals.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-6 shadow-xl"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-black" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Últimos Gols</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                </div>
+                
+                <div className="space-y-3">
+                  {match?.goals?.slice(-5).reverse().map((goal, index) => (
+                    <motion.div 
+                      key={goal.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center justify-between bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-cyan-500/50 transition-all duration-200"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${goal.team === "V" ? "bg-blue-500" : "bg-red-500"}`}></div>
+                        <span className="text-white font-semibold">
+                          {goal.player.character?.name || goal.player.username}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-cyan-400 font-mono text-lg">{goal.minute}'</span>
+                        <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+                          goal.team === "V" 
+                            ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" 
+                            : "bg-red-500/20 text-red-300 border border-red-500/30"
+                        }`}>
+                          Team {goal.team}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Controles do Mestre - Design melhorado */}
+            {user?.isAdmin && match && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                    <Timer className="w-4 h-4 text-black" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Controles do Mestre</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                </div>
+
+                {/* Botões de controle da partida */}
+                <div className="flex gap-4 mb-8">
+                  {match?.status === "preparing" && (
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        onClick={() => startMatchMutation.mutate(match?.id || 0)}
+                        disabled={startMatchMutation.isPending}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white px-8 py-4 text-lg font-bold shadow-lg hover:shadow-green-500/25 transform transition-all duration-200"
+                      >
+                        {startMatchMutation.isPending ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Iniciando...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Play className="w-5 h-5" />
+                            Iniciar Partida
+                          </div>
+                        )}
+                      </Button>
+                    </motion.div>
+                  )}
+                  
+                  {match?.status === "active" && (
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        onClick={() => finishMatchMutation.mutate(match?.id || 0)}
+                        disabled={finishMatchMutation.isPending}
+                        className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white px-8 py-4 text-lg font-bold shadow-lg hover:shadow-red-500/25 transform transition-all duration-200"
+                      >
+                        {finishMatchMutation.isPending ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Finalizando...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Square className="w-5 h-5" />
+                            Finalizar Partida
+                          </div>
+                        )}
+                      </Button>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Seção Adicionar Gol - Design melhorado */}
+                {match?.status === "active" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="border-t border-slate-600/50 pt-6"
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                        <Plus className="w-3 h-3 text-black" />
+                      </div>
+                      <h4 className="text-xl font-bold text-white">Adicionar Gol</h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <Label htmlFor="goalPlayer" className="text-white text-lg font-semibold mb-2 block">Jogador</Label>
+                        <Select onValueChange={setGoalPlayer}>
+                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-cyan-400 transition-colors">
+                            <SelectValue placeholder="Selecione o jogador" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {usersWithCharacters?.filter(u => u.character).map((userWithCharacter) => (
+                              <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
+                                {userWithCharacter.character.name} ({userWithCharacter.username})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <Label htmlFor="goalTeam" className="text-white text-lg font-semibold mb-2 block">Time</Label>
+                        <Select onValueChange={(value: "V" | "Z") => setGoalTeam(value)}>
+                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-cyan-400 transition-colors">
+                            <SelectValue placeholder="Selecione o time" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="V">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                Team V - {match?.teamV || "TEAM V"}
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Z">
+                              <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                Team Z - {match?.teamZ || "TEAM Z"}
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 }}
+                      >
+                        <Label htmlFor="goalMinute" className="text-white text-lg font-semibold mb-2 block">Minuto</Label>
+                        <Input
+                          type="number"
+                          placeholder="Minuto do gol"
+                          value={goalMinute || ""}
+                          onChange={(e) => setGoalMinute(parseInt(e.target.value) || 0)}
+                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-cyan-400 focus:ring-cyan-400/20"
+                        />
+                      </motion.div>
+                    </div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.7 }}
+                      className="mt-6"
+                    >
+                      <Button
+                        onClick={handleAddGoal}
+                        disabled={addGoalMutation.isPending || !goalPlayer || !goalMinute}
+                        className="w-full h-14 text-xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-yellow-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {addGoalMutation.isPending ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Adicionando Gol...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Trophy className="w-6 h-6" />
+                            Adicionar Gol
+                          </div>
+                        )}
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Visualização para jogadores não-admin */}
+            {!user?.isAdmin && match && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                    <Timer className="w-4 h-4 text-black" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Status da Partida</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                </div>
+
+                <div className="text-center space-y-4">
+                  <div className="grid grid-cols-3 gap-6 items-center">
+                    <div className="text-right">
+                      <div className="text-white text-xl font-bold">{match?.teamV}</div>
+                      <div className="text-cyan-400 text-3xl font-black">{match?.scoreV || 0}</div>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="text-gray-400 text-lg font-bold mb-2">VS</div>
+                      <Badge 
+                        variant={match?.status === "active" ? "default" : "secondary"}
+                        className={`text-sm px-3 py-1 ${
+                          match?.status === "active" 
+                            ? "bg-green-600 animate-pulse" 
+                            : match?.status === "preparing"
+                            ? "bg-yellow-600"
+                            : "bg-gray-600"
+                        }`}
+                      >
+                        {match?.status === "preparing" && "PREPARANDO"}
+                        {match?.status === "active" && "AO VIVO"}
+                        {match?.status === "finished" && "FINALIZADA"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="text-left">
+                      <div className="text-white text-xl font-bold">{match?.teamZ}</div>
+                      <div className="text-red-400 text-3xl font-black">{match?.scoreZ || 0}</div>
+                    </div>
+                  </div>
+
+                  {match?.status === "active" && (
+                    <div className="mt-6 p-4 bg-black/30 rounded-lg border border-cyan-500/30">
+                      <div className="text-cyan-400 text-sm font-bold mb-1">TEMPO DE JOGO</div>
+                      <div className="text-white text-2xl font-mono font-black">
+                        {getMatchTime()}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-gray-400 text-sm mt-4">
+                    <span className="inline-flex items-center gap-2">
+                      <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                      Assistindo partida do Blue Lock
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
