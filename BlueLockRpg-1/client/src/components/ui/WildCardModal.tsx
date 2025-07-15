@@ -69,7 +69,7 @@ export function WildCardModal({ isOpen, onClose }: WildCardModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] bg-black border-0 text-white overflow-y-auto p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
+      <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] bg-black border-0 text-white overflow-hidden p-0 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" aria-describedby="wildcard-description">
         <DialogTitle className="sr-only">Wild Card Invitation</DialogTitle>
         <div className="sr-only">
           <p id="wildcard-description">You have received a Wild Card invitation for a second chance in Blue Lock</p>
