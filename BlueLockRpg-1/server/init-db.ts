@@ -5,13 +5,7 @@ import bcrypt from 'bcrypt';
 export async function initializeDatabase() {
   try {
     console.log('Verificando e criando tabelas do banco...');
-
-    // Corrigir estrutura se a tabela characters já existir
-    await db.execute(sql`
-      ALTER TABLE characters 
-      ADD COLUMN IF NOT EXISTS is_eliminated BOOLEAN DEFAULT FALSE NOT NULL
-    `);
-
+    
     // Criar tabela users se não existir
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS users (
@@ -65,6 +59,35 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Criar tabela matches se não existir
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS matches (
+        id SERIAL PRIMARY KEY,
+        team_v VARCHAR(100) NOT NULL,
+        team_z VARCHAR(100) NOT NULL,
+        score_v INTEGER DEFAULT 0 NOT NULL,
+        score_z INTEGER DEFAULT 0 NOT NULL,
+        status VARCHAR(20) DEFAULT 'preparing' NOT NULL,
+        start_time TIMESTAMP,
+        end_time TIMESTAMP,
+        current_minute INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      )
+    `);
+
+    // Criar tabela goals se não existir
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS goals (
+        id SERIAL PRIMARY KEY,
+        match_id INTEGER REFERENCES matches(id) NOT NULL,
+        player_id INTEGER REFERENCES users(id) NOT NULL,
+        team VARCHAR(1) NOT NULL CHECK (team IN ('V', 'Z')),
+        minute INTEGER NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL
+      )
+    `);
+
     console.log('Tabelas criadas/verificadas com sucesso!');
 
     // Verificar se já existe o usuário admin
@@ -72,15 +95,18 @@ export async function initializeDatabase() {
       SELECT COUNT(*) as count FROM users WHERE username = 'mestre'
     `);
 
-    const adminCount = adminCheck.rows[0]?.count || 0;
+    const adminCount = Number(adminCheck.rows[0]?.count) || 0;
 
     if (adminCount === 0) {
+      // Criar usuário admin padrão
       const hashedPassword = await bcrypt.hash('admin123', 10);
       await db.execute(sql`
         INSERT INTO users (username, password, is_admin)
         VALUES ('mestre', ${hashedPassword}, true)
       `);
       console.log('Default admin user created: mestre / admin123');
+    } else {
+      console.log('Admin user already exists');
     }
 
   } catch (error) {
