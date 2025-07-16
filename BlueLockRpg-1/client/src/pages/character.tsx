@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import BlueLockRadar from "@/components/ui/blue-lock-radar-svg";
+import BlueLockRadar from "@/components/ui/blue-lock-radar-final";
 import type { Character, UpdateCharacter } from "@shared/schema";
 
 export default function Character() {
