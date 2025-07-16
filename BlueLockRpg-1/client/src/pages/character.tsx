@@ -36,6 +36,8 @@ export default function Character() {
     shooting: 50,
     passing: 50,
     dribbling: 50,
+    flowColor: "cyan",
+    flowPhrase: "É hora de dominar o campo!",
   });
 
   useEffect(() => {
@@ -53,6 +55,8 @@ export default function Character() {
         shooting: character.shooting,
         passing: character.passing,
         dribbling: character.dribbling,
+        flowColor: character.flowColor || "cyan",
+        flowPhrase: character.flowPhrase || "É hora de dominar o campo!",
       });
     }
   }, [character]);
@@ -111,6 +115,27 @@ export default function Character() {
       ...formData,
       position: value,
     });
+  };
+
+  const handleFlowColorChange = (value: string) => {
+    setFormData({
+      ...formData,
+      flowColor: value,
+    });
+  };
+
+  const getFlowPreviewColor = (color: string) => {
+    const colorMap = {
+      cyan: "#22d3ee",
+      purple: "#a855f7",
+      red: "#ef4444",
+      blue: "#3b82f6",
+      green: "#10b981",
+      yellow: "#f59e0b",
+      orange: "#f97316",
+      pink: "#ec4899"
+    };
+    return colorMap[color as keyof typeof colorMap] || "#22d3ee";
   };
 
   const handleStatChange = (stat: string, value: number) => {
@@ -424,6 +449,141 @@ export default function Character() {
                       className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
                       placeholder="Ex: Chute Certeiro, Drible Fantasma..."
                     />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Flow State Configuration */}
+            <Card className="bg-slate-900 border-2 border-purple-600 hud-corner mt-6">
+              <CardContent className="p-6">
+                <h3 className="font-orbitron text-xl font-bold text-purple-400 mb-4">
+                  <i className="fas fa-bolt mr-2"></i>
+                  CONFIGURAÇÃO DO FLOW STATE
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                      COR DO FLOW STATE
+                    </Label>
+                    <Select value={formData.flowColor} onValueChange={handleFlowColorChange}>
+                      <SelectTrigger className="w-full bg-slate-800 border-2 border-slate-700 focus:border-purple-500 text-white">
+                        <SelectValue placeholder="Selecione a cor do seu Flow State" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cyan">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-cyan-400"></div>
+                            <span>Cyan - Velocidade</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="purple">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-purple-400"></div>
+                            <span>Purple - Controle</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="red">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-red-400"></div>
+                            <span>Red - Força</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="blue">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-blue-400"></div>
+                            <span>Blue - Precisão</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="green">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-green-400"></div>
+                            <span>Green - Resistência</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="yellow">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
+                            <span>Yellow - Agilidade</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="orange">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-orange-400"></div>
+                            <span>Orange - Explosão</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="pink">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 rounded-full bg-pink-400"></div>
+                            <span>Pink - Criatividade</span>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                      FRASE DE ATIVAÇÃO
+                    </Label>
+                    <Input
+                      type="text"
+                      name="flowPhrase"
+                      value={formData.flowPhrase}
+                      onChange={handleInputChange}
+                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-purple-500 text-white"
+                      placeholder="Ex: É hora de dominar o campo!"
+                      maxLength={255}
+                    />
+                    <p className="text-slate-500 text-sm mt-1 font-rajdhani">
+                      Esta frase aparecerá durante a ativação do seu Flow State
+                    </p>
+                  </div>
+
+                  {/* Preview */}
+                  <div className="mt-6 p-4 bg-slate-800 rounded-lg border-2 border-purple-500">
+                    <h4 className="font-rajdhani font-bold text-purple-400 mb-2">PREVIEW DO FLOW STATE</h4>
+                    <div className="text-center p-6 bg-black rounded-lg relative overflow-hidden">
+                      {/* Background effect */}
+                      <div 
+                        className="absolute inset-0 opacity-20"
+                        style={{
+                          background: `radial-gradient(circle, ${getFlowPreviewColor(formData.flowColor)} 0%, transparent 70%)`
+                        }}
+                      />
+                      
+                      {/* Content */}
+                      <div className="relative z-10">
+                        <div 
+                          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+                          style={{
+                            background: `linear-gradient(45deg, ${getFlowPreviewColor(formData.flowColor)}, ${getFlowPreviewColor(formData.flowColor)}80)`,
+                            boxShadow: `0 0 20px ${getFlowPreviewColor(formData.flowColor)}`
+                          }}
+                        >
+                          <i className="fas fa-bolt text-white text-xl"></i>
+                        </div>
+                        <h3 
+                          className="text-2xl font-bold font-orbitron mb-2"
+                          style={{
+                            color: getFlowPreviewColor(formData.flowColor),
+                            textShadow: `0 0 10px ${getFlowPreviewColor(formData.flowColor)}`
+                          }}
+                        >
+                          {formData.name || "SEU PERSONAGEM"}
+                        </h3>
+                        <p 
+                          className="text-lg font-rajdhani font-bold text-white mb-2"
+                          style={{
+                            textShadow: `0 0 8px ${getFlowPreviewColor(formData.flowColor)}`
+                          }}
+                        >
+                          "{formData.flowPhrase}"
+                        </p>
+                        <p className="text-sm text-gray-300 font-rajdhani">FLOW STATE ACTIVATED</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
