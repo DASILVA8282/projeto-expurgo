@@ -6,6 +6,7 @@ interface FlowStateCutsceneProps {
   isActive: boolean;
   playerName: string;
   flowColor: string;
+  flowPhrase?: string;
   onComplete: () => void;
 }
 
@@ -13,6 +14,7 @@ export default function FlowStateCutsceneSimple({
   isActive, 
   playerName, 
   flowColor,
+  flowPhrase = "É hora de dominar o campo!",
   onComplete 
 }: FlowStateCutsceneProps) {
   
@@ -235,6 +237,35 @@ export default function FlowStateCutsceneSimple({
           >
             {playerName}
           </motion.h1>
+        </motion.div>
+
+        {/* Frase personalizada do jogador */}
+        <motion.div
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          className="mb-8"
+        >
+          <motion.div
+            animate={{
+              scale: [1, 1.02, 1],
+              textShadow: [
+                `0 0 20px ${colors.primary}`,
+                `0 0 40px ${colors.secondary}`,
+                `0 0 20px ${colors.primary}`
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-4xl font-bold text-white px-8 py-4 rounded-lg"
+            style={{ 
+              fontFamily: "'Rajdhani', sans-serif",
+              background: `rgba(0, 0, 0, 0.7)`,
+              border: `2px solid ${colors.accent}`,
+              boxShadow: `0 0 30px ${colors.primary}50, inset 0 0 20px ${colors.accent}20`
+            }}
+          >
+            <span style={{ color: colors.accent }}>"{flowPhrase}"</span>
+          </motion.div>
         </motion.div>
 
         {/* Texto FLOW STATE */}
