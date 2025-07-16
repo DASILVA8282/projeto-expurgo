@@ -707,19 +707,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Player already has active Flow State" });
       }
       
-      // Cores disponíveis para o Flow State
-      const flowColors = ["cyan", "purple", "red", "blue", "green", "yellow", "orange", "pink"];
-      const randomColor = flowColors[Math.floor(Math.random() * flowColors.length)];
+      // Buscar dados do jogador para obter configurações personalizadas
+      const player = await storage.getUserWithCharacter(playerId);
       
-      // Criar Flow State
+      // Usar cor personalizada do jogador ou fallback para cor aleatória
+      const flowColor = player?.character?.flowColor || "cyan";
+      const flowPhrase = player?.character?.flowPhrase || "É hora de dominar o campo!";
+      
+      // Criar Flow State com dados personalizados
       const flowState = await storage.createFlowState({
         matchId,
         playerId,
-        flowColor: randomColor
+        flowColor: flowColor
       });
-      
-      // Buscar dados do jogador para notificação
-      const player = await storage.getUserWithCharacter(playerId);
       
       // Notificar todos os jogadores via WebSocket
       wss.clients.forEach((client) => {
@@ -728,7 +728,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             type: "flow_state_activated",
             playerId: playerId,
             playerName: player?.character?.name || player?.username,
-            flowColor: randomColor,
+            flowColor: flowColor,
+            flowPhrase: flowPhrase,
             message: `${player?.character?.name || player?.username} entrou no Flow State!`
           }));
         }
