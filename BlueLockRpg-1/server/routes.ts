@@ -511,7 +511,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Match already finished" });
       }
       
-      // Atualiza o status da partida
+      // PRIMEIRO: Encerra qualquer Flow State ativo da partida
+      const activeFlowState = await storage.getActiveFlowState(matchId);
+      if (activeFlowState) {
+        await storage.endFlowState(matchId, activeFlowState.playerId);
+        console.log(`Flow State ended for player ${activeFlowState.playerId} due to match finish`);
+        
+        // Notificar via WebSocket que o Flow State acabou
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: "flow_state_ended",
+              playerId: activeFlowState.playerId,
+              playerName: activeFlowState.player.character?.name || activeFlowState.player.username,
+              message: `${activeFlowState.player.character?.name || activeFlowState.player.username} saiu do Flow State!`
+            }));
+          }
+        });
+      }
+      
+      // Atualiza o status da partida para finalizada
       const updatedMatch = await storage.updateMatch(matchId, {
         status: "finished",
         endTime: new Date()
@@ -555,11 +574,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify({
             type: "match_finished",
+            matchId: matchId,
             message: "A partida foi finalizada! Redirecionando para o dashboard..."
           }));
         }
       });
       
+      console.log(`Match ${matchId} finished and all Flow States cleared`);
       res.json(updatedMatch);
     } catch (error) {
       console.error("Finish match error:", error);
@@ -571,6 +592,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/goals", requireAdmin, async (req, res) => {
     try {
       const goalData = insertGoalSchema.parse(req.body);
+      
+      // Verificar se há Flow State ativo e encerrar
+      const activeFlowState = await storage.getActiveFlowState(goalData.matchId);
+      if (activeFlowState) {
+        await storage.endFlowState(goalData.matchId, activeFlowState.playerId);
+        
+        // Notificar via WebSocket que o Flow State acabou
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({
+              type: "flow_state_ended",
+              playerId: activeFlowState.playerId,
+              playerName: activeFlowState.player.character?.name || activeFlowState.player.username,
+              message: `${activeFlowState.player.character?.name || activeFlowState.player.username} saiu do Flow State!`
+            }));
+          }
+        });
+      }
+      
       const newGoal = await storage.createGoal(goalData);
       
       // Update match score
@@ -587,6 +627,200 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Create goal error:", error);
       res.status(500).json({ message: "Failed to create goal" });
+    }
+  });
+
+  // Flow State routes - Ordem importante: mais específicas primeiro
+  app.get("/api/flow-state/:matchId/active", async (req, res) => {
+    try {
+      const { matchId } = req.params;
+      
+      // Validar se o parâmetro é válido
+      if (!matchId || matchId === 'undefined') {
+        return res.status(400).json({ message: "Invalid matchId" });
+      }
+      
+      const matchIdNum = Number(matchId);
+      
+      if (isNaN(matchIdNum)) {
+        return res.status(400).json({ message: "matchId must be a valid number" });
+      }
+      
+      const activeFlowState = await storage.getActiveFlowState(matchIdNum);
+      
+      if (!activeFlowState) {
+        return res.status(404).json({ message: "No active flow state" });
+      }
+      
+      res.json(activeFlowState);
+    } catch (error) {
+      console.error("Get active flow state error:", error);
+      res.status(500).json({ message: "Failed to get active flow state" });
+    }
+  });
+
+  app.get("/api/flow-state/:matchId/:playerId", async (req, res) => {
+    try {
+      const { matchId, playerId } = req.params;
+      
+      // Validar se os parâmetros são válidos
+      if (!matchId || !playerId || matchId === 'undefined' || playerId === 'undefined') {
+        return res.status(400).json({ message: "Invalid matchId or playerId" });
+      }
+      
+      const matchIdNum = Number(matchId);
+      const playerIdNum = Number(playerId);
+      
+      if (isNaN(matchIdNum) || isNaN(playerIdNum)) {
+        return res.status(400).json({ message: "matchId and playerId must be valid numbers" });
+      }
+      
+      const flowState = await storage.getFlowStateForPlayer(matchIdNum, playerIdNum);
+      
+      if (!flowState) {
+        return res.status(404).json({ message: "Flow State not found" });
+      }
+      
+      res.json(flowState);
+    } catch (error) {
+      console.error("Get flow state error:", error);
+      res.status(500).json({ message: "Failed to get flow state" });
+    }
+  });
+
+  app.post("/api/admin/flow-state", requireAdmin, async (req, res) => {
+    try {
+      const { matchId, playerId } = req.body;
+      
+      // Verificar se já existe um Flow State ativo (qualquer jogador)
+      const existingFlowState = await storage.getActiveFlowState(matchId);
+      if (existingFlowState) {
+        return res.status(400).json({ 
+          message: "Flow State already active",
+          activePlayer: existingFlowState.player?.character?.name || existingFlowState.player?.username
+        });
+      }
+      
+      // Verificar se o jogador específico já tem Flow State ativo
+      const playerFlowState = await storage.getFlowStateForPlayer(matchId, playerId);
+      if (playerFlowState && playerFlowState.isActive) {
+        return res.status(400).json({ message: "Player already has active Flow State" });
+      }
+      
+      // Cores disponíveis para o Flow State
+      const flowColors = ["cyan", "purple", "red", "blue", "green", "yellow", "orange", "pink"];
+      const randomColor = flowColors[Math.floor(Math.random() * flowColors.length)];
+      
+      // Criar Flow State
+      const flowState = await storage.createFlowState({
+        matchId,
+        playerId,
+        flowColor: randomColor
+      });
+      
+      // Buscar dados do jogador para notificação
+      const player = await storage.getUserWithCharacter(playerId);
+      
+      // Notificar todos os jogadores via WebSocket
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            type: "flow_state_activated",
+            playerId: playerId,
+            playerName: player?.character?.name || player?.username,
+            flowColor: randomColor,
+            message: `${player?.character?.name || player?.username} entrou no Flow State!`
+          }));
+        }
+      });
+      
+      res.json(flowState);
+    } catch (error) {
+      console.error("Create flow state error:", error);
+      res.status(500).json({ message: "Failed to create flow state" });
+    }
+  });
+
+  // API para desativar Flow State
+  app.post("/api/admin/flow-state/deactivate", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { matchId, playerId } = req.body;
+      
+      if (!matchId || !playerId) {
+        return res.status(400).json({ message: "matchId and playerId are required" });
+      }
+
+      // Verificar se a partida existe e está ativa
+      const match = await storage.getMatch(matchId);
+      if (!match) {
+        return res.status(404).json({ message: "Match not found" });
+      }
+
+      if (match.status !== "active") {
+        return res.status(400).json({ message: "Match is not active" });
+      }
+
+      // Encerrar Flow State
+      await storage.endFlowState(matchId, playerId);
+
+      // Buscar dados do jogador para notificação
+      const player = await storage.getUserWithCharacter(playerId);
+      
+      // Notificar todos os jogadores via WebSocket
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            type: "flow_state_ended",
+            playerId: playerId,
+            playerName: player?.character?.name || player?.username,
+            message: `Flow State de ${player?.character?.name || player?.username} foi desativado pelo Mestre`
+          }));
+        }
+      });
+
+      res.json({ message: "Flow State deactivated successfully" });
+    } catch (error) {
+      console.error("Deactivate flow state error:", error);
+      res.status(500).json({ message: "Failed to deactivate flow state" });
+    }
+  });
+
+  // API para definir tempo da partida
+  app.post("/api/admin/matches/set-time", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const { matchId, minutes } = req.body;
+      
+      if (!matchId || minutes === undefined) {
+        return res.status(400).json({ message: "matchId and minutes are required" });
+      }
+
+      // Verificar se a partida existe e está ativa
+      const match = await storage.getMatch(matchId);
+      if (!match) {
+        return res.status(404).json({ message: "Match not found" });
+      }
+
+      if (match.status !== "active") {
+        return res.status(400).json({ message: "Match is not active" });
+      }
+
+      // Calcular novo startTime baseado no tempo desejado
+      const now = new Date();
+      const newStartTime = new Date(now.getTime() - (minutes * 60 * 1000));
+
+      // Atualizar a partida com o novo startTime
+      await storage.updateMatch(matchId, {
+        startTime: newStartTime
+      });
+
+      res.json({ 
+        message: "Match time set successfully",
+        newStartTime: newStartTime.toISOString(),
+        currentMinutes: minutes
+      });
+    } catch (error) {
+      console.error("Set match time error:", error);
+      res.status(500).json({ message: "Failed to set match time" });
     }
   });
 
