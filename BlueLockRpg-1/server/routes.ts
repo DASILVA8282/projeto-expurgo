@@ -136,10 +136,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Character routes
   app.post("/api/characters", requireAuth, async (req, res) => {
     try {
+      console.log("Received character data:", req.body);
       const characterData = insertCharacterSchema.parse({
         ...req.body,
         userId: req.session.userId,
       });
+      console.log("Parsed character data:", characterData);
 
       // Check if user already has a character
       const existingCharacter = await storage.getCharacter(req.session.userId!);
@@ -148,16 +150,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const character = await storage.createCharacter(characterData);
+      console.log("Created character:", character);
       res.json(character);
     } catch (error) {
       console.error("Create character error:", error);
-      res.status(400).json({ message: "Invalid character data" });
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      res.status(400).json({ message: "Invalid character data", error: error.message });
     }
   });
 
   app.put("/api/characters", requireAuth, async (req, res) => {
     try {
+      console.log("Received update data:", req.body);
       const updates = updateCharacterSchema.parse(req.body);
+      console.log("Parsed update data:", updates);
       
       // Check if character exists
       const existingCharacter = await storage.getCharacter(req.session.userId!);
@@ -166,10 +175,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const character = await storage.updateCharacter(req.session.userId!, updates);
+      console.log("Updated character:", character);
       res.json(character);
     } catch (error) {
       console.error("Update character error:", error);
-      res.status(400).json({ message: "Invalid character data" });
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      res.status(400).json({ message: "Invalid character data", error: error.message });
     }
   });
 
