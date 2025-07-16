@@ -1,6 +1,6 @@
-import { users, characters, wildCardInvitations, matches, goals, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals } from "@shared/schema";
+import { users, characters, wildCardInvitations, matches, goals, flowStates, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals, type InsertFlowState, type FlowState, type FlowStateWithPlayer } from "@shared/schema";
 import { db } from "./db";
-import { eq, or, desc } from "drizzle-orm";
+import { eq, or, desc, and } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -36,6 +36,12 @@ export interface IStorage {
   // Goal operations
   createGoal(goal: InsertGoal): Promise<Goal>;
   getGoalsForMatch(matchId: number): Promise<(Goal & { player: User })[]>;
+  
+  // Flow State operations
+  createFlowState(flowState: InsertFlowState): Promise<FlowState>;
+  getActiveFlowState(matchId: number): Promise<FlowStateWithPlayer | undefined>;
+  endFlowState(matchId: number, playerId: number): Promise<void>;
+  getFlowStateForPlayer(matchId: number, playerId: number): Promise<FlowState | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -282,6 +288,96 @@ export class DatabaseStorage implements IStorage {
           character: row.character
         }
       })));
+  }
+
+  // Flow State operations
+  async createFlowState(flowState: InsertFlowState): Promise<FlowState> {
+    const [newFlowState] = await db
+      .insert(flowStates)
+      .values(flowState)
+      .returning();
+    return newFlowState;
+  }
+
+  async getActiveFlowState(matchId: number): Promise<FlowStateWithPlayer | undefined> {
+    const [flowState] = await db
+      .select({
+        id: flowStates.id,
+        matchId: flowStates.matchId,
+        playerId: flowStates.playerId,
+        isActive: flowStates.isActive,
+        flowColor: flowStates.flowColor,
+        activatedAt: flowStates.activatedAt,
+        endedAt: flowStates.endedAt,
+        player: {
+          id: users.id,
+          username: users.username,
+          isAdmin: users.isAdmin,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+        },
+        character: {
+          id: characters.id,
+          userId: characters.userId,
+          name: characters.name,
+          position: characters.position,
+          age: characters.age,
+          height: characters.height,
+          bio: characters.bio,
+          weapon: characters.weapon,
+          avatar: characters.avatar,
+          level: characters.level,
+          experience: characters.experience,
+          matches: characters.matches,
+          goals: characters.goals,
+          ranking: characters.ranking,
+          speed: characters.speed,
+          strength: characters.strength,
+          stamina: characters.stamina,
+          shooting: characters.shooting,
+          passing: characters.passing,
+          dribbling: characters.dribbling,
+          isEliminated: characters.isEliminated,
+          createdAt: characters.createdAt,
+          updatedAt: characters.updatedAt,
+        },
+      })
+      .from(flowStates)
+      .leftJoin(users, eq(flowStates.playerId, users.id))
+      .leftJoin(characters, eq(users.id, characters.userId))
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.isActive, true)))
+      .orderBy(desc(flowStates.activatedAt))
+      .limit(1);
+
+    if (!flowState) return undefined;
+
+    return {
+      ...flowState,
+      player: {
+        ...flowState.player,
+        character: flowState.character || undefined,
+      },
+    };
+  }
+
+  async endFlowState(matchId: number, playerId: number): Promise<void> {
+    await db
+      .update(flowStates)
+      .set({
+        isActive: false,
+        endedAt: new Date(),
+      })
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.playerId, playerId)));
+  }
+
+  async getFlowStateForPlayer(matchId: number, playerId: number): Promise<FlowState | undefined> {
+    const [flowState] = await db
+      .select()
+      .from(flowStates)
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.playerId, playerId), eq(flowStates.isActive, true)))
+      .limit(1);
+
+    return flowState;
   }
 }
 
