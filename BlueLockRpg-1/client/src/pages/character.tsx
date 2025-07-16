@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import StatSlider from "@/components/ui/stat-slider";
+import BlueLockRadar from "@/components/ui/blue-lock-radar";
 import type { Character, UpdateCharacter } from "@shared/schema";
 
 export default function Character() {
@@ -347,63 +347,27 @@ export default function Character() {
               <CardContent className="p-6">
                 <h3 className="font-orbitron text-xl font-bold text-blue-400 mb-6">ATRIBUTOS</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Physical Stats */}
-                  <div>
-                    <h4 className="font-rajdhani text-lg font-bold text-blue-300 mb-4">FÍSICOS</h4>
-                    <div className="space-y-4">
-                      <StatSlider
-                        label="VELOCIDADE"
-                        value={formData.speed}
-                        onChange={(value) => handleStatChange("speed", value)}
-                        color="blue"
-                      />
-                      <StatSlider
-                        label="FORÇA"
-                        value={formData.strength}
-                        onChange={(value) => handleStatChange("strength", value)}
-                        color="green"
-                      />
-                      <StatSlider
-                        label="RESISTÊNCIA"
-                        value={formData.stamina}
-                        onChange={(value) => handleStatChange("stamina", value)}
-                        color="yellow"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Technical Stats */}
-                  <div>
-                    <h4 className="font-rajdhani text-lg font-bold text-blue-300 mb-4">TÉCNICOS</h4>
-                    <div className="space-y-4">
-                      <StatSlider
-                        label="CHUTE"
-                        value={formData.shooting}
-                        onChange={(value) => handleStatChange("shooting", value)}
-                        color="red"
-                      />
-                      <StatSlider
-                        label="PASSE"
-                        value={formData.passing}
-                        onChange={(value) => handleStatChange("passing", value)}
-                        color="purple"
-                      />
-                      <StatSlider
-                        label="DRIBLE"
-                        value={formData.dribbling}
-                        onChange={(value) => handleStatChange("dribbling", value)}
-                        color="cyan"
-                      />
-                    </div>
-                  </div>
+                {/* Blue Lock Radar Chart */}
+                <div className="mb-6">
+                  <BlueLockRadar
+                    stats={{
+                      speed: formData.speed,
+                      strength: formData.strength,
+                      stamina: formData.stamina,
+                      shooting: formData.shooting,
+                      passing: formData.passing,
+                      dribbling: formData.dribbling,
+                    }}
+                    onStatChange={handleStatChange}
+                    remainingPoints={remainingPoints}
+                  />
                 </div>
 
-                {/* Points Remaining */}
-                <div className="mt-6 p-4 bg-slate-800 rounded-lg border-2 border-yellow-500">
+                {/* Total Stats Display */}
+                <div className="mt-6 p-4 bg-slate-800 rounded-lg border-2 border-cyan-500">
                   <div className="flex justify-between items-center">
-                    <span className="font-rajdhani font-bold text-yellow-400">PONTOS RESTANTES:</span>
-                    <span className="font-orbitron text-2xl font-bold text-yellow-400">{remainingPoints}</span>
+                    <span className="font-rajdhani font-bold text-cyan-400">TOTAL DE PONTOS USADOS:</span>
+                    <span className="font-orbitron text-lg font-bold text-cyan-400">{totalStats}/600</span>
                   </div>
                 </div>
 
