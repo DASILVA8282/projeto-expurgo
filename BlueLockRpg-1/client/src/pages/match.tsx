@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +15,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Edit3, Play, Square, Plus, Timer, Trophy } from "lucide-react";
 import type { Match, MatchWithGoals, User } from "@shared/schema";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import FlowStateCutsceneSimple from "@/components/FlowStateCutsceneSimple";
+import FlowStateVignette from "@/components/FlowStateVignette";
 
 export default function Match() {
   const { user } = useAuth();
@@ -33,6 +35,23 @@ export default function Match() {
   const [editingTeamZ, setEditingTeamZ] = useState(false);
   const [tempTeamVName, setTempTeamVName] = useState("");
   const [tempTeamZName, setTempTeamZName] = useState("");
+  
+  // Flow State
+  const [showFlowCutscene, setShowFlowCutscene] = useState(false);
+  const [flowPlayerName, setFlowPlayerName] = useState("");
+  const [flowColor, setFlowColor] = useState("cyan");
+  const [isInFlowState, setIsInFlowState] = useState(false);
+  const [flowStateTriggered, setFlowStateTriggered] = useState(false);
+  const [flowStatePlayer, setFlowStatePlayer] = useState<string>("");
+  
+  // Controle de tempo
+  const [customMatchTime, setCustomMatchTime] = useState<number>(0);
+
+  // Limpa o cache quando a página carrega para garantir dados atualizados
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
+    queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+  }, []);
 
   // Atualiza o tempo atual a cada segundo
   useEffect(() => {
@@ -42,16 +61,65 @@ export default function Match() {
     return () => clearInterval(interval);
   }, []);
 
-  // Escuta notificações WebSocket para redirecionamento automático
+  // Escuta notificações WebSocket para redirecionamento automático e Flow State
   useEffect(() => {
     if (lastMessage?.type === "match_finished") {
       toast({ title: "Partida finalizada!", description: lastMessage.message });
-      // Só redireciona jogadores não-admin para o dashboard
-      if (!user?.isAdmin) {
-        setTimeout(() => {
-          setLocation("/");
-        }, 2000);
+      
+      // Limpa todos os estados do Flow State
+      setShowFlowCutscene(false);
+      setIsInFlowState(false);
+      setFlowPlayerName("");
+      setFlowColor("cyan");
+      setFlowStateTriggered(false);
+      setFlowStatePlayer("");
+      
+      // Invalida e remove todas as queries relacionadas
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/finished"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/flow-state"] });
+      queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
+      
+      // Redireciona TODOS os usuários para o dashboard (incluindo admin)
+      setTimeout(() => {
+        setLocation("/dashboard");
+      }, 1500);
+    }
+    
+    // Flow State ativado
+    if (lastMessage?.type === "flow_state_activated") {
+      console.log("Flow State activated WebSocket message received:", lastMessage);
+      setFlowPlayerName(lastMessage.playerName);
+      setFlowColor(lastMessage.flowColor);
+      
+      // Se é o próprio usuário, mostra a cutscene
+      if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
+        console.log("Starting Epic Flow State cutscene for user", user.id);
+        console.log("Current states before cutscene:", { showFlowCutscene, isInFlowState });
+        // Reset any previous state first
+        setIsInFlowState(false);
+        setShowFlowCutscene(true);
+        console.log("Set showFlowCutscene to true");
+      } else {
+        // Outros usuários recebem toast notification
+        toast({
+          title: "Flow State Ativado!",
+          description: `${lastMessage.playerName} entrou no Flow State!`,
+        });
       }
+    }
+    
+    // Flow State encerrado
+    if (lastMessage?.type === "flow_state_ended") {
+      console.log("Flow State ended");
+      setIsInFlowState(false);
+      setShowFlowCutscene(false); // Garantir que cutscene também está fechada
+      setFlowPlayerName("");
+      setFlowColor("cyan");
+      toast({
+        title: "Flow State Encerrado",
+        description: lastMessage.message,
+      });
     }
   }, [lastMessage, toast, setLocation, user]);
 
@@ -76,6 +144,82 @@ export default function Match() {
     retry: false,
     throwOnError: false,
   });
+
+  // Verifica se o usuário atual está em Flow State
+  const { data: userFlowState } = useQuery<any>({
+    queryKey: [`/api/flow-state/${match?.id}/${user?.id}`],
+    enabled: !user?.isAdmin && match?.id && user?.id && match?.status === "active",
+    retry: false,
+    throwOnError: false,
+  });
+
+  // Verifica se existe Flow State ativo na partida (para admin)
+  const { data: activeFlowState, refetch: refetchActiveFlowState } = useQuery<any>({
+    queryKey: [`/api/flow-state/${match?.id}/active`],
+    enabled: user?.isAdmin && match?.id && match?.status === "active",
+    retry: false,
+    throwOnError: false,
+    refetchInterval: 1000, // Atualiza a cada 1 segundo para ser mais responsivo
+  });
+
+
+
+  // Atualiza o estado do Flow State baseado na resposta da API
+  useEffect(() => {
+    if (userFlowState) {
+      setIsInFlowState(true);
+      setFlowColor(userFlowState.flowColor);
+      // NÃO modifica showFlowCutscene aqui para evitar loops
+    } else {
+      setIsInFlowState(false);
+      // Só limpa cutscene se não estiver em processo de ativação
+      if (!showFlowCutscene) {
+        // OK para limpar quando não há cutscene ativa
+      }
+    }
+  }, [userFlowState]);
+
+  // Monitora se há Flow State ativo na partida (para admin)
+  useEffect(() => {
+    if (activeFlowState) {
+      setFlowStateTriggered(true);
+    } else {
+      // Quando não há Flow State ativo, reseta o estado triggered para permitir nova ativação
+      // MAS não se for desativação manual recente (evita reativação automática imediata)
+      setTimeout(() => {
+        setFlowStateTriggered(false);
+      }, 1000);
+    }
+  }, [activeFlowState]);
+
+  // Lógica para ativação automática do Flow State aos 30 minutos
+  useEffect(() => {
+    if (!match || !user?.isAdmin || match.status !== "active" || flowStateTriggered) return;
+
+    const startTime = new Date(match.startTime).getTime();
+    const now = currentTime.getTime();
+    const elapsedMinutes = Math.floor((now - startTime) / (1000 * 60));
+
+    // Ativa Flow State exatamente aos 30 minutos, mas só se não houver Flow State ativo
+    if (elapsedMinutes >= 30 && !activeFlowState) {
+      setFlowStateTriggered(true);
+      
+      // Seleciona um jogador aleatório com personagem
+      if (usersWithCharacters && usersWithCharacters.length > 0) {
+        const playersWithCharacters = usersWithCharacters.filter(u => u.character && !u.isAdmin);
+        
+        if (playersWithCharacters.length > 0) {
+          const randomPlayer = playersWithCharacters[Math.floor(Math.random() * playersWithCharacters.length)];
+          
+          // Ativa Flow State via API
+          activateFlowStateMutation.mutate({
+            matchId: match.id,
+            playerId: randomPlayer.id
+          });
+        }
+      }
+    }
+  }, [match, currentTime, user, flowStateTriggered, usersWithCharacters, activeFlowState]);
 
   // Busca partidas finalizadas para histórico
   const { data: finishedMatches } = useQuery<Match[]>({
@@ -152,6 +296,142 @@ export default function Match() {
       toast({ title: "Gol marcado!", description: `${playerName} marcou um gol!` });
     },
   });
+
+  // Mutação para ativar Flow State
+  const activateFlowStateMutation = useMutation({
+    mutationFn: async ({ matchId, playerId }: { matchId: number; playerId: number }) => {
+      const response = await apiRequest("POST", "/api/admin/flow-state", { matchId, playerId });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/flow-state"] });
+    },
+    onError: (error: any) => {
+      console.error("Erro ao ativar Flow State:", error);
+    },
+  });
+
+  // Mutação para desativar Flow State
+  const deactivateFlowStateMutation = useMutation({
+    mutationFn: async ({ matchId, playerId }: { matchId: number; playerId: number }) => {
+      const response = await apiRequest("POST", "/api/admin/flow-state/deactivate", { matchId, playerId });
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidar todas as queries relacionadas ao Flow State
+      queryClient.invalidateQueries({ queryKey: ["/api/flow-state"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/active`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}`] });
+      
+      // Forçar refetch imediato da query activeFlowState para atualizar o estado
+      refetchActiveFlowState();
+      
+      // Limpar estado local de Flow State
+      setIsInFlowState(false);
+      setFlowPlayerName("");
+      setFlowColor("");
+      setShowFlowCutscene(false);
+      
+      // Evitar reativação automática imediata definindo um cooldown
+      setFlowStateTriggered(true);
+      setTimeout(() => {
+        setFlowStateTriggered(false);
+      }, 2000); // Cooldown de 2 segundos
+      
+      toast({ title: "Flow State desativado com sucesso!" });
+    },
+    onError: (error: any) => {
+      console.error("Erro ao desativar Flow State:", error);
+      toast({ title: "Erro ao desativar Flow State", variant: "destructive" });
+    },
+  });
+
+  // Mutação para definir tempo da partida
+  const setMatchTimeMutation = useMutation({
+    mutationFn: async ({ matchId, minutes }: { matchId: number; minutes: number }) => {
+      const response = await apiRequest("POST", "/api/admin/matches/set-time", { matchId, minutes });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      toast({ title: "Tempo da partida definido com sucesso!" });
+    },
+    onError: (error: any) => {
+      console.error("Erro ao definir tempo:", error);
+      toast({ title: "Erro ao definir tempo", variant: "destructive" });
+    },
+  });
+
+  // Handler para completar a cutscene do Flow State
+  const handleFlowCutsceneComplete = useCallback(() => {
+    console.log("Flow State cutscene completed - returning to match");
+    
+    // Limpar estado da cutscene IMEDIATAMENTE e forçar re-render
+    setShowFlowCutscene(false);
+    setIsInFlowState(true);
+    
+    // Show toast após pequeno delay
+    setTimeout(() => {
+      toast({
+        title: "Flow State Ativado!",
+        description: "Você está em estado de concentração máxima!",
+      });
+    }, 200);
+  }, [toast]);
+
+  // Handler para ativar Flow State manualmente
+  const handleManualFlowState = () => {
+    if (!match || !flowStatePlayer) {
+      toast({ title: "Erro", description: "Selecione um jogador", variant: "destructive" });
+      return;
+    }
+
+    if (activeFlowState) {
+      toast({ 
+        title: "Flow State já ativo", 
+        description: `${activeFlowState.player.character?.name || activeFlowState.player.username} já está em Flow State!`,
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    const playerId = parseInt(flowStatePlayer);
+    activateFlowStateMutation.mutate({
+      matchId: match.id,
+      playerId: playerId
+    });
+  };
+
+  // Handler para desativar Flow State manualmente
+  const handleDeactivateFlowState = () => {
+    if (!match || !activeFlowState) {
+      toast({ title: "Erro", description: "Nenhum Flow State ativo encontrado", variant: "destructive" });
+      return;
+    }
+
+    deactivateFlowStateMutation.mutate({
+      matchId: match.id,
+      playerId: activeFlowState.playerId
+    });
+  };
+
+  // Handler para definir tempo da partida
+  const handleSetMatchTime = () => {
+    if (!match || !customMatchTime) {
+      toast({ title: "Erro", description: "Digite um tempo válido", variant: "destructive" });
+      return;
+    }
+
+    if (customMatchTime < 0 || customMatchTime > 200) {
+      toast({ title: "Erro", description: "Tempo deve estar entre 0 e 200 minutos", variant: "destructive" });
+      return;
+    }
+
+    setMatchTimeMutation.mutate({
+      matchId: match.id,
+      minutes: customMatchTime
+    });
+  };
 
   // Calcula o tempo decorrido da partida
   const getMatchTime = () => {
@@ -378,7 +658,7 @@ export default function Match() {
       </AnimatePresence>
 
       <div className="relative z-10 p-6">
-        {!match && isFetched ? (
+        {(!match || match?.status === "finished") && isFetched ? (
           // Tela de criação de partida - Design melhorado
           <div className="flex items-center justify-center min-h-screen">
             <motion.div
@@ -518,7 +798,7 @@ export default function Match() {
               </motion.div>
             )}
           </div>
-        ) : match ? (
+        ) : match && match?.status !== "finished" ? (
           // Tela principal da partida
           <div className="space-y-8">
             {/* HUD Principal estilo Blue Lock - Baseado na imagem */}
@@ -951,6 +1231,197 @@ export default function Match() {
                     </motion.div>
                   </motion.div>
                 )}
+
+                {/* Seção Flow State Manual - Novo */}
+                {match?.status === "active" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="border-t border-slate-600/50 pt-6"
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-6 h-6 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+                        <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                      </div>
+                      <h4 className="text-xl font-bold text-white">Flow State Manual</h4>
+                      <div className="text-sm text-gray-400">(Força ativação independente da minutagem)</div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <Label htmlFor="flowStatePlayer" className="text-white text-lg font-semibold mb-2 block">Jogador para Flow State</Label>
+                        <Select onValueChange={setFlowStatePlayer}>
+                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-purple-400 transition-colors">
+                            <SelectValue placeholder="Selecione o jogador" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {usersWithCharacters?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
+                              <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                  {userWithCharacter.character.name} ({userWithCharacter.username})
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 }}
+                        className="flex items-end gap-3"
+                      >
+                        <Button
+                          onClick={handleManualFlowState}
+                          disabled={activateFlowStateMutation.isPending || !flowStatePlayer || !!activeFlowState}
+                          className="flex-1 h-14 text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {activateFlowStateMutation.isPending ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              Ativando...
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 bg-white rounded-full animate-pulse"></div>
+                              Ativar Flow State
+                            </div>
+                          )}
+                        </Button>
+                        
+                        <Button
+                          onClick={handleDeactivateFlowState}
+                          disabled={deactivateFlowStateMutation.isPending || !activeFlowState}
+                          className="flex-1 h-14 text-xl font-bold bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-red-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deactivateFlowStateMutation.isPending ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              Desativando...
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Square className="w-6 h-6" />
+                              Desativar Flow State
+                            </div>
+                          )}
+                        </Button>
+                      </motion.div>
+                    </div>
+
+                    {/* Indicador de Flow State ativo */}
+                    {activeFlowState && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="mt-4 p-4 bg-purple-900/30 border border-purple-500/50 rounded-lg"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-4 h-4 bg-purple-500 rounded-full animate-pulse"></div>
+                            <span className="text-purple-300 font-semibold">Flow State ativo:</span>
+                            <span className="text-white font-bold">
+                              {activeFlowState.player.character?.name || activeFlowState.player.username}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: activeFlowState.flowColor }}></div>
+                            <span className="text-purple-300 text-sm capitalize">{activeFlowState.flowColor}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Seção Controle de Tempo - Novo */}
+                {match?.status === "active" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="border-t border-slate-600/50 pt-6"
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                        <Timer className="w-3 h-3 text-black" />
+                      </div>
+                      <h4 className="text-xl font-bold text-white">Controle de Tempo</h4>
+                      <div className="text-sm text-gray-400">(Definir tempo para ativação automática do Flow State)</div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 }}
+                      >
+                        <Label htmlFor="matchTime" className="text-white text-lg font-semibold mb-2 block">Tempo da Partida (minutos)</Label>
+                        <Input
+                          type="number"
+                          placeholder="Ex: 30 para ativar Flow State"
+                          value={customMatchTime || ""}
+                          onChange={(e) => setCustomMatchTime(parseInt(e.target.value) || 0)}
+                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-cyan-400 focus:ring-cyan-400/20"
+                        />
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="flex items-end"
+                      >
+                        <Button
+                          onClick={handleSetMatchTime}
+                          disabled={setMatchTimeMutation.isPending || !customMatchTime}
+                          className="w-full h-14 text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {setMatchTimeMutation.isPending ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              Definindo Tempo...
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <Timer className="w-6 h-6" />
+                              Definir Tempo
+                            </div>
+                          )}
+                        </Button>
+                      </motion.div>
+                    </div>
+
+                    {/* Indicador de tempo personalizado */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="mt-4 p-4 bg-cyan-900/30 border border-cyan-500/50 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-4 h-4 bg-cyan-500 rounded-full animate-pulse"></div>
+                          <span className="text-cyan-300 font-semibold">Tempo atual da partida:</span>
+                          <span className="text-white font-bold font-mono">
+                            {getMatchTime()}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-300 text-sm">
+                            Flow State automático aos 30 minutos
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 
@@ -1022,6 +1493,20 @@ export default function Match() {
           </div>
         ) : null}
       </div>
+      
+      {/* Componentes visuais do Flow State */}
+      <FlowStateCutsceneSimple
+        isActive={showFlowCutscene}
+        playerName={flowPlayerName}
+        flowColor={flowColor}
+        onComplete={handleFlowCutsceneComplete}
+      />
+      
+      {/* Vinheta do Flow State - aparece após a cutscene */}
+      <FlowStateVignette
+        isActive={isInFlowState && !showFlowCutscene}
+        flowColor={flowColor}
+      />
     </div>
   );
 }
