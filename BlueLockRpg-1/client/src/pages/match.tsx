@@ -15,8 +15,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Edit3, Play, Square, Plus, Timer, Trophy } from "lucide-react";
 import type { Match, MatchWithGoals, User } from "@shared/schema";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import FlowStateCutsceneSimple from "@/components/FlowStateCutsceneSimple";
-import FlowStateVignette from "@/components/FlowStateVignette";
+import FlowStateCutsceneSimple from "@/components/ui/FlowStateCutsceneSimple";
+import FlowStateVignette from "@/components/ui/FlowStateVignette";
 
 export default function Match() {
   const { user } = useAuth();
