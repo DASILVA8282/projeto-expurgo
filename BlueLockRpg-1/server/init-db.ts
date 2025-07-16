@@ -42,6 +42,8 @@ export async function initializeDatabase() {
         passing INTEGER DEFAULT 50 NOT NULL,
         dribbling INTEGER DEFAULT 50 NOT NULL,
         is_eliminated BOOLEAN DEFAULT FALSE NOT NULL,
+        flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL,
+        flow_phrase VARCHAR(255) DEFAULT 'É hora de dominar o campo!' NOT NULL,
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       )
