@@ -88,6 +88,19 @@ export async function initializeDatabase() {
       )
     `);
 
+    // Criar tabela flow_states se não existir
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS flow_states (
+        id SERIAL PRIMARY KEY,
+        match_id INTEGER REFERENCES matches(id) NOT NULL,
+        player_id INTEGER REFERENCES users(id) NOT NULL,
+        is_active BOOLEAN DEFAULT TRUE NOT NULL,
+        flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL,
+        activated_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        ended_at TIMESTAMP
+      )
+    `);
+
     console.log('Tabelas criadas/verificadas com sucesso!');
 
     // Verificar se já existe o usuário admin
