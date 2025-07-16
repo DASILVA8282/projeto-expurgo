@@ -70,6 +70,16 @@ export const goals = pgTable("goals", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const flowStates = pgTable("flow_states", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => matches.id).notNull(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  flowColor: varchar("flow_color", { length: 20 }).default("cyan").notNull(),
+  activatedAt: timestamp("activated_at").defaultNow().notNull(),
+  endedAt: timestamp("ended_at"),
+});
+
 export const usersRelations = relations(users, ({ one }) => ({
   character: one(characters, {
     fields: [users.id],
@@ -102,6 +112,17 @@ export const goalsRelations = relations(goals, ({ one }) => ({
   }),
   player: one(users, {
     fields: [goals.playerId],
+    references: [users.id],
+  }),
+}));
+
+export const flowStatesRelations = relations(flowStates, ({ one }) => ({
+  match: one(matches, {
+    fields: [flowStates.matchId],
+    references: [matches.id],
+  }),
+  player: one(users, {
+    fields: [flowStates.playerId],
     references: [users.id],
   }),
 }));
@@ -145,6 +166,12 @@ export const insertGoalSchema = createInsertSchema(goals).omit({
   createdAt: true,
 });
 
+export const insertFlowStateSchema = createInsertSchema(flowStates).omit({
+  id: true,
+  activatedAt: true,
+  endedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
@@ -163,7 +190,13 @@ export type UpdateMatch = z.infer<typeof updateMatchSchema>;
 export type Match = typeof matches.$inferSelect;
 export type InsertGoal = z.infer<typeof insertGoalSchema>;
 export type Goal = typeof goals.$inferSelect;
+export type InsertFlowState = z.infer<typeof insertFlowStateSchema>;
+export type FlowState = typeof flowStates.$inferSelect;
 
 export type MatchWithGoals = Match & {
   goals: (Goal & { player: User })[];
+};
+
+export type FlowStateWithPlayer = FlowState & {
+  player: User & { character?: Character };
 };
