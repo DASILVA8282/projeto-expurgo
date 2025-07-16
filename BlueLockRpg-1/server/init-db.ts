@@ -6,6 +6,27 @@ export async function initializeDatabase() {
   try {
     console.log('Verificando e criando tabelas do banco...');
     
+    // Migração: Adicionar colunas flow_color e flow_phrase se não existirem
+    try {
+      await db.execute(sql`
+        ALTER TABLE characters 
+        ADD COLUMN IF NOT EXISTS flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL
+      `);
+      console.log('Coluna flow_color adicionada/verificada');
+    } catch (error) {
+      console.log('Coluna flow_color já existe ou erro:', error);
+    }
+    
+    try {
+      await db.execute(sql`
+        ALTER TABLE characters 
+        ADD COLUMN IF NOT EXISTS flow_phrase VARCHAR(255) DEFAULT 'É hora de dominar o campo!' NOT NULL
+      `);
+      console.log('Coluna flow_phrase adicionada/verificada');
+    } catch (error) {
+      console.log('Coluna flow_phrase já existe ou erro:', error);
+    }
+    
     // Criar tabela users se não existir
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS users (
