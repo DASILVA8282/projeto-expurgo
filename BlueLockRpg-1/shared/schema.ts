@@ -35,6 +35,9 @@ export const characters = pgTable("characters", {
   shooting: integer("shooting").default(50).notNull(),
   passing: integer("passing").default(50).notNull(),
   dribbling: integer("dribbling").default(50).notNull(),
+  // Flow State personalization
+  flowColor: varchar("flow_color", { length: 20 }).default("cyan").notNull(),
+  flowPhrase: varchar("flow_phrase", { length: 255 }).default("É hora de dominar o campo!").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
