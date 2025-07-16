@@ -168,6 +168,8 @@ export default function Character() {
       shooting: formData.shooting,
       passing: formData.passing,
       dribbling: formData.dribbling,
+      flowColor: formData.flowColor,
+      flowPhrase: formData.flowPhrase,
     };
 
     if (character) {
