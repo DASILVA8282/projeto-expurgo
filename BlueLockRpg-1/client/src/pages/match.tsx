@@ -40,6 +40,7 @@ export default function Match() {
   const [showFlowCutscene, setShowFlowCutscene] = useState(false);
   const [flowPlayerName, setFlowPlayerName] = useState("");
   const [flowColor, setFlowColor] = useState("cyan");
+  const [flowPhrase, setFlowPhrase] = useState("É hora de dominar o campo!");
   const [isInFlowState, setIsInFlowState] = useState(false);
   const [flowStateTriggered, setFlowStateTriggered] = useState(false);
   const [flowStatePlayer, setFlowStatePlayer] = useState<string>("");
@@ -71,6 +72,7 @@ export default function Match() {
       setIsInFlowState(false);
       setFlowPlayerName("");
       setFlowColor("cyan");
+      setFlowPhrase("É hora de dominar o campo!");
       setFlowStateTriggered(false);
       setFlowStatePlayer("");
       
@@ -91,6 +93,7 @@ export default function Match() {
       console.log("Flow State activated WebSocket message received:", lastMessage);
       setFlowPlayerName(lastMessage.playerName);
       setFlowColor(lastMessage.flowColor);
+      setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
       
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
@@ -116,6 +119,7 @@ export default function Match() {
       setShowFlowCutscene(false); // Garantir que cutscene também está fechada
       setFlowPlayerName("");
       setFlowColor("cyan");
+      setFlowPhrase("É hora de dominar o campo!");
       toast({
         title: "Flow State Encerrado",
         description: lastMessage.message,
@@ -1499,6 +1503,7 @@ export default function Match() {
         isActive={showFlowCutscene}
         playerName={flowPlayerName}
         flowColor={flowColor}
+        flowPhrase={flowPhrase}
         onComplete={handleFlowCutsceneComplete}
       />
       
