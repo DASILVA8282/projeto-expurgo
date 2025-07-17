@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
@@ -83,6 +84,259 @@ function RankingManager({ character, userId }: { character: any; userId: number 
       >
         {calculateRankMutation.isPending ? "Calculando..." : "Calcular Rank Automático"}
       </Button>
+    </div>
+  );
+}
+
+function MatchAdmin() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [selectedTeam, setSelectedTeam] = useState<'V' | 'H'>('V');
+  const [goalMinute, setGoalMinute] = useState<number>(0);
+  const [showGoalForm, setShowGoalForm] = useState(false);
+
+  const { data: matches, isLoading: matchesLoading } = useQuery({
+    queryKey: ['/api/admin/matches'],
+    refetchInterval: 2000,
+  });
+
+  const { data: playersWithCharacters } = useQuery({
+    queryKey: ['/api/admin/users-with-characters'],
+    enabled: showGoalForm,
+  });
+
+  const createMatchMutation = useMutation({
+    mutationFn: async (matchData: any) => {
+      return await apiRequest('POST', '/api/admin/matches', matchData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/matches'] });
+      toast({
+        title: 'Partida criada!',
+        description: 'A partida foi criada com sucesso.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao criar partida',
+        description: error.message || 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const createGoalMutation = useMutation({
+    mutationFn: async (goalData: any) => {
+      return await apiRequest('POST', '/api/admin/goals', goalData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/matches'] });
+      setShowGoalForm(false);
+      setSelectedPlayer(null);
+      setGoalMinute(0);
+      toast({
+        title: 'Gol registrado!',
+        description: 'O gol foi registrado com sucesso.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao registrar gol',
+        description: error.message || 'Erro desconhecido',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleCreateGoal = () => {
+    if (!selectedMatch || !selectedPlayer) return;
+
+    createGoalMutation.mutate({
+      matchId: selectedMatch.id,
+      playerId: selectedPlayer.id,
+      team: selectedTeam,
+      minute: goalMinute,
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Match List */}
+      <Card className="bg-slate-900 border-2 border-slate-700">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-orbitron text-xl font-bold text-green-400">GERENCIAMENTO DE PARTIDAS</h3>
+            <Button
+              onClick={() => setShowGoalForm(true)}
+              className="bg-green-600 hover:bg-green-700 font-rajdhani font-semibold"
+            >
+              <i className="fas fa-futbol mr-2"></i>Registrar Gol
+            </Button>
+          </div>
+
+          {matchesLoading ? (
+            <div className="text-center py-8">
+              <i className="fas fa-spinner fa-spin text-2xl text-slate-400"></i>
+              <p className="text-slate-400 mt-2">Carregando partidas...</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-slate-700">
+                    <th className="text-left p-4 font-orbitron text-slate-300">ID</th>
+                    <th className="text-left p-4 font-orbitron text-slate-300">TIMES</th>
+                    <th className="text-left p-4 font-orbitron text-slate-300">PLACAR</th>
+                    <th className="text-left p-4 font-orbitron text-slate-300">STATUS</th>
+                    <th className="text-left p-4 font-orbitron text-slate-300">AÇÕES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {matches?.map((match: any) => (
+                    <tr key={match.id} className="border-b border-slate-700 hover:bg-slate-800/50">
+                      <td className="p-4 font-rajdhani text-slate-400">#{match.id}</td>
+                      <td className="p-4 font-rajdhani text-white">{match.teamV} vs {match.teamH}</td>
+                      <td className="p-4 font-rajdhani text-white">{match.scoreV} - {match.scoreH}</td>
+                      <td className="p-4">
+                        <Badge className={match.status === 'active' ? 'bg-green-600' : 'bg-slate-600'}>
+                          {match.status === 'active' ? 'Ativa' : 'Inativa'}
+                        </Badge>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => setSelectedMatch(match)}
+                            className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
+                          >
+                            <i className="fas fa-eye mr-1"></i>Ver
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setSelectedMatch(match);
+                              setShowGoalForm(true);
+                            }}
+                            className="bg-green-600 hover:bg-green-700 font-rajdhani font-semibold"
+                          >
+                            <i className="fas fa-futbol mr-1"></i>Gol
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {matches?.length === 0 && (
+                <div className="text-center py-8">
+                  <i className="fas fa-futbol text-4xl text-slate-600 mb-4"></i>
+                  <p className="text-slate-400 font-rajdhani">Nenhuma partida encontrada</p>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Goal Creation Form */}
+      <Dialog open={showGoalForm} onOpenChange={setShowGoalForm}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white">
+          <DialogHeader>
+            <DialogTitle className="font-orbitron text-green-400">REGISTRAR GOL</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Match Selection */}
+            <div>
+              <Label className="text-slate-300 font-rajdhani">Partida</Label>
+              <select
+                value={selectedMatch?.id || ''}
+                onChange={(e) => {
+                  const match = matches?.find((m: any) => m.id === parseInt(e.target.value));
+                  setSelectedMatch(match);
+                }}
+                className="w-full p-2 bg-slate-800 border border-slate-600 rounded text-white"
+              >
+                <option value="">Selecione uma partida</option>
+                {matches?.map((match: any) => (
+                  <option key={match.id} value={match.id}>
+                    {match.teamV} vs {match.teamH} ({match.scoreV} - {match.scoreH})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Player Selection */}
+            <div>
+              <Label className="text-slate-300 font-rajdhani">Jogador</Label>
+              <select
+                value={selectedPlayer?.id || ''}
+                onChange={(e) => {
+                  const player = playersWithCharacters?.find((p: any) => p.id === parseInt(e.target.value));
+                  setSelectedPlayer(player);
+                }}
+                className="w-full p-2 bg-slate-800 border border-slate-600 rounded text-white"
+              >
+                <option value="">Selecione um jogador</option>
+                {playersWithCharacters?.map((player: any) => (
+                  <option key={player.id} value={player.id}>
+                    {player.character?.name || player.username} ({player.username})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Team Selection */}
+            <div>
+              <Label className="text-slate-300 font-rajdhani">Time</Label>
+              <select
+                value={selectedTeam}
+                onChange={(e) => setSelectedTeam(e.target.value as 'V' | 'H')}
+                className="w-full p-2 bg-slate-800 border border-slate-600 rounded text-white"
+              >
+                <option value="V">Visitante</option>
+                <option value="H">Casa</option>
+              </select>
+            </div>
+
+            {/* Minute */}
+            <div>
+              <Label className="text-slate-300 font-rajdhani">Minuto</Label>
+              <Input
+                type="number"
+                value={goalMinute}
+                onChange={(e) => setGoalMinute(parseInt(e.target.value) || 0)}
+                className="bg-slate-800 border-slate-600 text-white"
+                placeholder="Ex: 45"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-6">
+            <Button
+              onClick={() => setShowGoalForm(false)}
+              variant="outline"
+              className="border-slate-600 text-slate-300 hover:bg-slate-800"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreateGoal}
+              disabled={!selectedMatch || !selectedPlayer || createGoalMutation.isPending}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {createGoalMutation.isPending ? (
+                <><i className="fas fa-spinner fa-spin mr-2"></i>Registrando...</>
+              ) : (
+                <><i className="fas fa-futbol mr-2"></i>Registrar Gol</>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -289,9 +543,12 @@ export default function Admin() {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="players" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-2 border-slate-700">
+          <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-2 border-slate-700">
             <TabsTrigger value="players" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
               <i className="fas fa-users mr-2"></i>Jogadores
+            </TabsTrigger>
+            <TabsTrigger value="matches" className="data-[state=active]:bg-green-600 data-[state=active]:text-white">
+              <i className="fas fa-futbol mr-2"></i>Partidas
             </TabsTrigger>
             <TabsTrigger value="wildcard" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <i className="fas fa-bolt mr-2"></i>Wild Card
@@ -542,6 +799,10 @@ export default function Admin() {
             </div>
           </CardContent>
         </Card>
+      </TabsContent>
+
+      <TabsContent value="matches" className="mt-6">
+        <MatchAdmin />
       </TabsContent>
 
       <TabsContent value="wildcard" className="mt-6">
