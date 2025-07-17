@@ -228,6 +228,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get users connected to match page (Admin only)
+  app.get("/api/admin/match-page-users", requireAdmin, async (req, res) => {
+    try {
+      const connectedUserIds = Array.from(matchPageConnections.keys());
+      const users = [];
+      
+      console.log("Connected user IDs:", connectedUserIds);
+      
+      for (const userId of connectedUserIds) {
+        const user = await storage.getUserWithCharacter(userId);
+        console.log(`User ${userId}:`, user ? { id: user.id, username: user.username, hasCharacter: !!user.character } : "not found");
+        if (user) {
+          users.push(user);
+        }
+      }
+      
+      console.log("Final users array:", users.length);
+      res.json(users);
+    } catch (error) {
+      console.error("Get match page users error:", error);
+      res.status(500).json({ message: "Failed to fetch match page users" });
+    }
+  });
+
   app.get("/api/admin/stats", requireAdmin, async (req, res) => {
     try {
       const users = await storage.getAllUsersWithCharacters();
@@ -504,6 +528,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         startTime: new Date(),
         currentMinute: 0
       });
+      
+      // Buscar todos os usuários conectados na página de partidas para enviar introduções
+      const connectedUserIds = Array.from(matchPageConnections.keys());
+      const playersWithCharacters = [];
+      
+      // Coletar apenas jogadores com personagens
+      for (const userId of connectedUserIds) {
+        const user = await storage.getUserWithCharacter(userId);
+        if (user && user.character && !user.isAdmin) {
+          playersWithCharacters.push(user.character);
+        }
+      }
+      
+      // Enviar introdução sequencial para todos os usuários conectados
+      if (playersWithCharacters.length > 0) {
+        // Broadcast para todos os conectados
+        for (const [userId, connection] of matchPageConnections) {
+          if (connection.readyState === WebSocket.OPEN) {
+            connection.send(JSON.stringify({
+              type: "match_started_character_intro_sequence",
+              characters: playersWithCharacters,
+              message: "A partida começou! Apresentando os jogadores..."
+            }));
+          }
+        }
+      }
+      
       res.json(updatedMatch);
     } catch (error) {
       console.error("Start match error:", error);
@@ -846,6 +897,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Store WebSocket connections by user ID
   const userConnections = new Map<number, WebSocket>();
+  const matchPageConnections = new Map<number, WebSocket>(); // Usuários específicos na página de partidas
   
   wss.on('connection', (ws, req) => {
     console.log('New WebSocket connection');
@@ -853,10 +905,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message.toString());
+        console.log('WebSocket message received:', data);
         
         if (data.type === 'auth' && data.userId) {
           userConnections.set(data.userId, ws);
           console.log(`User ${data.userId} connected via WebSocket`);
+        }
+        
+        // Tracking específico para página de partidas
+        if (data.type === 'match_page_connect' && data.userId) {
+          matchPageConnections.set(data.userId, ws);
+          console.log(`User ${data.userId} connected to match page`);
+        }
+        
+        if (data.type === 'match_page_disconnect' && data.userId) {
+          matchPageConnections.delete(data.userId);
+          console.log(`User ${data.userId} disconnected from match page`);
         }
       } catch (error) {
         console.error('WebSocket message error:', error);
@@ -864,10 +928,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
     
     ws.on('close', () => {
-      // Remove connection from map when user disconnects
+      // Remove connection from both maps when user disconnects
       for (const [userId, connection] of userConnections.entries()) {
         if (connection === ws) {
           userConnections.delete(userId);
+          matchPageConnections.delete(userId);
           break;
         }
       }
