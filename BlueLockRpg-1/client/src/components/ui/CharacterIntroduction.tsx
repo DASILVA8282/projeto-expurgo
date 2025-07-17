@@ -11,79 +11,47 @@ interface CharacterIntroductionProps {
 export default function CharacterIntroduction({ character, isVisible, onComplete }: CharacterIntroductionProps) {
   const [hasStarted, setHasStarted] = React.useState(false);
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
-  const safetyTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const onCompleteRef = React.useRef(onComplete);
+  
+  // Update the callback ref whenever onComplete changes
+  React.useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
-  // Reset hasStarted quando o personagem muda
+  // Reset hasStarted when character changes
   React.useEffect(() => {
     console.log("Character changed, resetting hasStarted for:", character?.name);
     setHasStarted(false);
-    // Limpar timers quando personagem muda
+    // Clear timer when character changes
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
-    if (safetyTimerRef.current) {
-      clearTimeout(safetyTimerRef.current);
-      safetyTimerRef.current = null;
-    }
-  }, [character?.id]); // Usar character.id para detectar mudança de personagem
+  }, [character?.id]);
 
+  // Start timer when component becomes visible and character changes
   React.useEffect(() => {
-    if (isVisible && character && !hasStarted) {
-      console.log("=== CHARACTER INTRODUCTION STARTING ===");
+    console.log("=== CHARACTER INTRODUCTION EFFECT ===");
+    console.log("isVisible:", isVisible);
+    console.log("character:", character?.name);
+    console.log("hasStarted:", hasStarted);
+    
+    if (isVisible && character) {
+      console.log("=== STARTING CHARACTER INTRODUCTION ===");
       console.log("Character:", character.name);
-      console.log("Character ID:", character.id);
-      console.log("isVisible:", isVisible);
-      console.log("hasStarted:", hasStarted);
       
       setHasStarted(true);
       
-      // Timer principal de 6 segundos
-      timerRef.current = setTimeout(() => {
-        console.log("=== CHARACTER INTRODUCTION TIMER COMPLETED ===");
-        console.log("Character:", character.name);
+      // Start timer
+      const timer = setTimeout(() => {
+        console.log("=== TIMER COMPLETED FOR CHARACTER:", character.name, "===");
         console.log("Calling onComplete callback");
-        
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-        if (safetyTimerRef.current) {
-          clearTimeout(safetyTimerRef.current);
-          safetyTimerRef.current = null;
-        }
-        onComplete();
-      }, 6000);
-
-      // Timer de segurança de 8 segundos para garantir que sempre termine
-      safetyTimerRef.current = setTimeout(() => {
-        console.log("=== CHARACTER INTRODUCTION SAFETY TIMEOUT ===");
-        console.log("Character:", character.name);
-        console.log("Calling onComplete callback via safety timeout");
-        
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-        if (safetyTimerRef.current) {
-          clearTimeout(safetyTimerRef.current);
-          safetyTimerRef.current = null;
-        }
-        onComplete();
-      }, 8000);
+        onCompleteRef.current();
+      }, 10000); // Aumentar tempo para 10 segundos
+      
+      timerRef.current = timer;
     }
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-      if (safetyTimerRef.current) {
-        clearTimeout(safetyTimerRef.current);
-        safetyTimerRef.current = null;
-      }
-    };
-  }, [isVisible, character, onComplete, hasStarted]);
+  }, [isVisible, character?.id]); // Usar character?.id para garantir que inicia para cada personagem
 
   // Cleanup quando componente é desmontado (sem dependências para evitar loops)
   React.useEffect(() => {
