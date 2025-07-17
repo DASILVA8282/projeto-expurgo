@@ -74,31 +74,46 @@ export default function Match() {
     console.log("=== CHARACTER INTRO COMPLETED CALLBACK CALLED ===");
     console.log("Current index from ref:", currentCharacterIndexRef.current);
     console.log("Total characters from ref:", characterSequenceRef.current.length);
-    console.log("Character sequence from ref:", characterSequenceRef.current.map(c => c.name));
+    console.log("Character sequence from ref:", characterSequenceRef.current.map(c => c?.name || 'undefined'));
+    console.log("Current introCharacter:", introCharacter?.name);
+    console.log("Current showCharacterIntro:", showCharacterIntro);
     
     const currentIndex = currentCharacterIndexRef.current;
     const sequence = characterSequenceRef.current;
     
-    // Se há mais personagens na sequência, mostra o próximo
-    if (sequence.length > 0 && currentIndex < sequence.length - 1) {
-      const nextIndex = currentIndex + 1;
-      console.log("=== ADVANCING TO NEXT CHARACTER ===");
-      console.log("Next index:", nextIndex);
-      console.log("Next character:", sequence[nextIndex].name);
-      
-      setCurrentCharacterIndex(nextIndex);
-      setIntroCharacter(sequence[nextIndex]);
-      // Mantém showCharacterIntro como true para continuar a sequência
-      console.log("Character sequence continuing...");
-    } else {
-      // Acabou a sequência ou é apresentação individual
-      console.log("=== CHARACTER SEQUENCE COMPLETED ===");
-      console.log("Returning to match page");
-      setShowCharacterIntro(false);
-      setIntroCharacter(null);
-      setCharacterSequence([]);
-      setCurrentCharacterIndex(0);
-    }
+    console.log("=== DECISION LOGIC ===");
+    console.log("sequence.length > 0?", sequence.length > 0);
+    console.log("currentIndex < sequence.length - 1?", currentIndex < sequence.length - 1);
+    console.log("Condition result:", sequence.length > 0 && currentIndex < sequence.length - 1);
+    
+    // Use setTimeout to ensure state updates are processed
+    setTimeout(() => {
+      // Se há mais personagens na sequência, mostra o próximo
+      if (sequence.length > 0 && currentIndex < sequence.length - 1) {
+        const nextIndex = currentIndex + 1;
+        console.log("=== ADVANCING TO NEXT CHARACTER ===");
+        console.log("Next index:", nextIndex);
+        console.log("Next character:", sequence[nextIndex]?.name || 'undefined');
+        
+        console.log("About to call setCurrentCharacterIndex with:", nextIndex);
+        setCurrentCharacterIndex(nextIndex);
+        
+        console.log("About to call setIntroCharacter with:", sequence[nextIndex]);
+        setIntroCharacter(sequence[nextIndex]);
+        
+        // Mantém showCharacterIntro como true para continuar a sequência
+        console.log("Character sequence continuing... showCharacterIntro should remain true");
+      } else {
+        // Acabou a sequência ou é apresentação individual
+        console.log("=== CHARACTER SEQUENCE COMPLETED ===");
+        console.log("Returning to match page");
+        console.log("About to call setShowCharacterIntro(false)");
+        setShowCharacterIntro(false);
+        setIntroCharacter(null);
+        setCharacterSequence([]);
+        setCurrentCharacterIndex(0);
+      }
+    }, 100); // Small delay to ensure state updates are processed
   }, []); // Sem dependências, usa refs para acessar valores atuais
 
   // Notifica que o usuário entrou na página de partidas e limpa cache
@@ -175,12 +190,22 @@ export default function Match() {
       console.log("Current user:", user?.username);
       console.log("User is admin:", user?.isAdmin);
       
+      console.log("About to set characterSequence with:", lastMessage.characters);
       setCharacterSequence(lastMessage.characters);
+      
+      console.log("About to set currentCharacterIndex to 0");
       setCurrentCharacterIndex(0);
+      
+      console.log("About to set introCharacter to:", lastMessage.characters[0]);
       setIntroCharacter(lastMessage.characters[0]);
+      
+      console.log("About to set showCharacterIntro to true");
       setShowCharacterIntro(true);
+      
+      console.log("About to set hasShownIntro to true");
       setHasShownIntro(true);
       
+      console.log("=== WEBSOCKET SETUP COMPLETE ===");
       console.log("Set first character:", lastMessage.characters[0].name);
       console.log("showCharacterIntro set to:", true);
       
@@ -297,25 +322,7 @@ export default function Match() {
     setIntroCharacter(null);
   }, [match?.id, user?.id]);
 
-  // Timeout de segurança para garantir que a cutscene sempre termine
-  useEffect(() => {
-    if (showCharacterIntro) {
-      // Calcula timeout baseado no número de personagens (8 segundos por personagem + 5 segundos extra)
-      const timeoutDuration = characterSequence.length > 0 
-        ? (characterSequence.length * 8000) + 5000  // 8 segundos por personagem + 5 segundos extra
-        : 10000; // 10 segundos para apresentação individual
-      
-      const safetyTimeout = setTimeout(() => {
-        console.log("Character intro safety timeout - forcing completion after", timeoutDuration, "ms");
-        setShowCharacterIntro(false);
-        setIntroCharacter(null);
-        setCharacterSequence([]);
-        setCurrentCharacterIndex(0);
-      }, timeoutDuration);
-
-      return () => clearTimeout(safetyTimeout);
-    }
-  }, [showCharacterIntro, characterSequence.length]);
+  // Removed interfering safety timeout - CharacterIntroduction component handles its own timeouts
 
   // Verifica se o usuário atual está em Flow State
   const { data: userFlowState } = useQuery<any>({
@@ -1301,6 +1308,33 @@ export default function Match() {
                       </Button>
                     </motion.div>
                   )}
+                  
+                  {/* Botão de teste da sequência de personagens */}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      onClick={() => {
+                        // Simular sequência de personagens para teste
+                        const testCharacters = [
+                          { id: 1, name: "BILOULA", position: "Atacante", level: 1, ranking: 299 },
+                          { id: 2, name: "ADOLFO", position: "Meio-campo", level: 1, ranking: 298 }
+                        ];
+                        console.log("=== TEST: TRIGGERING CHARACTER SEQUENCE ===");
+                        setCharacterSequence(testCharacters);
+                        setCurrentCharacterIndex(0);
+                        setIntroCharacter(testCharacters[0]);
+                        setShowCharacterIntro(true);
+                      }}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-4 text-lg font-bold shadow-lg hover:shadow-purple-500/25 transform transition-all duration-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Play className="w-5 h-5" />
+                        Test Sequence
+                      </div>
+                    </Button>
+                  </motion.div>
                 </div>
 
                 {/* Seção Adicionar Gol - Design melhorado */}
