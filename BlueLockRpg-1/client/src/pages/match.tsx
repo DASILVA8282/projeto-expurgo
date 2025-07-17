@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,13 +17,14 @@ import type { Match, MatchWithGoals, User } from "@shared/schema";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import FlowStateCutsceneSimple from "@/components/ui/FlowStateCutsceneSimple";
 import FlowStateVignette from "@/components/ui/FlowStateVignette";
+import CharacterIntroduction from "@/components/ui/CharacterIntroduction";
 
 export default function Match() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const { lastMessage } = useWebSocket();
+  const { lastMessage, sendMessage, isConnected } = useWebSocket();
   
   const [currentTime, setCurrentTime] = useState(new Date());
   const [goalPlayer, setGoalPlayer] = useState<string>("");
@@ -47,12 +48,45 @@ export default function Match() {
   
   // Controle de tempo
   const [customMatchTime, setCustomMatchTime] = useState<number>(0);
+  
+  // Introdução de personagem
+  const [showCharacterIntro, setShowCharacterIntro] = useState(false);
+  const [introCharacter, setIntroCharacter] = useState<any>(null);
+  const [hasShownIntro, setHasShownIntro] = useState(false);
+  const [characterSequence, setCharacterSequence] = useState<any[]>([]);
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0);
 
-  // Limpa o cache quando a página carrega para garantir dados atualizados
+  // Notifica que o usuário entrou na página de partidas e limpa cache
+  const hasNotifiedRef = useRef(false);
+  
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
     queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
-  }, []);
+  }, []); // Executa apenas uma vez ao montar o componente
+  
+  useEffect(() => {
+    // Somente notifica se o usuário existir, WebSocket estiver conectado e ainda não foi notificado
+    if (user?.id && isConnected && !hasNotifiedRef.current) {
+      hasNotifiedRef.current = true;
+      console.log("Sending match_page_connect message for user:", user.id);
+      sendMessage({
+        type: 'match_page_connect',
+        userId: user.id
+      });
+    }
+    
+    // Cleanup: notifica saída da página
+    return () => {
+      if (user?.id && hasNotifiedRef.current) {
+        hasNotifiedRef.current = false;
+        console.log("Sending match_page_disconnect message for user:", user.id);
+        sendMessage({
+          type: 'match_page_disconnect',
+          userId: user.id
+        });
+      }
+    };
+  }, [user?.id, isConnected]); // Removed sendMessage from dependencies
 
   // Atualiza o tempo atual a cada segundo
   useEffect(() => {
@@ -86,6 +120,31 @@ export default function Match() {
       setTimeout(() => {
         setLocation("/dashboard");
       }, 1500);
+    }
+    
+    // Introdução de personagem quando partida inicia (sequencial)
+    if (lastMessage?.type === "match_started_character_intro_sequence" && lastMessage.characters) {
+      console.log("Starting character sequence with", lastMessage.characters.length, "characters");
+      setCharacterSequence(lastMessage.characters);
+      setCurrentCharacterIndex(0);
+      setIntroCharacter(lastMessage.characters[0]);
+      setShowCharacterIntro(true);
+      setHasShownIntro(true);
+      toast({
+        title: "Partida Iniciada!",
+        description: "Apresentando os jogadores...",
+      });
+    }
+    
+    // Introdução de personagem quando partida inicia (individual - legacy)
+    if (lastMessage?.type === "match_started_character_intro" && lastMessage.character) {
+      setIntroCharacter(lastMessage.character);
+      setShowCharacterIntro(true);
+      setHasShownIntro(true);
+      toast({
+        title: "Partida Iniciada!",
+        description: "Apresentando seu personagem...",
+      });
     }
     
     // Flow State ativado
@@ -135,10 +194,11 @@ export default function Match() {
     throwOnError: false, // Não lança erro quando retorna 404
   });
 
-  // Busca usuários com personagens para seleção de jogador
-  const { data: usersWithCharacters } = useQuery<any[]>({
-    queryKey: ["/api/admin/users-with-characters"],
+  // Busca usuários conectados na página de partidas para seleção de jogador
+  const { data: matchPageUsers } = useQuery<any[]>({
+    queryKey: ["/api/admin/match-page-users"],
     enabled: user?.isAdmin,
+    refetchInterval: 5000, // Reduzido para 5 segundos para menos flicker
   });
 
   // Busca o personagem do usuário atual (para verificar se pode participar)
@@ -149,10 +209,53 @@ export default function Match() {
     throwOnError: false,
   });
 
+  // Mostra introdução de personagem quando jogador entra em partida ativa
+  useEffect(() => {
+    if (
+      !user?.isAdmin && 
+      currentUserCharacter && 
+      match?.status === "active" && 
+      !hasShownIntro && 
+      !showCharacterIntro
+    ) {
+      setIntroCharacter(currentUserCharacter);
+      setShowCharacterIntro(true);
+      setHasShownIntro(true);
+      toast({
+        title: "Entrando na Partida!",
+        description: "Apresentando seu personagem...",
+      });
+    }
+  }, [currentUserCharacter, match, user, hasShownIntro, showCharacterIntro]);
+
+  // Reset hasShownIntro when match changes or user changes
+  useEffect(() => {
+    setHasShownIntro(false);
+    setShowCharacterIntro(false);
+    setCharacterSequence([]);
+    setCurrentCharacterIndex(0);
+    setIntroCharacter(null);
+  }, [match?.id, user?.id]);
+
+  // Timeout de segurança para garantir que a cutscene sempre termine
+  useEffect(() => {
+    if (showCharacterIntro) {
+      const safetyTimeout = setTimeout(() => {
+        console.log("Character intro safety timeout - forcing completion");
+        setShowCharacterIntro(false);
+        setIntroCharacter(null);
+        setCharacterSequence([]);
+        setCurrentCharacterIndex(0);
+      }, 10000); // 10 segundos para garantir que termine
+
+      return () => clearTimeout(safetyTimeout);
+    }
+  }, [showCharacterIntro]);
+
   // Verifica se o usuário atual está em Flow State
   const { data: userFlowState } = useQuery<any>({
     queryKey: [`/api/flow-state/${match?.id}/${user?.id}`],
-    enabled: !user?.isAdmin && match?.id && user?.id && match?.status === "active",
+    enabled: !user?.isAdmin && !!match?.id && !!user?.id && match?.status === "active",
     retry: false,
     throwOnError: false,
   });
@@ -160,10 +263,10 @@ export default function Match() {
   // Verifica se existe Flow State ativo na partida (para admin)
   const { data: activeFlowState, refetch: refetchActiveFlowState } = useQuery<any>({
     queryKey: [`/api/flow-state/${match?.id}/active`],
-    enabled: user?.isAdmin && match?.id && match?.status === "active",
+    enabled: user?.isAdmin && !!match?.id && match?.status === "active",
     retry: false,
     throwOnError: false,
-    refetchInterval: 1000, // Atualiza a cada 1 segundo para ser mais responsivo
+    refetchInterval: 2000, // Aumentado para 2 segundos para reduzir flicker
   });
 
 
@@ -208,9 +311,9 @@ export default function Match() {
     if (elapsedMinutes >= 30 && !activeFlowState) {
       setFlowStateTriggered(true);
       
-      // Seleciona um jogador aleatório com personagem
-      if (usersWithCharacters && usersWithCharacters.length > 0) {
-        const playersWithCharacters = usersWithCharacters.filter(u => u.character && !u.isAdmin);
+      // Seleciona um jogador aleatório conectado na página de partidas
+      if (matchPageUsers && matchPageUsers.length > 0) {
+        const playersWithCharacters = matchPageUsers.filter(u => u.character && !u.isAdmin);
         
         if (playersWithCharacters.length > 0) {
           const randomPlayer = playersWithCharacters[Math.floor(Math.random() * playersWithCharacters.length)];
@@ -223,7 +326,7 @@ export default function Match() {
         }
       }
     }
-  }, [match, currentTime, user, flowStateTriggered, usersWithCharacters, activeFlowState]);
+  }, [match, currentTime, user, flowStateTriggered, matchPageUsers, activeFlowState]);
 
   // Busca partidas finalizadas para histórico
   const { data: finishedMatches } = useQuery<Match[]>({
@@ -254,6 +357,12 @@ export default function Match() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
       toast({ title: "Partida iniciada!" });
+      
+      // Mostrar introdução do personagem do usuário atual se não for admin
+      if (!user?.isAdmin && currentUserCharacter) {
+        setIntroCharacter(currentUserCharacter);
+        setShowCharacterIntro(true);
+      }
     },
   });
 
@@ -295,7 +404,7 @@ export default function Match() {
       setShowGoalAnimation(true);
       setTimeout(() => setShowGoalAnimation(false), 3000);
       
-      const selectedPlayer = usersWithCharacters?.find(u => u.id.toString() === goalPlayer);
+      const selectedPlayer = matchPageUsers?.find(u => u.id.toString() === goalPlayer);
       const playerName = selectedPlayer?.character?.name || "Jogador";
       toast({ title: "Gol marcado!", description: `${playerName} marcou um gol!` });
     },
@@ -520,7 +629,8 @@ export default function Match() {
   };
 
   // Verifica se o jogador não-admin tem personagem
-  if (!user?.isAdmin && currentUserCharacter === null) {
+  // Admin sempre pode acessar, jogadores precisam de personagem
+  if (!user?.isAdmin && currentUserCharacter === null && currentUserCharacter !== undefined) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center p-4">
         <motion.div 
@@ -558,7 +668,8 @@ export default function Match() {
   }
 
   // Só mostra loading no primeiro carregamento, não quando não há partida ativa
-  if (isLoading && !isFetched) {
+  // Admin sempre pode ver a tela, jogadores precisam aguardar query do personagem
+  if (isLoading && !isFetched && (!user?.isAdmin ? currentUserCharacter === undefined : false)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center">
         <motion.div 
@@ -1157,11 +1268,16 @@ export default function Match() {
                             <SelectValue placeholder="Selecione o jogador" />
                           </SelectTrigger>
                           <SelectContent>
-                            {usersWithCharacters?.filter(u => u.character).map((userWithCharacter) => (
+                            {matchPageUsers?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
                               <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
-                                {userWithCharacter.character.name} ({userWithCharacter.username})
+                                {userWithCharacter.character.name} ({userWithCharacter.username}) • ONLINE
                               </SelectItem>
                             ))}
+                            {matchPageUsers?.filter(u => u.character && !u.isAdmin).length === 0 && (
+                              <SelectItem value="no-players" disabled>
+                                Nenhum jogador conectado
+                              </SelectItem>
+                            )}
                           </SelectContent>
                         </Select>
                       </motion.div>
@@ -1264,11 +1380,11 @@ export default function Match() {
                             <SelectValue placeholder="Selecione o jogador" />
                           </SelectTrigger>
                           <SelectContent>
-                            {usersWithCharacters?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
+                            {matchPageUsers?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
                               <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
                                 <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                                  {userWithCharacter.character.name} ({userWithCharacter.username})
+                                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                  {userWithCharacter.character.name} ({userWithCharacter.username}) • ONLINE
                                 </div>
                               </SelectItem>
                             ))}
@@ -1512,6 +1628,33 @@ export default function Match() {
         isActive={isInFlowState && !showFlowCutscene}
         flowColor={flowColor}
       />
+      
+      {/* Introdução de personagem quando a partida inicia */}
+      {showCharacterIntro && introCharacter && (
+        <CharacterIntroduction
+          character={introCharacter}
+          isVisible={showCharacterIntro}
+          onComplete={() => {
+            console.log("Character intro completed. Current index:", currentCharacterIndex, "Total characters:", characterSequence.length);
+            
+            // Se há mais personagens na sequência, mostra o próximo
+            if (characterSequence.length > 0 && currentCharacterIndex < characterSequence.length - 1) {
+              const nextIndex = currentCharacterIndex + 1;
+              console.log("Showing next character at index:", nextIndex, "Character:", characterSequence[nextIndex].name);
+              setCurrentCharacterIndex(nextIndex);
+              setIntroCharacter(characterSequence[nextIndex]);
+              // Mantém showCharacterIntro como true para continuar a sequência
+            } else {
+              // Acabou a sequência ou é apresentação individual
+              console.log("Character sequence completed, returning to match page");
+              setShowCharacterIntro(false);
+              setIntroCharacter(null);
+              setCharacterSequence([]);
+              setCurrentCharacterIndex(0);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
