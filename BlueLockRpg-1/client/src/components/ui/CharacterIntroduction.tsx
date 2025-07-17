@@ -36,27 +36,30 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
       // Timer principal de 6 segundos
       timerRef.current = setTimeout(() => {
         console.log("Character introduction timer completed for:", character.name);
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        if (safetyTimerRef.current) {
+          clearTimeout(safetyTimerRef.current);
+          safetyTimerRef.current = null;
+        }
         onComplete();
       }, 6000);
 
       // Timer de segurança de 8 segundos para garantir que sempre termine
       safetyTimerRef.current = setTimeout(() => {
         console.log("Character introduction safety timeout triggered for:", character.name);
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        if (safetyTimerRef.current) {
+          clearTimeout(safetyTimerRef.current);
+          safetyTimerRef.current = null;
+        }
         onComplete();
       }, 8000);
-    }
-
-    // Cleanup ao desmontar ou quando isVisible muda para false
-    if (!isVisible && hasStarted) {
-      setHasStarted(false);
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-      if (safetyTimerRef.current) {
-        clearTimeout(safetyTimerRef.current);
-        safetyTimerRef.current = null;
-      }
     }
 
     return () => {
