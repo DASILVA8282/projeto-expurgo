@@ -124,12 +124,19 @@ export default function Match() {
     
     // Introdução de personagem quando partida inicia (sequencial)
     if (lastMessage?.type === "match_started_character_intro_sequence" && lastMessage.characters) {
-      console.log("Starting character sequence with", lastMessage.characters.length, "characters");
+      console.log("=== WEBSOCKET: CHARACTER SEQUENCE STARTED ===");
+      console.log("Characters received:", lastMessage.characters.length);
+      console.log("Characters:", lastMessage.characters.map(c => c.name));
+      
       setCharacterSequence(lastMessage.characters);
       setCurrentCharacterIndex(0);
       setIntroCharacter(lastMessage.characters[0]);
       setShowCharacterIntro(true);
       setHasShownIntro(true);
+      
+      console.log("Set first character:", lastMessage.characters[0].name);
+      console.log("showCharacterIntro set to:", true);
+      
       toast({
         title: "Partida Iniciada!",
         description: "Apresentando os jogadores...",
@@ -216,7 +223,8 @@ export default function Match() {
       currentUserCharacter && 
       match?.status === "active" && 
       !hasShownIntro && 
-      !showCharacterIntro
+      !showCharacterIntro &&
+      characterSequence.length === 0 // Só mostra introdução individual se não há sequência ativa
     ) {
       setIntroCharacter(currentUserCharacter);
       setShowCharacterIntro(true);
@@ -226,7 +234,7 @@ export default function Match() {
         description: "Apresentando seu personagem...",
       });
     }
-  }, [currentUserCharacter, match, user, hasShownIntro, showCharacterIntro]);
+  }, [currentUserCharacter, match, user, hasShownIntro, showCharacterIntro, characterSequence.length]);
 
   // Reset hasShownIntro when match changes or user changes
   useEffect(() => {
@@ -240,17 +248,22 @@ export default function Match() {
   // Timeout de segurança para garantir que a cutscene sempre termine
   useEffect(() => {
     if (showCharacterIntro) {
+      // Calcula timeout baseado no número de personagens (8 segundos por personagem + 5 segundos extra)
+      const timeoutDuration = characterSequence.length > 0 
+        ? (characterSequence.length * 8000) + 5000  // 8 segundos por personagem + 5 segundos extra
+        : 10000; // 10 segundos para apresentação individual
+      
       const safetyTimeout = setTimeout(() => {
-        console.log("Character intro safety timeout - forcing completion");
+        console.log("Character intro safety timeout - forcing completion after", timeoutDuration, "ms");
         setShowCharacterIntro(false);
         setIntroCharacter(null);
         setCharacterSequence([]);
         setCurrentCharacterIndex(0);
-      }, 10000); // 10 segundos para garantir que termine
+      }, timeoutDuration);
 
       return () => clearTimeout(safetyTimeout);
     }
-  }, [showCharacterIntro]);
+  }, [showCharacterIntro, characterSequence.length]);
 
   // Verifica se o usuário atual está em Flow State
   const { data: userFlowState } = useQuery<any>({
@@ -358,11 +371,8 @@ export default function Match() {
       queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
       toast({ title: "Partida iniciada!" });
       
-      // Mostrar introdução do personagem do usuário atual se não for admin
-      if (!user?.isAdmin && currentUserCharacter) {
-        setIntroCharacter(currentUserCharacter);
-        setShowCharacterIntro(true);
-      }
+      // Introdução será controlada pelo WebSocket message "match_started_character_intro_sequence"
+      // Removido código que forçava introdução individual aqui
     },
   });
 
@@ -1635,18 +1645,26 @@ export default function Match() {
           character={introCharacter}
           isVisible={showCharacterIntro}
           onComplete={() => {
-            console.log("Character intro completed. Current index:", currentCharacterIndex, "Total characters:", characterSequence.length);
+            console.log("=== CHARACTER INTRO COMPLETED ===");
+            console.log("Current index:", currentCharacterIndex);
+            console.log("Total characters:", characterSequence.length);
+            console.log("Character sequence:", characterSequence.map(c => c.name));
             
             // Se há mais personagens na sequência, mostra o próximo
             if (characterSequence.length > 0 && currentCharacterIndex < characterSequence.length - 1) {
               const nextIndex = currentCharacterIndex + 1;
-              console.log("Showing next character at index:", nextIndex, "Character:", characterSequence[nextIndex].name);
+              console.log("=== SHOWING NEXT CHARACTER ===");
+              console.log("Next index:", nextIndex);
+              console.log("Next character:", characterSequence[nextIndex].name);
+              
               setCurrentCharacterIndex(nextIndex);
               setIntroCharacter(characterSequence[nextIndex]);
               // Mantém showCharacterIntro como true para continuar a sequência
+              console.log("Character sequence continuing...");
             } else {
               // Acabou a sequência ou é apresentação individual
-              console.log("Character sequence completed, returning to match page");
+              console.log("=== CHARACTER SEQUENCE COMPLETED ===");
+              console.log("Returning to match page");
               setShowCharacterIntro(false);
               setIntroCharacter(null);
               setCharacterSequence([]);
