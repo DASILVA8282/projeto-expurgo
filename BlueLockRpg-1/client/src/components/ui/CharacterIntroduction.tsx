@@ -30,12 +30,20 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
 
   React.useEffect(() => {
     if (isVisible && character && !hasStarted) {
-      console.log("Character introduction starting for:", character.name);
+      console.log("=== CHARACTER INTRODUCTION STARTING ===");
+      console.log("Character:", character.name);
+      console.log("Character ID:", character.id);
+      console.log("isVisible:", isVisible);
+      console.log("hasStarted:", hasStarted);
+      
       setHasStarted(true);
       
       // Timer principal de 6 segundos
       timerRef.current = setTimeout(() => {
-        console.log("Character introduction timer completed for:", character.name);
+        console.log("=== CHARACTER INTRODUCTION TIMER COMPLETED ===");
+        console.log("Character:", character.name);
+        console.log("Calling onComplete callback");
+        
         if (timerRef.current) {
           clearTimeout(timerRef.current);
           timerRef.current = null;
@@ -49,7 +57,10 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
 
       // Timer de segurança de 8 segundos para garantir que sempre termine
       safetyTimerRef.current = setTimeout(() => {
-        console.log("Character introduction safety timeout triggered for:", character.name);
+        console.log("=== CHARACTER INTRODUCTION SAFETY TIMEOUT ===");
+        console.log("Character:", character.name);
+        console.log("Calling onComplete callback via safety timeout");
+        
         if (timerRef.current) {
           clearTimeout(timerRef.current);
           timerRef.current = null;
