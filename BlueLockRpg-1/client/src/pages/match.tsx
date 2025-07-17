@@ -58,17 +58,18 @@ export default function Match() {
   
   // Callback para completar introdução de personagem
   const handleCharacterIntroComplete = useCallback(() => {
-    console.log("=== CHARACTER INTRO COMPLETED ===");
+    console.log("=== CHARACTER INTRO COMPLETED CALLBACK CALLED ===");
     console.log("Current index:", currentCharacterIndex);
     console.log("Total characters:", characterSequence.length);
     console.log("Character sequence:", characterSequence.map(c => c.name));
+    console.log("Current character:", introCharacter?.name);
     
     // Usar setTimeout para evitar problemas de state batching
     setTimeout(() => {
       // Se há mais personagens na sequência, mostra o próximo
       if (characterSequence.length > 0 && currentCharacterIndex < characterSequence.length - 1) {
         const nextIndex = currentCharacterIndex + 1;
-        console.log("=== SHOWING NEXT CHARACTER ===");
+        console.log("=== ADVANCING TO NEXT CHARACTER ===");
         console.log("Next index:", nextIndex);
         console.log("Next character:", characterSequence[nextIndex].name);
         
@@ -86,7 +87,7 @@ export default function Match() {
         setCurrentCharacterIndex(0);
       }
     }, 100); // Pequeno delay para garantir que os states sejam atualizados
-  }, [characterSequence, currentCharacterIndex]);
+  }, [characterSequence, currentCharacterIndex, introCharacter]);
 
   // Notifica que o usuário entrou na página de partidas e limpa cache
   const hasNotifiedRef = useRef(false);
