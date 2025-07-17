@@ -159,6 +159,8 @@ export default function Match() {
       console.log("=== WEBSOCKET: CHARACTER SEQUENCE STARTED ===");
       console.log("Characters received:", lastMessage.characters.length);
       console.log("Characters:", lastMessage.characters.map(c => c.name));
+      console.log("Current user:", user?.username);
+      console.log("User is admin:", user?.isAdmin);
       
       setCharacterSequence(lastMessage.characters);
       setCurrentCharacterIndex(0);
@@ -174,6 +176,11 @@ export default function Match() {
         description: "Apresentando os jogadores...",
       });
     }
+    
+    // Log para debugar todas as mensagens WebSocket
+    console.log("=== ALL WEBSOCKET MESSAGES ===");
+    console.log("Message type:", lastMessage?.type);
+    console.log("Full message:", lastMessage);
     
     // Introdução de personagem quando partida inicia (individual - legacy)
     if (lastMessage?.type === "match_started_character_intro" && lastMessage.character) {
