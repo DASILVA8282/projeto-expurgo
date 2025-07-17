@@ -533,26 +533,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const connectedUserIds = Array.from(matchPageConnections.keys());
       const playersWithCharacters = [];
       
+      console.log("=== PROCESSING CONNECTED USERS FOR CHARACTER SEQUENCE ===");
+      console.log("Connected user IDs:", connectedUserIds);
+      
       // Coletar apenas jogadores com personagens
       for (const userId of connectedUserIds) {
         const user = await storage.getUserWithCharacter(userId);
+        console.log(`User ${userId}:`, {
+          exists: !!user,
+          hasCharacter: !!user?.character,
+          isAdmin: user?.isAdmin,
+          username: user?.username,
+          characterName: user?.character?.name
+        });
+        
         if (user && user.character && !user.isAdmin) {
           playersWithCharacters.push(user.character);
+          console.log(`Added character: ${user.character.name} (User: ${user.username})`);
+        } else {
+          console.log(`Skipped user ${userId}: no character or is admin`);
         }
       }
       
+      console.log("Final playersWithCharacters:", playersWithCharacters.length);
+      console.log("Characters to show:", playersWithCharacters.map(c => c.name));
+      
       // Enviar introdução sequencial para todos os usuários conectados
       if (playersWithCharacters.length > 0) {
+        console.log("=== SENDING WEBSOCKET MESSAGE ===");
+        console.log("Sending to", matchPageConnections.size, "connections");
+        
+        const message = {
+          type: "match_started_character_intro_sequence",
+          characters: playersWithCharacters,
+          message: "A partida começou! Apresentando os jogadores..."
+        };
+        
+        console.log("Message being sent:", JSON.stringify(message, null, 2));
+        
         // Broadcast para todos os conectados
         for (const [userId, connection] of matchPageConnections) {
           if (connection.readyState === WebSocket.OPEN) {
-            connection.send(JSON.stringify({
-              type: "match_started_character_intro_sequence",
-              characters: playersWithCharacters,
-              message: "A partida começou! Apresentando os jogadores..."
-            }));
+            console.log("Sending character sequence to user:", userId);
+            connection.send(JSON.stringify(message));
+          } else {
+            console.log("Connection not open for user:", userId);
           }
         }
+      } else {
+        console.log("No characters to show, skipping WebSocket broadcast");
       }
       
       res.json(updatedMatch);
