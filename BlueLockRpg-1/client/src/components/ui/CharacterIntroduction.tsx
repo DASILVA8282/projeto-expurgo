@@ -13,6 +13,21 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
   const timerRef = React.useRef<NodeJS.Timeout | null>(null);
   const safetyTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  // Reset hasStarted quando o personagem muda
+  React.useEffect(() => {
+    console.log("Character changed, resetting hasStarted for:", character?.name);
+    setHasStarted(false);
+    // Limpar timers quando personagem muda
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (safetyTimerRef.current) {
+      clearTimeout(safetyTimerRef.current);
+      safetyTimerRef.current = null;
+    }
+  }, [character?.id]); // Usar character.id para detectar mudança de personagem
+
   React.useEffect(() => {
     if (isVisible && character && !hasStarted) {
       console.log("Character introduction starting for:", character.name);
