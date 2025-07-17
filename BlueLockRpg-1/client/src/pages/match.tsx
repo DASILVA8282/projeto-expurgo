@@ -182,7 +182,7 @@ export default function Match() {
       }, 1500);
     }
     
-    // Introdução de personagem quando partida inicia (sequencial)
+    // Introdução de personagem quando partida inicia (sequencial) - Agora também para admin
     if (lastMessage?.type === "match_started_character_intro_sequence" && lastMessage.characters) {
       console.log("=== WEBSOCKET: CHARACTER SEQUENCE STARTED ===");
       console.log("Characters received:", lastMessage.characters.length);
@@ -1309,32 +1309,7 @@ export default function Match() {
                     </motion.div>
                   )}
                   
-                  {/* Botão de teste da sequência de personagens */}
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      onClick={() => {
-                        // Simular sequência de personagens para teste
-                        const testCharacters = [
-                          { id: 1, name: "BILOULA", position: "Atacante", level: 1, ranking: 299 },
-                          { id: 2, name: "ADOLFO", position: "Meio-campo", level: 1, ranking: 298 }
-                        ];
-                        console.log("=== TEST: TRIGGERING CHARACTER SEQUENCE ===");
-                        setCharacterSequence(testCharacters);
-                        setCurrentCharacterIndex(0);
-                        setIntroCharacter(testCharacters[0]);
-                        setShowCharacterIntro(true);
-                      }}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-4 text-lg font-bold shadow-lg hover:shadow-purple-500/25 transform transition-all duration-200"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Play className="w-5 h-5" />
-                        Test Sequence
-                      </div>
-                    </Button>
-                  </motion.div>
+
                 </div>
 
                 {/* Seção Adicionar Gol - Design melhorado */}
