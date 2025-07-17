@@ -55,6 +55,38 @@ export default function Match() {
   const [hasShownIntro, setHasShownIntro] = useState(false);
   const [characterSequence, setCharacterSequence] = useState<any[]>([]);
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0);
+  
+  // Callback para completar introdução de personagem
+  const handleCharacterIntroComplete = useCallback(() => {
+    console.log("=== CHARACTER INTRO COMPLETED ===");
+    console.log("Current index:", currentCharacterIndex);
+    console.log("Total characters:", characterSequence.length);
+    console.log("Character sequence:", characterSequence.map(c => c.name));
+    
+    // Usar setTimeout para evitar problemas de state batching
+    setTimeout(() => {
+      // Se há mais personagens na sequência, mostra o próximo
+      if (characterSequence.length > 0 && currentCharacterIndex < characterSequence.length - 1) {
+        const nextIndex = currentCharacterIndex + 1;
+        console.log("=== SHOWING NEXT CHARACTER ===");
+        console.log("Next index:", nextIndex);
+        console.log("Next character:", characterSequence[nextIndex].name);
+        
+        setCurrentCharacterIndex(nextIndex);
+        setIntroCharacter(characterSequence[nextIndex]);
+        // Mantém showCharacterIntro como true para continuar a sequência
+        console.log("Character sequence continuing...");
+      } else {
+        // Acabou a sequência ou é apresentação individual
+        console.log("=== CHARACTER SEQUENCE COMPLETED ===");
+        console.log("Returning to match page");
+        setShowCharacterIntro(false);
+        setIntroCharacter(null);
+        setCharacterSequence([]);
+        setCurrentCharacterIndex(0);
+      }
+    }, 100); // Pequeno delay para garantir que os states sejam atualizados
+  }, [characterSequence, currentCharacterIndex]);
 
   // Notifica que o usuário entrou na página de partidas e limpa cache
   const hasNotifiedRef = useRef(false);
@@ -1644,33 +1676,7 @@ export default function Match() {
         <CharacterIntroduction
           character={introCharacter}
           isVisible={showCharacterIntro}
-          onComplete={() => {
-            console.log("=== CHARACTER INTRO COMPLETED ===");
-            console.log("Current index:", currentCharacterIndex);
-            console.log("Total characters:", characterSequence.length);
-            console.log("Character sequence:", characterSequence.map(c => c.name));
-            
-            // Se há mais personagens na sequência, mostra o próximo
-            if (characterSequence.length > 0 && currentCharacterIndex < characterSequence.length - 1) {
-              const nextIndex = currentCharacterIndex + 1;
-              console.log("=== SHOWING NEXT CHARACTER ===");
-              console.log("Next index:", nextIndex);
-              console.log("Next character:", characterSequence[nextIndex].name);
-              
-              setCurrentCharacterIndex(nextIndex);
-              setIntroCharacter(characterSequence[nextIndex]);
-              // Mantém showCharacterIntro como true para continuar a sequência
-              console.log("Character sequence continuing...");
-            } else {
-              // Acabou a sequência ou é apresentação individual
-              console.log("=== CHARACTER SEQUENCE COMPLETED ===");
-              console.log("Returning to match page");
-              setShowCharacterIntro(false);
-              setIntroCharacter(null);
-              setCharacterSequence([]);
-              setCurrentCharacterIndex(0);
-            }
-          }}
+          onComplete={handleCharacterIntroComplete}
         />
       )}
     </div>
