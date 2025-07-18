@@ -25,7 +25,7 @@ export default function Match() {
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const { lastMessage, sendMessage, isConnected } = useWebSocket();
-  
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const [goalPlayer, setGoalPlayer] = useState<string>("");
   const [goalTeam, setGoalTeam] = useState<"V" | "Z">("V");
@@ -36,7 +36,7 @@ export default function Match() {
   const [editingTeamZ, setEditingTeamZ] = useState(false);
   const [tempTeamVName, setTempTeamVName] = useState("");
   const [tempTeamZName, setTempTeamZName] = useState("");
-  
+
   // Flow State
   const [showFlowCutscene, setShowFlowCutscene] = useState(false);
   const [flowPlayerName, setFlowPlayerName] = useState("");
@@ -45,30 +45,30 @@ export default function Match() {
   const [isInFlowState, setIsInFlowState] = useState(false);
   const [flowStateTriggered, setFlowStateTriggered] = useState(false);
   const [flowStatePlayer, setFlowStatePlayer] = useState<string>("");
-  
+
   // Controle de tempo
   const [customMatchTime, setCustomMatchTime] = useState<number>(0);
-  
+
   // Introdução de personagem
   const [showCharacterIntro, setShowCharacterIntro] = useState(false);
   const [introCharacter, setIntroCharacter] = useState<any>(null);
   const [hasShownIntro, setHasShownIntro] = useState(false);
   const [characterSequence, setCharacterSequence] = useState<any[]>([]);
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0);
-  
+
   // Usar refs para acessar valores atuais
   const characterSequenceRef = useRef<any[]>([]);
   const currentCharacterIndexRef = useRef(0);
-  
+
   // Atualizar refs quando estados mudam
   useEffect(() => {
     characterSequenceRef.current = characterSequence;
   }, [characterSequence]);
-  
+
   useEffect(() => {
     currentCharacterIndexRef.current = currentCharacterIndex;
   }, [currentCharacterIndex]);
-  
+
   // Callback para completar introdução de personagem
   const handleCharacterIntroComplete = useCallback(() => {
     console.log("=== CHARACTER INTRO COMPLETED CALLBACK CALLED ===");
@@ -77,15 +77,15 @@ export default function Match() {
     console.log("Character sequence from ref:", characterSequenceRef.current.map(c => c?.name || 'undefined'));
     console.log("Current introCharacter:", introCharacter?.name);
     console.log("Current showCharacterIntro:", showCharacterIntro);
-    
+
     const currentIndex = currentCharacterIndexRef.current;
     const sequence = characterSequenceRef.current;
-    
+
     console.log("=== DECISION LOGIC ===");
     console.log("sequence.length > 0?", sequence.length > 0);
     console.log("currentIndex < sequence.length - 1?", currentIndex < sequence.length - 1);
     console.log("Condition result:", sequence.length > 0 && currentIndex < sequence.length - 1);
-    
+
     // Use setTimeout to ensure state updates are processed
     setTimeout(() => {
       // Se há mais personagens na sequência, mostra o próximo
@@ -94,13 +94,13 @@ export default function Match() {
         console.log("=== ADVANCING TO NEXT CHARACTER ===");
         console.log("Next index:", nextIndex);
         console.log("Next character:", sequence[nextIndex]?.name || 'undefined');
-        
+
         console.log("About to call setCurrentCharacterIndex with:", nextIndex);
         setCurrentCharacterIndex(nextIndex);
-        
+
         console.log("About to call setIntroCharacter with:", sequence[nextIndex]);
         setIntroCharacter(sequence[nextIndex]);
-        
+
         // Mantém showCharacterIntro como true para continuar a sequência
         console.log("Character sequence continuing... showCharacterIntro should remain true");
       } else {
@@ -118,12 +118,12 @@ export default function Match() {
 
   // Notifica que o usuário entrou na página de partidas e limpa cache
   const hasNotifiedRef = useRef(false);
-  
+
   useEffect(() => {
     queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
     queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
   }, []); // Executa apenas uma vez ao montar o componente
-  
+
   useEffect(() => {
     // Somente notifica se o usuário existir, WebSocket estiver conectado e ainda não foi notificado
     if (user?.id && isConnected && !hasNotifiedRef.current) {
@@ -134,7 +134,7 @@ export default function Match() {
         userId: user.id
       });
     }
-    
+
     // Cleanup: notifica saída da página
     return () => {
       if (user?.id && hasNotifiedRef.current) {
@@ -160,7 +160,7 @@ export default function Match() {
   useEffect(() => {
     if (lastMessage?.type === "match_finished") {
       toast({ title: "Partida finalizada!", description: lastMessage.message });
-      
+
       // Limpa todos os estados do Flow State
       setShowFlowCutscene(false);
       setIsInFlowState(false);
@@ -169,19 +169,19 @@ export default function Match() {
       setFlowPhrase("É hora de dominar o campo!");
       setFlowStateTriggered(false);
       setFlowStatePlayer("");
-      
+
       // Invalida e remove todas as queries relacionadas
       queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
       queryClient.invalidateQueries({ queryKey: ["/api/matches/finished"] });
       queryClient.invalidateQueries({ queryKey: ["/api/flow-state"] });
       queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
-      
+
       // Redireciona TODOS os usuários para o dashboard (incluindo admin)
       setTimeout(() => {
         setLocation("/dashboard");
       }, 1500);
     }
-    
+
     // Introdução de personagem quando partida inicia (sequencial) - Agora também para admin
     if (lastMessage?.type === "match_started_character_intro_sequence" && lastMessage.characters) {
       console.log("=== WEBSOCKET: CHARACTER SEQUENCE STARTED ===");
@@ -189,37 +189,37 @@ export default function Match() {
       console.log("Characters:", lastMessage.characters.map(c => c.name));
       console.log("Current user:", user?.username);
       console.log("User is admin:", user?.isAdmin);
-      
+
       console.log("About to set characterSequence with:", lastMessage.characters);
       setCharacterSequence(lastMessage.characters);
-      
+
       console.log("About to set currentCharacterIndex to 0");
       setCurrentCharacterIndex(0);
-      
+
       console.log("About to set introCharacter to:", lastMessage.characters[0]);
       setIntroCharacter(lastMessage.characters[0]);
-      
+
       console.log("About to set showCharacterIntro to true");
       setShowCharacterIntro(true);
-      
+
       console.log("About to set hasShownIntro to true");
       setHasShownIntro(true);
-      
+
       console.log("=== WEBSOCKET SETUP COMPLETE ===");
       console.log("Set first character:", lastMessage.characters[0].name);
       console.log("showCharacterIntro set to:", true);
-      
+
       toast({
         title: "Partida Iniciada!",
         description: "Apresentando os jogadores...",
       });
     }
-    
+
     // Log para debugar todas as mensagens WebSocket
     console.log("=== ALL WEBSOCKET MESSAGES ===");
     console.log("Message type:", lastMessage?.type);
     console.log("Full message:", lastMessage);
-    
+
     // Introdução de personagem quando partida inicia (individual - legacy)
     if (lastMessage?.type === "match_started_character_intro" && lastMessage.character) {
       setIntroCharacter(lastMessage.character);
@@ -230,14 +230,14 @@ export default function Match() {
         description: "Apresentando seu personagem...",
       });
     }
-    
+
     // Flow State ativado
     if (lastMessage?.type === "flow_state_activated") {
       console.log("Flow State activated WebSocket message received:", lastMessage);
       setFlowPlayerName(lastMessage.playerName);
       setFlowColor(lastMessage.flowColor);
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
-      
+
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
         console.log("Starting Epic Flow State cutscene for user", user.id);
@@ -254,7 +254,7 @@ export default function Match() {
         });
       }
     }
-    
+
     // Flow State encerrado
     if (lastMessage?.type === "flow_state_ended") {
       console.log("Flow State ended");
@@ -382,14 +382,14 @@ export default function Match() {
     // Ativa Flow State exatamente aos 30 minutos, mas só se não houver Flow State ativo
     if (elapsedMinutes >= 30 && !activeFlowState) {
       setFlowStateTriggered(true);
-      
+
       // Seleciona um jogador aleatório conectado na página de partidas
       if (matchPageUsers && matchPageUsers.length > 0) {
         const playersWithCharacters = matchPageUsers.filter(u => u.character && !u.isAdmin);
-        
+
         if (playersWithCharacters.length > 0) {
           const randomPlayer = playersWithCharacters[Math.floor(Math.random() * playersWithCharacters.length)];
-          
+
           // Ativa Flow State via API
           activateFlowStateMutation.mutate({
             matchId: match.id,
@@ -429,7 +429,7 @@ export default function Match() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
       toast({ title: "Partida iniciada!" });
-      
+
       // Introdução será controlada pelo WebSocket message "match_started_character_intro_sequence"
       // Removido código que forçava introdução individual aqui
     },
@@ -472,7 +472,7 @@ export default function Match() {
       setLastGoal(newGoal);
       setShowGoalAnimation(true);
       setTimeout(() => setShowGoalAnimation(false), 3000);
-      
+
       const selectedPlayer = matchPageUsers?.find(u => u.id.toString() === goalPlayer);
       const playerName = selectedPlayer?.character?.name || "Jogador";
       toast({ title: "Gol marcado!", description: `${playerName} marcou um gol!` });
@@ -504,22 +504,22 @@ export default function Match() {
       queryClient.invalidateQueries({ queryKey: ["/api/flow-state"] });
       queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/active`] });
       queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}`] });
-      
+
       // Forçar refetch imediato da query activeFlowState para atualizar o estado
       refetchActiveFlowState();
-      
+
       // Limpar estado local de Flow State
       setIsInFlowState(false);
       setFlowPlayerName("");
       setFlowColor("");
       setShowFlowCutscene(false);
-      
+
       // Evitar reativação automática imediata definindo um cooldown
       setFlowStateTriggered(true);
       setTimeout(() => {
         setFlowStateTriggered(false);
       }, 2000); // Cooldown de 2 segundos
-      
+
       toast({ title: "Flow State desativado com sucesso!" });
     },
     onError: (error: any) => {
@@ -547,11 +547,11 @@ export default function Match() {
   // Handler para completar a cutscene do Flow State
   const handleFlowCutsceneComplete = useCallback(() => {
     console.log("Flow State cutscene completed - returning to match");
-    
+
     // Limpar estado da cutscene IMEDIATAMENTE e forçar re-render
     setShowFlowCutscene(false);
     setIsInFlowState(true);
-    
+
     // Show toast após pequeno delay
     setTimeout(() => {
       toast({
@@ -631,12 +631,12 @@ export default function Match() {
     const formData = new FormData(e.currentTarget);
     const teamV = formData.get("teamV") as string;
     const teamZ = formData.get("teamZ") as string;
-    
+
     if (!teamV || !teamZ) {
       toast({ title: "Erro", description: "Preencha os nomes dos times", variant: "destructive" });
       return;
     }
-    
+
     createMatchMutation.mutate({ teamV, teamZ });
   };
 
@@ -646,7 +646,7 @@ export default function Match() {
       return;
     }
 
-    const selectedPlayer = usersWithCharacters?.find(u => u.id.toString() === goalPlayer);
+    const selectedPlayer = matchPageUsers?.find(u => u.id.toString() === goalPlayer);
     if (!selectedPlayer || !selectedPlayer.character) {
       toast({ title: "Erro", description: "Jogador selecionado não tem personagem", variant: "destructive" });
       return;
@@ -663,7 +663,7 @@ export default function Match() {
 
   const handleTeamNameEdit = (team: "V" | "Z") => {
     if (!match) return;
-    
+
     if (team === "V") {
       if (editingTeamV && tempTeamVName.trim()) {
         updateTeamNameMutation.mutate({ 
@@ -765,11 +765,11 @@ export default function Match() {
       <div className="absolute inset-0 opacity-15">
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
-        
+
         {/* Centro do campo */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 border-2 border-cyan-500/30 rounded-full" />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-cyan-500/50 rounded-full bg-cyan-500/10" />
-        
+
         {/* Áreas do gol */}
         <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
         <div className="absolute top-1/2 right-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
@@ -1056,7 +1056,7 @@ export default function Match() {
                           </motion.button>
                         )}
                       </div>
-                      
+
                       {editingTeamV ? (
                         <div className="flex items-center gap-2 justify-center">
                           <Input
@@ -1089,7 +1089,7 @@ export default function Match() {
                           {match?.teamV || "TEAM V"}
                         </div>
                       )}
-                      
+
                       {/* Pontuação estilo display digital */}
                       <div className="relative">
                         <div className="text-[8rem] font-black text-gray-800 leading-none font-mono tracking-tighter relative">
@@ -1100,7 +1100,7 @@ export default function Match() {
                         </div>
                       </div>
                     </motion.div>
-                    
+
                     {/* Separador central */}
                     <div className="text-center mx-8 relative">
                       <motion.div
@@ -1112,7 +1112,7 @@ export default function Match() {
                       </motion.div>
                       <div className="w-2 h-32 bg-gradient-to-b from-gray-400 to-gray-600 mx-auto rounded-full"></div>
                     </div>
-                    
+
                     {/* Team Z */}
                     <motion.div 
                       whileHover={{ scale: 1.02 }}
@@ -1133,7 +1133,7 @@ export default function Match() {
                           </motion.button>
                         )}
                       </div>
-                      
+
                       {editingTeamZ ? (
                         <div className="flex items-center gap-2 justify-center">
                           <Input
@@ -1166,7 +1166,7 @@ export default function Match() {
                           {match?.teamZ || "TEAM Z"}
                         </div>
                       )}
-                      
+
                       {/* Pontuação estilo display digital */}
                       <div className="relative">
                         <div className="text-[8rem] font-black text-gray-800 leading-none font-mono tracking-tighter relative">
@@ -1209,7 +1209,7 @@ export default function Match() {
                   <h3 className="text-2xl font-bold text-white">Últimos Gols</h3>
                   <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
                 </div>
-                
+
                 <div className="space-y-3">
                   {match?.goals?.slice(-5).reverse().map((goal, index) => (
                     <motion.div 
@@ -1283,7 +1283,7 @@ export default function Match() {
                       </Button>
                     </motion.div>
                   )}
-                  
+
                   {match?.status === "active" && (
                     <motion.div
                       whileHover={{ scale: 1.05 }}
@@ -1308,7 +1308,7 @@ export default function Match() {
                       </Button>
                     </motion.div>
                   )}
-                  
+
 
                 </div>
 
@@ -1326,7 +1326,7 @@ export default function Match() {
                       </div>
                       <h4 className="text-xl font-bold text-white">Adicionar Gol</h4>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -1438,7 +1438,7 @@ export default function Match() {
                       <h4 className="text-xl font-bold text-white">Flow State Manual</h4>
                       <div className="text-sm text-gray-400">(Força ativação independente da minutagem)</div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -1486,7 +1486,7 @@ export default function Match() {
                             </div>
                           )}
                         </Button>
-                        
+
                         <Button
                           onClick={handleDeactivateFlowState}
                           disabled={deactivateFlowStateMutation.isPending || !activeFlowState}
@@ -1547,7 +1547,7 @@ export default function Match() {
                       <h4 className="text-xl font-bold text-white">Controle de Tempo</h4>
                       <div className="text-sm text-gray-400">(Definir tempo para ativação automática do Flow State)</div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -1638,7 +1638,7 @@ export default function Match() {
                       <div className="text-white text-xl font-bold">{match?.teamV}</div>
                       <div className="text-cyan-400 text-3xl font-black">{match?.scoreV || 0}</div>
                     </div>
-                    
+
                     <div className="text-center">
                       <div className="text-gray-400 text-lg font-bold mb-2">VS</div>
                       <Badge 
@@ -1656,7 +1656,7 @@ export default function Match() {
                         {match?.status === "finished" && "FINALIZADA"}
                       </Badge>
                     </div>
-                    
+
                     <div className="text-left">
                       <div className="text-white text-xl font-bold">{match?.teamZ}</div>
                       <div className="text-red-400 text-3xl font-black">{match?.scoreZ || 0}</div>
@@ -1684,7 +1684,7 @@ export default function Match() {
           </div>
         ) : null}
       </div>
-      
+
       {/* Componentes visuais do Flow State */}
       <FlowStateCutsceneSimple
         isActive={showFlowCutscene}
@@ -1693,13 +1693,13 @@ export default function Match() {
         flowPhrase={flowPhrase}
         onComplete={handleFlowCutsceneComplete}
       />
-      
+
       {/* Vinheta do Flow State - aparece após a cutscene */}
       <FlowStateVignette
         isActive={isInFlowState && !showFlowCutscene}
         flowColor={flowColor}
       />
-      
+
       {/* Introdução de personagem quando a partida inicia */}
       {showCharacterIntro && introCharacter && (
         <CharacterIntroduction
