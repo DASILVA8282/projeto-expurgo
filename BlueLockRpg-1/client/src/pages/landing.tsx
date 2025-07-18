@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import InvitationEnvelope from "@/components/ui/InvitationEnvelope";
+import InvitationEnvelope from "@/components/InvitationEnvelope";
 
 export default function Landing() {
   const { login, register, isLoginPending, isRegisterPending } = useAuth();
