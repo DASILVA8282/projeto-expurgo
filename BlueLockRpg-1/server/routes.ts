@@ -1,6 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
+import multer from "multer";
+import path from "path";
+import express from "express";
 import { storage } from "./storage";
 import { insertUserSchema, insertCharacterSchema, updateCharacterSchema, insertWildCardInvitationSchema, updateWildCardInvitationSchema, insertMatchSchema, updateMatchSchema, insertGoalSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
@@ -31,6 +34,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   }));
 
+  // Multer configuration for file uploads
+  const storage_multer = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'public/uploads/avatars');
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+
+  const upload = multer({ 
+    storage: storage_multer,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
+        cb(null, true);
+      } else {
+        cb(new Error('Only PNG and JPEG images are allowed'));
+      }
+    }
+  });
+
+  // Serve static files from uploads directory
+  app.use('/uploads', express.static('public/uploads'));
+
   // Authentication middleware
   const requireAuth = (req: any, res: any, next: any) => {
     if (!req.session.userId) {
@@ -40,11 +69,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   const requireAdmin = async (req: any, res: any, next: any) => {
+    console.log("Admin check - Session userId:", req.session.userId);
     if (!req.session.userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     
     const user = await storage.getUser(req.session.userId);
+    console.log("Admin check - User:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
     if (!user || !user.isAdmin) {
       return res.status(403).json({ message: "Admin access required" });
     }
@@ -133,6 +164,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/mark-cesar-seen", requireAuth, async (req, res) => {
+    try {
+      await storage.markCesarMonitorSeen(req.session.userId!);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking César monitor as seen:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+
+  // Avatar upload route
+  app.post("/api/characters/avatar", requireAuth, upload.single('avatar'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      
+      // Update character with new avatar URL
+      const character = await storage.getCharacter(req.session.userId!);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+
+      const updatedCharacter = await storage.updateCharacter(req.session.userId!, {
+        avatar: avatarUrl
+      });
+
+      res.json({ 
+        success: true, 
+        avatarUrl: avatarUrl,
+        character: updatedCharacter 
+      });
+    } catch (error) {
+      console.error("Avatar upload error:", error);
+      res.status(500).json({ message: "Upload failed" });
+    }
+  });
+
   // Character routes
   app.post("/api/characters", requireAuth, async (req, res) => {
     try {
@@ -210,6 +281,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get all users error:", error);
       res.status(500).json({ message: "Failed to get users" });
+    }
+  });
+
+  // Get all matches for admin
+  app.get("/api/admin/matches", requireAdmin, async (req, res) => {
+    try {
+      const matches = await storage.getAllMatches();
+      res.json(matches);
+    } catch (error) {
+      console.error("Get all matches error:", error);
+      res.status(500).json({ message: "Failed to get matches" });
     }
   });
 
@@ -725,7 +807,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Flow State routes - Ordem importante: mais específicas primeiro
-  app.get("/api/flow-state/:matchId/active", async (req, res) => {
+  app.get("/api/flow-state/:matchId/active", requireAuth, async (req, res) => {
     try {
       const { matchId } = req.params;
       
