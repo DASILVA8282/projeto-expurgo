@@ -40,7 +40,7 @@ export default function Match() {
   // Flow State
   const [showFlowCutscene, setShowFlowCutscene] = useState(false);
   const [flowPlayerName, setFlowPlayerName] = useState("");
-  const [flowColor, setFlowColor] = useState("cyan");
+  const [flowColor, setFlowColor] = useState("red");
   const [flowPhrase, setFlowPhrase] = useState("É hora de dominar o campo!");
   const [isInFlowState, setIsInFlowState] = useState(false);
   const [flowStateTriggered, setFlowStateTriggered] = useState(false);
@@ -165,7 +165,7 @@ export default function Match() {
       setShowFlowCutscene(false);
       setIsInFlowState(false);
       setFlowPlayerName("");
-      setFlowColor("cyan");
+      setFlowColor("red");
       setFlowPhrase("É hora de dominar o campo!");
       setFlowStateTriggered(false);
       setFlowStatePlayer("");
@@ -261,7 +261,7 @@ export default function Match() {
       setIsInFlowState(false);
       setShowFlowCutscene(false); // Garantir que cutscene também está fechada
       setFlowPlayerName("");
-      setFlowColor("cyan");
+      setFlowColor("red");
       setFlowPhrase("É hora de dominar o campo!");
       toast({
         title: "Flow State Encerrado",
@@ -720,12 +720,12 @@ export default function Match() {
               <p className="text-gray-300">
                 Você precisa criar seu personagem antes de participar de partidas!
               </p>
-              <p className="text-cyan-400 text-sm">
+              <p className="text-red-400 text-sm">
                 Vá para a página de personagem e crie sua ficha completa.
               </p>
               <Button 
                 onClick={() => setLocation("/character")}
-                className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500"
+                className="w-full bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-500"
               >
                 Criar Personagem
               </Button>
@@ -747,9 +747,9 @@ export default function Match() {
           className="text-center"
         >
           <div className="relative mb-8">
-            <div className="w-20 h-20 mx-auto rounded-full border-4 border-cyan-500 border-t-transparent animate-spin"></div>
+            <div className="w-20 h-20 mx-auto rounded-full border-4 border-red-500 border-t-transparent animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <Timer className="w-8 h-8 text-cyan-500" />
+              <Timer className="w-8 h-8 text-red-500" />
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Carregando Sistema de Partidas</h2>
@@ -767,12 +767,12 @@ export default function Match() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
 
         {/* Centro do campo */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 border-2 border-cyan-500/30 rounded-full" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-cyan-500/50 rounded-full bg-cyan-500/10" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 border-2 border-red-500/30 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-red-500/50 rounded-full bg-red-500/10" />
 
         {/* Áreas do gol */}
-        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
-        <div className="absolute top-1/2 right-8 transform -translate-y-1/2 w-32 h-48 border-2 border-cyan-500/20" />
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 w-32 h-48 border-2 border-red-500/20" />
+        <div className="absolute top-1/2 right-8 transform -translate-y-1/2 w-32 h-48 border-2 border-red-500/20" />
       </div>
 
       {/* Partículas animadas */}
@@ -780,7 +780,7 @@ export default function Match() {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-cyan-500/30 rounded-full"
+            className="absolute w-1 h-1 bg-red-500/30 rounded-full"
             animate={{
               x: [0, Math.random() * window.innerWidth],
               y: [0, Math.random() * window.innerHeight],
@@ -851,15 +851,15 @@ export default function Match() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="max-w-lg w-full mx-4"
             >
-              <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-cyan-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-red-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
                 {/* Header com gradiente animado */}
-                <div className="relative bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 p-6">
+                <div className="relative bg-gradient-to-r from-red-600 via-red-700 to-red-800 p-6">
                   <motion.div
                     animate={{ 
                       backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] 
                     }}
                     transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30"
+                    className="absolute inset-0 bg-gradient-to-r from-red-400 via-red-500 to-red-600 opacity-30"
                     style={{ backgroundSize: "200% 200%" }}
                   />
                   <div className="relative z-10 text-center">
@@ -871,7 +871,7 @@ export default function Match() {
                       <Trophy className="w-8 h-8 text-white" />
                     </motion.div>
                     <h2 className="text-3xl font-bold text-white mb-2">Nova Partida</h2>
-                    <p className="text-cyan-100">Configure os times para começar</p>
+                    <p className="text-red-100">Configure os times para começar</p>
                   </div>
                 </div>
 
@@ -883,14 +883,14 @@ export default function Match() {
                       transition={{ delay: 0.2 }}
                     >
                       <Label htmlFor="teamV" className="text-white text-lg font-semibold flex items-center gap-2">
-                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
                         Team V
                       </Label>
                       <Input
                         id="teamV"
                         name="teamV"
                         placeholder="Digite o nome do Team V"
-                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-cyan-400 focus:ring-cyan-400/20"
+                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-red-400 focus:ring-red-400/20"
                         required
                       />
                     </motion.div>
@@ -908,7 +908,7 @@ export default function Match() {
                         id="teamZ"
                         name="teamZ"
                         placeholder="Digite o nome do Team Z"
-                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-cyan-400 focus:ring-cyan-400/20"
+                        className="bg-slate-700/50 border-slate-600 text-white text-lg h-12 mt-2 focus:border-red-400 focus:ring-red-400/20"
                         required
                       />
                     </motion.div>
@@ -921,7 +921,7 @@ export default function Match() {
                       <Button
                         type="submit"
                         disabled={createMatchMutation.isPending}
-                        className="w-full h-14 text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25"
+                        className="w-full h-14 text-lg font-bold bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-red-500/25"
                       >
                         {createMatchMutation.isPending ? (
                           <div className="flex items-center gap-2">
@@ -949,8 +949,8 @@ export default function Match() {
                 transition={{ delay: 0.4 }}
                 className="max-w-lg w-full mx-4 mt-8"
               >
-                <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-cyan-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
-                  <div className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 p-4">
+                <Card className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border-red-500/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+                  <div className="bg-gradient-to-r from-red-600 via-red-600 to-red-800 p-4">
                     <h3 className="text-xl font-bold text-white text-center flex items-center justify-center gap-2">
                       <Trophy className="w-5 h-5" />
                       Últimas Partidas
@@ -961,13 +961,13 @@ export default function Match() {
                       {finishedMatches.map((finishedMatch) => (
                         <div 
                           key={finishedMatch.id}
-                          className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-cyan-500/50 transition-all duration-200"
+                          className="bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-red-500/50 transition-all duration-200"
                         >
                           <div className="flex justify-between items-center">
                             <div className="text-white font-semibold">
                               {finishedMatch.teamV} vs {finishedMatch.teamZ}
                             </div>
-                            <div className="text-cyan-400 font-mono text-lg">
+                            <div className="text-red-400 font-mono text-lg">
                               {finishedMatch.scoreV} - {finishedMatch.scoreZ}
                             </div>
                           </div>
@@ -1003,7 +1003,7 @@ export default function Match() {
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-black border-4 border-cyan-500 rounded-lg px-6 py-4 z-20"
+                  className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-black border-4 border-red-500 rounded-lg px-6 py-4 z-20"
                 >
                   <div className="text-center">
                     <div className="text-green-400 text-sm font-bold mb-1">TEMPO</div>
@@ -1050,7 +1050,7 @@ export default function Match() {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={() => handleTeamNameEdit("V")}
-                            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
+                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full"
                           >
                             <Edit3 className="w-4 h-4" />
                           </motion.button>
@@ -1062,7 +1062,7 @@ export default function Match() {
                           <Input
                             value={tempTeamVName}
                             onChange={(e) => setTempTeamVName(e.target.value)}
-                            className="text-center text-3xl font-black bg-white border-2 border-blue-500 w-32"
+                            className="text-center text-3xl font-black bg-white border-2 border-red-500 w-32"
                             onKeyDown={(e) => {
                               if (e.key === "Enter") handleTeamNameEdit("V");
                               if (e.key === "Escape") cancelEdit("V");
@@ -1094,7 +1094,7 @@ export default function Match() {
                       <div className="relative">
                         <div className="text-[8rem] font-black text-gray-800 leading-none font-mono tracking-tighter relative">
                           {match?.scoreV || 0}
-                          <div className="absolute inset-0 text-[8rem] font-black text-blue-600/20 transform translate-x-1 translate-y-1">
+                          <div className="absolute inset-0 text-[8rem] font-black text-red-600/20 transform translate-x-1 translate-y-1">
                             {match?.scoreV || 0}
                           </div>
                         </div>
@@ -1200,14 +1200,14 @@ export default function Match() {
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-6 shadow-xl"
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-red-500/30 backdrop-blur-xl rounded-xl p-6 shadow-xl"
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                     <Trophy className="w-4 h-4 text-black" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Últimos Gols</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-red-500/50 to-transparent"></div>
                 </div>
 
                 <div className="space-y-3">
@@ -1217,19 +1217,19 @@ export default function Match() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-cyan-500/50 transition-all duration-200"
+                      className="flex items-center justify-between bg-slate-700/50 p-4 rounded-lg border border-slate-600/50 hover:border-red-500/50 transition-all duration-200"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${goal.team === "V" ? "bg-blue-500" : "bg-red-500"}`}></div>
+                        <div className={`w-3 h-3 rounded-full ${goal.team === "V" ? "bg-red-500" : "bg-red-500"}`}></div>
                         <span className="text-white font-semibold">
                           {goal.player.character?.name || goal.player.username}
                         </span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-cyan-400 font-mono text-lg">{goal.minute}'</span>
+                        <span className="text-red-400 font-mono text-lg">{goal.minute}'</span>
                         <span className={`px-3 py-1 rounded-full text-sm font-bold ${
                           goal.team === "V" 
-                            ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" 
+                            ? "bg-red-500/20 text-blue-300 border border-red-500/30" 
                             : "bg-red-500/20 text-red-300 border border-red-500/30"
                         }`}>
                           Team {goal.team}
@@ -1247,14 +1247,14 @@ export default function Match() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-red-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center">
                     <Timer className="w-4 h-4 text-black" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Controles do Mestre</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-red-500/50 to-transparent"></div>
                 </div>
 
                 {/* Botões de controle da partida */}
@@ -1335,7 +1335,7 @@ export default function Match() {
                       >
                         <Label htmlFor="goalPlayer" className="text-white text-lg font-semibold mb-2 block">Jogador</Label>
                         <Select onValueChange={setGoalPlayer}>
-                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-cyan-400 transition-colors">
+                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-red-400 transition-colors">
                             <SelectValue placeholder="Selecione o jogador" />
                           </SelectTrigger>
                           <SelectContent>
@@ -1360,13 +1360,13 @@ export default function Match() {
                       >
                         <Label htmlFor="goalTeam" className="text-white text-lg font-semibold mb-2 block">Time</Label>
                         <Select onValueChange={(value: "V" | "Z") => setGoalTeam(value)}>
-                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-cyan-400 transition-colors">
+                          <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg hover:border-red-400 transition-colors">
                             <SelectValue placeholder="Selecione o time" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="V">
                               <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                                 Team V - {match?.teamV || "TEAM V"}
                               </div>
                             </SelectItem>
@@ -1391,7 +1391,7 @@ export default function Match() {
                           placeholder="Minuto do gol"
                           value={goalMinute || ""}
                           onChange={(e) => setGoalMinute(parseInt(e.target.value) || 0)}
-                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-cyan-400 focus:ring-cyan-400/20"
+                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-red-400 focus:ring-red-400/20"
                         />
                       </motion.div>
                     </div>
@@ -1541,7 +1541,7 @@ export default function Match() {
                     className="border-t border-slate-600/50 pt-6"
                   >
                     <div className="flex items-center gap-3 mb-6">
-                      <div className="w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                      <div className="w-6 h-6 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center">
                         <Timer className="w-3 h-3 text-black" />
                       </div>
                       <h4 className="text-xl font-bold text-white">Controle de Tempo</h4>
@@ -1560,7 +1560,7 @@ export default function Match() {
                           placeholder="Ex: 30 para ativar Flow State"
                           value={customMatchTime || ""}
                           onChange={(e) => setCustomMatchTime(parseInt(e.target.value) || 0)}
-                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-cyan-400 focus:ring-cyan-400/20"
+                          className="bg-slate-700/50 border-slate-600 text-white h-12 text-lg focus:border-red-400 focus:ring-red-400/20"
                         />
                       </motion.div>
 
@@ -1573,7 +1573,7 @@ export default function Match() {
                         <Button
                           onClick={handleSetMatchTime}
                           disabled={setMatchTimeMutation.isPending || !customMatchTime}
-                          className="w-full h-14 text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full h-14 text-xl font-bold bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-500 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-red-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {setMatchTimeMutation.isPending ? (
                             <div className="flex items-center gap-2">
@@ -1594,18 +1594,18 @@ export default function Match() {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="mt-4 p-4 bg-cyan-900/30 border border-cyan-500/50 rounded-lg"
+                      className="mt-4 p-4 bg-cyan-900/30 border border-red-500/50 rounded-lg"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-4 h-4 bg-cyan-500 rounded-full animate-pulse"></div>
-                          <span className="text-cyan-300 font-semibold">Tempo atual da partida:</span>
+                          <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="text-red-300 font-semibold">Tempo atual da partida:</span>
                           <span className="text-white font-bold font-mono">
                             {getMatchTime()}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-cyan-300 text-sm">
+                          <span className="text-red-300 text-sm">
                             Flow State automático aos 30 minutos
                           </span>
                         </div>
@@ -1622,21 +1622,21 @@ export default function Match() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-cyan-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
+                className="bg-gradient-to-br from-slate-800/90 to-gray-900/90 border border-red-500/30 backdrop-blur-xl rounded-xl p-8 shadow-xl"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-400 to-red-500 rounded-full flex items-center justify-center">
                     <Timer className="w-4 h-4 text-black" />
                   </div>
                   <h3 className="text-2xl font-bold text-white">Status da Partida</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-cyan-500/50 to-transparent"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-red-500/50 to-transparent"></div>
                 </div>
 
                 <div className="text-center space-y-4">
                   <div className="grid grid-cols-3 gap-6 items-center">
                     <div className="text-right">
                       <div className="text-white text-xl font-bold">{match?.teamV}</div>
-                      <div className="text-cyan-400 text-3xl font-black">{match?.scoreV || 0}</div>
+                      <div className="text-red-400 text-3xl font-black">{match?.scoreV || 0}</div>
                     </div>
 
                     <div className="text-center">
@@ -1664,8 +1664,8 @@ export default function Match() {
                   </div>
 
                   {match?.status === "active" && (
-                    <div className="mt-6 p-4 bg-black/30 rounded-lg border border-cyan-500/30">
-                      <div className="text-cyan-400 text-sm font-bold mb-1">TEMPO DE JOGO</div>
+                    <div className="mt-6 p-4 bg-black/30 rounded-lg border border-red-500/30">
+                      <div className="text-red-400 text-sm font-bold mb-1">TEMPO DE JOGO</div>
                       <div className="text-white text-2xl font-mono font-black">
                         {getMatchTime()}
                       </div>
@@ -1674,7 +1674,7 @@ export default function Match() {
 
                   <div className="text-gray-400 text-sm mt-4">
                     <span className="inline-flex items-center gap-2">
-                      <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                       Assistindo partida do Blue Lock
                     </span>
                   </div>
