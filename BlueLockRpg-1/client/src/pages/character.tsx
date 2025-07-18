@@ -10,8 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import BlueLockRadar from "@/components/ui/blue-lock-radar-final";
+import ExpurgoRadar from "@/components/ui/expurgo-radar";
+import CesarMonitor from "@/components/CesarMonitor";
 import type { Character, UpdateCharacter } from "@shared/schema";
+import defaultAvatar from "@assets/c33bd226d924c0e6c81af6810cc1f723_cleanup_upscayl_3x_realesrgan-x4plus-anime_1752871326667.png";
 
 export default function Character() {
   const { user, logout } = useAuth();
@@ -40,6 +42,8 @@ export default function Character() {
     flowPhrase: "É hora de dominar o campo!",
   });
 
+  const [showCesarMonitor, setShowCesarMonitor] = useState(false);
+
   useEffect(() => {
     if (character) {
       setFormData({
@@ -60,6 +64,16 @@ export default function Character() {
       });
     }
   }, [character]);
+
+  // Show César's monitor when user doesn't have a character and hasn't seen it before
+  useEffect(() => {
+    if (!isLoading && !character && user && !user.cesarMonitorSeen) {
+      const timer = setTimeout(() => {
+        setShowCesarMonitor(true);
+      }, 1000); // Show after 1 second
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, character, user]);
 
   const createCharacterMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -98,6 +112,39 @@ export default function Character() {
       toast({
         title: "Erro ao atualizar personagem",
         description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const uploadAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      const response = await fetch('/api/characters/avatar', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+      toast({
+        title: "Avatar atualizado!",
+        description: "Sua imagem foi salva com sucesso.",
+      });
+    },
+    onError: (error) => {
+      console.error("Avatar upload error:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao fazer upload da imagem. Tente novamente.",
         variant: "destructive",
       });
     },
@@ -143,6 +190,43 @@ export default function Character() {
       ...formData,
       [stat]: value,
     });
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if user has a character first
+    if (!character) {
+      toast({
+        title: "Crie seu personagem primeiro",
+        description: "Você precisa salvar seu personagem antes de fazer upload do avatar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione apenas arquivos de imagem (PNG, JPEG).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Erro",
+        description: "A imagem deve ter no máximo 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    uploadAvatarMutation.mutate(file);
   };
 
   const handleSave = async () => {
@@ -200,39 +284,49 @@ export default function Character() {
           <div className="inline-block p-4 blue-lock-gradient rounded-2xl mb-4 animate-glow">
             <i className="fas fa-futbol text-4xl text-white"></i>
           </div>
-          <h1 className="font-orbitron text-2xl font-bold text-blue-500">Carregando...</h1>
+          <h1 className="font-bebas text-2xl font-bold text-red-500 tracking-wider">CARREGANDO...</h1>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <>
+    <div className="min-h-screen bg-black">
       {/* Navigation */}
-      <nav className="bg-slate-900 border-b-2 border-blue-600 sticky top-0 z-50">
+      <nav className="bg-gray-900 border-b-2 border-red-600 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 blue-lock-gradient rounded-lg flex items-center justify-center transform rotate-45">
-                <i className="fas fa-futbol text-white transform -rotate-45"></i>
+              <div className="w-10 h-10 expurgo-gradient rounded-lg flex items-center justify-center transform rotate-12">
+                <svg width="24" height="24" viewBox="0 0 24 24" className="text-white">
+                  {/* Marcas de garra - versão pequena, maiores e centralizadas */}
+                  <g transform="translate(12,12) rotate(-20) translate(-12,-12)">
+                    <path d="M4 2 L6 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M7 1 L9 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M10 0.5 L12 20.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M13 1 L15 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M16 2 L18 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  </g>
+                </svg>
               </div>
-              <h1 className="font-orbitron text-xl font-bold text-blue-500">BLUE LOCK RPG</h1>
+              <h1 className="font-bebas text-xl font-bold text-red-500 tracking-wider">PROJETO EXPURGO</h1>
             </div>
 
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/">
-                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <i className="fas fa-tachometer-alt mr-2"></i>CENTRAL DE COMANDO
                 </button>
               </Link>
               <Link href="/character">
-                <button className="text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-user-edit mr-2"></i>Meu Personagem
+                <button className="text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <i className="fas fa-user-edit mr-2"></i>MEU SOBREVIVENTE
                 </button>
               </Link>
               {user?.isAdmin && (
                 <Link href="/admin">
-                  <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
+                  <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
                     <i className="fas fa-crown mr-2"></i>Admin
                   </button>
                 </Link>
@@ -252,50 +346,73 @@ export default function Character() {
       {/* Character Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="font-orbitron text-3xl font-bold text-blue-400 mb-2">MEU PERSONAGEM</h2>
-          <p className="text-slate-400 font-rajdhani">Configure e edite sua ficha de personagem</p>
+          <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">MEU SOBREVIVENTE</h2>
+          <p className="text-gray-400 font-oswald tracking-wide">Configure e edite sua ficha de sobrevivente</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Character Basic Info */}
           <div className="lg:col-span-1">
-            <Card className="bg-slate-900 border-2 border-blue-600 hud-corner">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
-                <h3 className="font-orbitron text-xl font-bold text-blue-400 mb-4">INFORMAÇÕES BÁSICAS</h3>
+                <h3 className="font-bebas text-xl font-bold text-red-400 mb-4 tracking-wider">INFORMAÇÕES BÁSICAS</h3>
 
                 {/* Character Avatar */}
                 <div className="text-center mb-6">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300" 
-                    alt="Avatar do personagem" 
-                    className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-500 object-cover"
+                  <div className="relative">
+                    <img 
+                      src={character?.avatar || defaultAvatar}
+                      alt="Avatar do personagem" 
+                      className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-500 object-cover"
+                    />
+                    {uploadAvatarMutation.isPending && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                    id="avatar-upload"
                   />
-                  <Button className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold">
-                    <i className="fas fa-camera mr-2"></i>Alterar Foto
+                  <Button 
+                    onClick={() => document.getElementById('avatar-upload')?.click()}
+                    className="bg-red-600 hover:bg-red-700 font-oswald font-semibold tracking-wide"
+                    disabled={uploadAvatarMutation.isPending || !character}
+                    title={!character ? "Crie seu personagem primeiro para fazer upload do avatar" : ""}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 16 16" className="mr-2" fill="currentColor">
+                      <path d="M8 1L7 2L8 6L9 2L8 1Z"/>
+                      <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                    {uploadAvatarMutation.isPending ? 'Enviando...' : character ? 'Alterar Foto' : 'Crie Personagem Primeiro'}
                   </Button>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
-                      NOME DO PERSONAGEM
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
+                      NOME DO SOBREVIVENTE
                     </Label>
                     <Input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
-                      placeholder="Nome do seu jogador"
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                      placeholder="Nome do seu sobrevivente"
                     />
                   </div>
 
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       POSIÇÃO
                     </Label>
                     <Select value={formData.position} onValueChange={handleSelectChange}>
-                      <SelectTrigger className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white">
+                      <SelectTrigger className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white">
                         <SelectValue placeholder="Selecione a posição" />
                       </SelectTrigger>
                       <SelectContent>
@@ -308,7 +425,7 @@ export default function Character() {
                   </div>
 
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       IDADE
                     </Label>
                     <Input
@@ -316,7 +433,7 @@ export default function Character() {
                       name="age"
                       value={formData.age}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
                       placeholder="Idade"
                       min="16"
                       max="25"
@@ -324,7 +441,7 @@ export default function Character() {
                   </div>
 
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       ALTURA
                     </Label>
                     <Input
@@ -332,7 +449,7 @@ export default function Character() {
                       name="height"
                       value={formData.height}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
                       placeholder="Ex: 1.75m"
                     />
                   </div>
@@ -343,13 +460,13 @@ export default function Character() {
 
           {/* Character Stats */}
           <div className="lg:col-span-2">
-            <Card className="bg-slate-900 border-2 border-blue-600 hud-corner">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
-                <h3 className="font-orbitron text-xl font-bold text-blue-400 mb-6">ATRIBUTOS</h3>
+                <h3 className="font-bebas text-xl font-bold text-red-400 mb-6 tracking-wider">ATRIBUTOS</h3>
 
                 {/* Blue Lock Radar Chart */}
                 <div className="mb-6">
-                  <BlueLockRadar
+                  <ExpurgoRadar
                     stats={{
                       speed: formData.speed,
                       strength: formData.strength,
@@ -364,10 +481,10 @@ export default function Character() {
                 </div>
 
                 {/* Total Stats Display */}
-                <div className="mt-6 p-4 bg-slate-800 rounded-lg border-2 border-cyan-500">
+                <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
-                    <span className="font-rajdhani font-bold text-cyan-400">TOTAL DE PONTOS USADOS:</span>
-                    <span className="font-orbitron text-lg font-bold text-cyan-400">{totalStats}/600</span>
+                    <span className="font-oswald font-bold text-red-400">TOTAL DE PONTOS USADOS:</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalStats}/600</span>
                   </div>
                 </div>
 
@@ -375,36 +492,36 @@ export default function Character() {
                 <div className="mt-6">
                   <Button 
                     onClick={handleSave}
-                    className="w-full blue-lock-gradient hover:opacity-90 text-white font-orbitron font-bold py-3"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bebas font-bold py-3 tracking-wider"
                     disabled={createCharacterMutation.isPending || updateCharacterMutation.isPending}
                   >
                     <i className="fas fa-save mr-2"></i>
-                    {createCharacterMutation.isPending || updateCharacterMutation.isPending ? "SALVANDO..." : "SALVAR PERSONAGEM"}
+                    {createCharacterMutation.isPending || updateCharacterMutation.isPending ? "SALVANDO..." : "SALVAR SOBREVIVENTE"}
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
             {/* Character Bio */}
-            <Card className="bg-slate-900 border-2 border-blue-600 hud-corner mt-6">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner mt-6">
               <CardContent className="p-6">
-                <h3 className="font-orbitron text-xl font-bold text-blue-400 mb-4">BIOGRAFIA</h3>
+                <h3 className="font-bebas text-xl font-bold text-red-400 mb-4 tracking-wider">BIOGRAFIA</h3>
                 <div className="space-y-4">
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       HISTÓRIA PESSOAL
                     </Label>
                     <Textarea
                       name="bio"
                       value={formData.bio}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white h-32"
-                      placeholder="Conte a história do seu personagem..."
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white h-32"
+                      placeholder="Conte a história do seu sobrevivente..."
                     />
                   </div>
 
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       WEAPON (HABILIDADE ESPECIAL)
                     </Label>
                     <Input
@@ -412,8 +529,8 @@ export default function Character() {
                       name="weapon"
                       value={formData.weapon}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
-                      placeholder="Ex: Chute Certeiro, Drible Fantasma..."
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                      placeholder="Ex: Golpe Devastador, Velocidade Letal..."
                     />
                   </div>
                 </div>
@@ -558,5 +675,11 @@ export default function Character() {
         </div>
       </div>
     </div>
+
+    {/* César Monitor - appears for new character creation */}
+    {showCesarMonitor && (
+      <CesarMonitor onClose={() => setShowCesarMonitor(false)} />
+    )}
+    </>
   );
 }
