@@ -7,9 +7,11 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined>;
   getAllUsersWithCharacters(): Promise<UserWithCharacter[]>;
+  markCesarMonitorSeen(userId: number): Promise<void>;
   
   // Character operations
   getCharacter(userId: number): Promise<Character | undefined>;
@@ -55,6 +57,15 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async markCesarMonitorSeen(userId: number): Promise<void> {
+    await db.update(users).set({ cesarMonitorSeen: true }).where(eq(users.id, userId));
+  }
+
 
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -70,7 +81,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined> {
-    const user = await this.getUser(id);
+    const user = await this.getUserById(id);
     if (!user) return undefined;
 
     const character = await this.getCharacter(id);
