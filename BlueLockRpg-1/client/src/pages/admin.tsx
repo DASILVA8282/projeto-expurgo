@@ -56,7 +56,7 @@ function RankingManager({ character, userId }: { character: any; userId: number 
       <div className="flex items-center space-x-2">
         <span className="text-slate-400 text-sm">Ranking atual: #{character?.ranking}</span>
       </div>
-      
+
       <div className="flex items-center space-x-2">
         <Input
           type="number"
@@ -167,12 +167,15 @@ function MatchAdmin() {
       <Card className="bg-slate-900 border-2 border-slate-700">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-orbitron text-xl font-bold text-green-400">GERENCIAMENTO DE PARTIDAS</h3>
+            <h3 className="font-bebas text-xl font-bold text-red-400 tracking-wider">GERENCIAMENTO DE COMBATES</h3>
             <Button
               onClick={() => setShowGoalForm(true)}
-              className="bg-green-600 hover:bg-green-700 font-rajdhani font-semibold"
+              className="bg-red-600 hover:bg-red-700 font-oswald font-semibold tracking-wide"
             >
-              <i className="fas fa-futbol mr-2"></i>Registrar Gol
+              <svg width="16" height="16" viewBox="0 0 16 16" className="mr-2" fill="currentColor">
+                <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M5 8L11 8M8 5L8 11" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>Registrar Ponto
             </Button>
           </div>
 
@@ -247,7 +250,7 @@ function MatchAdmin() {
           <DialogHeader>
             <DialogTitle className="font-orbitron text-green-400">REGISTRAR GOL</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             {/* Match Selection */}
             <div>
@@ -404,15 +407,20 @@ export default function Admin() {
 
   if (!user?.isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <Card className="w-full max-w-md mx-4">
           <CardContent className="pt-6 text-center">
-            <i className="fas fa-shield-alt text-6xl text-red-500 mb-4"></i>
-            <h1 className="text-2xl font-bold text-red-500 mb-2">Acesso Negado</h1>
-            <p className="text-slate-400 mb-4">Você não tem permissão para acessar esta página.</p>
+            <svg width="80" height="80" viewBox="0 0 80 80" className="mx-auto mb-4 text-red-500">
+              <path d="M40 8L38 10L40 32L42 10L40 8Z" fill="currentColor"/>
+              <circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" strokeWidth="4"/>
+              <path d="M25 25L55 55M55 25L25 55" stroke="currentColor" strokeWidth="4"/>
+              <path d="M30 40L50 40M40 30L40 50" stroke="currentColor" strokeWidth="3"/>
+            </svg>
+            <h1 className="text-2xl font-bebas font-bold text-red-500 mb-2 tracking-wider">ACESSO NEGADO</h1>
+            <p className="text-gray-400 mb-4 font-oswald">Você não possui autorização para acessar o centro de comando.</p>
             <Link href="/">
-              <Button className="blue-lock-gradient">
-                Voltar ao Dashboard
+              <Button className="expurgo-gradient font-bebas tracking-wider">
+                RETORNAR À CENTRAL
               </Button>
             </Link>
           </CardContent>
@@ -423,12 +431,21 @@ export default function Admin() {
 
   if (usersLoading || statsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <div className="inline-block p-4 blue-lock-gradient rounded-2xl mb-4 animate-glow">
-            <i className="fas fa-crown text-4xl text-white"></i>
+          <div className="inline-block p-4 expurgo-gradient rounded-lg mb-4 animate-menacing-glow transform rotate-12">
+            <svg width="48" height="48" viewBox="0 0 48 48" className="text-white">
+              {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
+              <g transform="translate(24,24) rotate(-20) translate(-24,-24)">
+                <path d="M8 4 L12 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M14 2 L18 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M20 1 L24 41" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M26 2 L30 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M32 4 L36 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+              </g>
+            </svg>
           </div>
-          <h1 className="font-orbitron text-2xl font-bold text-yellow-400">Carregando Painel Admin...</h1>
+          <h1 className="font-bebas text-3xl font-bold text-red-500 tracking-wider">CARREGANDO CENTRO DE COMANDO...</h1>
         </div>
       </div>
     );
@@ -554,7 +571,7 @@ export default function Admin() {
               <i className="fas fa-bolt mr-2"></i>Wild Card
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="players" className="mt-6">
             <Card className="bg-slate-900 border-2 border-slate-700">
               <CardContent className="p-6">
@@ -649,7 +666,7 @@ export default function Admin() {
                                     FICHA COMPLETA - {userData.character?.name}
                                   </DialogTitle>
                                 </DialogHeader>
-                                
+
                                 {/* Character Sheet */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
                                   {/* Basic Info */}
@@ -766,7 +783,7 @@ export default function Admin() {
                                 </div>
                               </DialogContent>
                             </Dialog>
-                            
+
                             {!userData.character.isEliminated && (
                               <Button
                                 size="sm"
