@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import InvitationEnvelope from "@/components/ui/InvitationEnvelope";
 
 export default function Landing() {
   const { login, register, isLoginPending, isRegisterPending } = useAuth();
   const { toast } = useToast();
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [showInvitation, setShowInvitation] = useState(true);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -26,7 +28,7 @@ export default function Landing() {
         });
         toast({
           title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao Blue Lock RPG",
+          description: "Bem-vindo ao Projeto Expurgo",
         });
       } else {
         await register({
@@ -35,7 +37,7 @@ export default function Landing() {
         });
         toast({
           title: "Conta criada com sucesso!",
-          description: "Bem-vindo ao Blue Lock RPG",
+          description: "Bem-vindo ao Projeto Expurgo",
         });
       }
     } catch (error: any) {
@@ -54,6 +56,14 @@ export default function Landing() {
     });
   };
 
+  const handleInvitationAccept = () => {
+    setShowInvitation(false);
+  };
+
+  if (showInvitation) {
+    return <InvitationEnvelope onAccept={handleInvitationAccept} />;
+  }
+
   return (
     <div className="min-h-screen relative">
       {/* Background */}
@@ -63,40 +73,49 @@ export default function Landing() {
           alt="Estádio de futebol" 
           className="w-full h-full object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-blue-600/20 to-slate-950/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-red-900/25 to-black/95"></div>
       </div>
 
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-block p-4 blue-lock-gradient rounded-2xl mb-4 animate-glow">
-              <i className="fas fa-futbol text-4xl text-white"></i>
+            <div className="inline-block p-4 expurgo-gradient rounded-lg mb-4 animate-menacing-glow transform rotate-12">
+              <svg width="48" height="48" viewBox="0 0 48 48" className="text-white">
+                {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
+                <g transform="translate(24,24) rotate(-20) translate(-24,-24)">
+                  <path d="M8 4 L12 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M14 2 L18 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M20 1 L24 41" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M26 2 L30 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M32 4 L36 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                </g>
+              </svg>
             </div>
-            <h1 className="font-orbitron text-4xl font-black text-blue-500 mb-2">BLUE LOCK</h1>
-            <p className="font-rajdhani text-lg text-slate-400">SISTEMA DE RPG</p>
+            <h1 className="font-bebas text-5xl font-black text-red-500 mb-2 tracking-wider transform -skew-x-6">PROJETO EXPURGO</h1>
+            <p className="font-oswald text-lg text-amber-600 uppercase tracking-widest">SISTEMA DE EXTERMÍNIO</p>
           </div>
 
           {/* Auth Form */}
-          <div className="blue-lock-border rounded-xl">
-            <Card className="bg-slate-900/95 backdrop-blur-sm rounded-xl hud-corner border-0">
+          <div className="expurgo-border rounded-lg">
+            <Card className="bg-black/95 backdrop-blur-sm rounded-lg hud-corner border-0">
               <CardContent className="p-8">
-                <h2 className="font-orbitron text-2xl font-bold text-center mb-6 text-blue-400">
-                  {isLoginMode ? "ENTRAR" : "REGISTRAR"}
+                <h2 className="font-bebas text-3xl font-bold text-center mb-6 text-red-500 tracking-wider">
+                  {isLoginMode ? "ENTRAR NO EXPURGO" : "JUNTAR-SE AO EXPURGO"}
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
-                      USUÁRIO
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2 tracking-wide">
+                      SOBREVIVENTE
                     </Label>
                     <Input
                       type="text"
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
-                      placeholder={isLoginMode ? "Digite seu usuário" : "Escolha um usuário"}
+                      className="w-full bg-gray-900 border-2 border-gray-700 focus:border-red-500 text-white font-mono"
+                      placeholder={isLoginMode ? "Digite sua identificação" : "Escolha uma identificação"}
                       required
                     />
                   </div>
@@ -104,29 +123,33 @@ export default function Landing() {
 
 
                   <div>
-                    <Label className="block text-slate-300 font-rajdhani font-semibold mb-2">
-                      SENHA
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2 tracking-wide">
+                      CÓDIGO DE ACESSO
                     </Label>
                     <Input
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-blue-500 text-white"
-                      placeholder={isLoginMode ? "Digite sua senha" : "Crie uma senha"}
+                      className="w-full bg-gray-900 border-2 border-gray-700 focus:border-red-500 text-white font-mono"
+                      placeholder={isLoginMode ? "Digite seu código de acesso" : "Crie um código de acesso"}
                       required
                     />
                   </div>
 
                   <Button 
                     type="submit" 
-                    className="w-full blue-lock-gradient hover:opacity-90 text-white font-orbitron font-bold py-3"
+                    className="w-full expurgo-gradient hover:opacity-90 text-white font-bebas font-bold py-3 text-lg tracking-widest transform hover:skew-x-1 transition-all duration-200"
                     disabled={isLoginPending || isRegisterPending}
                   >
-                    <i className={`fas ${isLoginMode ? 'fa-sign-in-alt' : 'fa-user-plus'} mr-2`}></i>
+                    <svg width="20" height="20" viewBox="0 0 20 20" className="mr-2" fill="currentColor">
+                      <path d="M10 2L9 3L10 8L11 3L10 2Z"/>
+                      <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M6 6L14 14M14 6L6 14" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
                     {isLoginMode ? 
-                      (isLoginPending ? "ENTRANDO..." : "ENTRAR") : 
-                      (isRegisterPending ? "REGISTRANDO..." : "REGISTRAR")
+                      (isLoginPending ? "ACESSANDO EXPURGO..." : "ENTRAR NO EXPURGO") : 
+                      (isRegisterPending ? "INGRESSANDO..." : "JUNTAR-SE AO EXPURGO")
                     }
                   </Button>
                 </form>
@@ -135,12 +158,12 @@ export default function Landing() {
                   <button
                     type="button"
                     onClick={() => setIsLoginMode(!isLoginMode)}
-                    className="text-blue-400 hover:text-blue-300 font-rajdhani font-semibold transition-colors"
+                    className="text-amber-500 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide"
                   >
                     {isLoginMode ? (
-                      <>Não tem conta? <span className="underline">Registre-se</span></>
+                      <>Não foi recrutado? <span className="underline text-red-500">Inscreva-se no Expurgo</span></>
                     ) : (
-                      <>Já tem conta? <span className="underline">Faça login</span></>
+                      <>Já faz parte? <span className="underline text-red-500">Acesse sua conta</span></>
                     )}
                   </button>
                 </div>
