@@ -1,0 +1,63 @@
+Entendi perfeitamente agora! Minhas desculpas pela confusão anterior. O foco é em ideias de sistemas para o site que integrem design, motion e a personalidade única de César "O Carniceiro" Valente, transformando a experiência do usuário em algo imersivo e alinhado com a brutalidade do "Projeto Eclipse".
+
+Vamos detalhar as ideias para você implementar, focando em como a IA pode entender essas alterações e mantendo os conceitos de futebol, mas com a estética sombria de César.
+
+1. Experiência de Boas-Vindas e Convite Inicial (Tela de Login/Inscrição)
+Objetivo: Criar uma primeira impressão imersiva que capture a essência manipuladora de César e o mistério do Projeto Expurgo.
+
+Alteração Principal para a IA: Altere o nome "Blue Lock" no site para "Projeto Expurgo". A estética geral deve ser de luxo opressor e sombrio, com predominância de tons escuros (preto, cinza chumbo), detalhes em vermelho escuro (quase sangue) e dourado fosco, linhas afiadas e tipografia que evoque autoridade e um certo gótico moderno.
+
+Implementação:
+
+Tela Inicial: Ao invés de um convite direto, a tela inicial pode ser escura, minimalista, com o logo do Projeto Expurgo sutilmente animado (talvez as garras do lobo no logo pulsando suavemente).
+
+O Convite "Realista": No centro da tela, um botão discreto que diz "Ver Convite" ou "Abrir Correspondência".
+
+Motion/Design: Ao clicar, uma animação de uma carta selada (com um selo de cera vermelho escuro e o brasão do Projeto Expurgo) aparece e se desdobra lentamente em tela cheia. O som de papel se abrindo e um sussurro distante de César poderiam acompanhar.
+
+Conteúdo da Carta (Texto para IA inserir):
+
+[Cabeçalho elegante, dourado envelhecido, com o brasão do Projeto Expurgo]
+
+**CONVITE EXCLUSIVO**
+
+Prezado(a) [Nome do Jogador - se puder ser puxado de alguma forma ou deixar para preenchimento],
+
+Temos o prazer de convidá-lo(a) a participar de uma **avaliação técnica de elite** para um projeto de desenvolvimento de novos talentos do futebol brasileiro. Reconhecemos em seu perfil um potencial bruto, uma **centelha de algo maior** que merece ser lapidado.
+
+Esta não é uma peneira comum. É uma oportunidade para os raros indivíduos que buscam transcender os limites do que é considerado "excelência". Nosso programa, "Centro de Excelência Eclipse", é o ambiente ideal para moldar craques que o futebol moderno realmente precisa.
+
+A apresentação e os testes iniciais ocorrerão no **Centro de Excelência Eclipse, localizado na Alameda dos Vencedores, nº 13, Bairro Sombra Alta, São Paulo/SP**. Por favor, chegue pontualmente às 08:00h do dia [Data Sugerida - ex: 25 de Julho de 2025].
+
+Seu futuro no futebol começa aqui.
+
+Atenciosamente,
+
+**César Valente**
+*Diretor do Projeto Expurgo*
+Após a Carta: Um botão "Aceitar Convite" leva para a tela de login. Um botão "Recusar" pode levar a uma tela de "Você não tem o que é preciso" com uma fala sarcástica de César e retornar à tela inicial.
+
+2. Página "Sobre o Projeto Expurgo" (Narrativa Imersiva)
+Objetivo: Contar a história do projeto e a filosofia de César de forma envolvente, usando os elementos visuais descritos.
+
+Alteração Principal para a IA: Estruturar a página usando os trechos da "Chegada dos Jogadores", "Sala de Apresentação" e "Entrada de César Valente", intercalando com a "Filosofia do Carniceiro".
+
+Implementação:
+
+Design: Use fundos escuros, com texturas que remetam a mármore negro e veias vermelhas. A tipografia deve ser imponente.
+
+Seções com Motion Sutil:
+
+"A Chegada": Uma imagem de fundo do ônibus preto com detalhes vermelhos e a fachada do Centro de Excelência Eclipse. Pequenas animações de luzes dos holofotes ou fumaça sutil poderiam ser aplicadas. Textos sobre o local e as estátuas.
+
+"O Auditório": Uma imagem do auditório opressor e luxuoso. O looping de jogadores chorando em campos vazios pode ser um vídeo de fundo muito sutil e embaçado, com pouca saturação, quase como uma memória assombrada.
+
+"A Revelação": À medida que o usuário rola, a imagem de César surge de uma cortina de fumaça (animação de transição). Suas falas marcantes podem aparecer em destaque, com um efeito de "pulso" ou "distorção" sutil ao serem reveladas.
+
+"Os Casos do Carniceiro":
+
+Design: Utilize um layout que remeta a um dossiê ou relatório tático. Para cada caso (Neymar & Ganso, Romário & Edmundo, André Lima & Washington), apresente as fotos dos jogadores com um "X" vermelho sobre o perdedor ou uma mancha de sangue.
+
+Motion: Animações sutis onde as "estatísticas brutais" aparecem como projeções holográficas ou dados em um terminal antigo. Quando César narra ("Ganso era melhor que Neymar?"), o texto da fala dele pode surgir com um efeito de digitando rápido ou distorcendo levemente.
+
+Interatividade (Opcional): Ao clicar em "Ganso" ou "Edmundo", uma breve animação da "derrota" deles pode ser exibida (ex: uma bola indo para fora, um rosto desolado).

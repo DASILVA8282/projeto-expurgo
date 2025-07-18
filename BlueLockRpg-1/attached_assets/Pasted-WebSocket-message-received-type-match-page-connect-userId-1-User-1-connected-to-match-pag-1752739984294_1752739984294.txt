@@ -1,0 +1,91 @@
+WebSocket message received: { type: 'match_page_connect', userId: 1 }
+User 1 connected to match page
+=== PROCESSING CONNECTED USERS FOR CHARACTER SEQUENCE ===
+Connected user IDs: [ 11, 10, 1 ]
+User 11: {
+  exists: true,
+  hasCharacter: true,
+  isAdmin: false,
+  username: 'TEUPAI',
+  characterName: 'ADOLFO'
+}
+Added character: ADOLFO (User: TEUPAI)
+User 10: {
+  exists: true,
+  hasCharacter: true,
+  isAdmin: false,
+  username: '2525',
+  characterName: 'BILOULA'
+}
+Added character: BILOULA (User: 2525)
+User 1: {
+  exists: true,
+  hasCharacter: true,
+  isAdmin: true,
+  username: 'mestre',
+  characterName: 'EGO JINPACHI'
+}
+Skipped user 1: no character or is admin
+Final playersWithCharacters: 2
+Characters to show: [ 'ADOLFO', 'BILOULA' ]
+=== SENDING WEBSOCKET MESSAGE ===
+Sending to 3 connections
+Message being sent: {
+  "type": "match_started_character_intro_sequence",
+  "characters": [
+    {
+      "id": 10,
+      "userId": 11,
+      "name": "ADOLFO",
+      "position": "defensor",
+      "age": 23,
+      "height": "154",
+      "bio": "",
+      "weapon": "",
+      "avatar": null,
+      "level": 1,
+      "experience": 0,
+      "matches": 7,
+      "goals": 0,
+      "ranking": 299,
+      "isEliminated": false,
+      "speed": 50,
+      "strength": 50,
+      "stamina": 50,
+      "shooting": 50,
+      "passing": 50,
+      "dribbling": 50,
+      "flowColor": "cyan",
+      "flowPhrase": "É hora de dominar o campo!",
+      "createdAt": "2025-07-17T07:05:32.217Z",
+      "updatedAt": "2025-07-17T08:10:57.226Z"
+    },
+    {
+      "id": 9,
+      "userId": 10,
+      "name": "BILOULA",
+      "position": "atacante",
+      "age": 23,
+      "height": "150",
+      "bio": "",
+      "weapon": "",
+      "avatar": null,
+      "level": 1,
+      "experience": 0,
+      "matches": 10,
+      "goals": 0,
+      "ranking": 299,
+      "isEliminated": false,
+      "speed": 50,
+      "strength": 50,
+      "stamina": 50,
+      "shooting": 50,
+      "passing": 50,
+      "dribbling": 50,
+      "flowColor": "cyan",
+      "flowPhrase": "É hora de dominar o campo!",
+      "createdAt": "2025-07-17T07:00:04.525Z",
+      "updatedAt": "2025-07-17T08:10:57.222Z"
+    }
+  ],
+  "message": "A partida começou! Apresentando os jogadores..."

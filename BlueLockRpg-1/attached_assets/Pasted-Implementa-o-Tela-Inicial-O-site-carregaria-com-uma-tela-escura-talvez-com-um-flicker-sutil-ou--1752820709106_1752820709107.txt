@@ -1,0 +1,31 @@
+Implementação:
+
+Tela Inicial: O site carregaria com uma tela escura, talvez com um flicker sutil ou um efeito de "névoa" em tons de cinza e vermelho. No centro, apareceria uma silhueta estilizada de um envelope de carta antigo, com um selo que remete ao símbolo do projeto (a bola sendo esmagada por garras de lobo). Um texto simples como "Abrir Convite" ou "Revelar Destino" apareceria.
+
+Animação da Carta: Ao clicar, o envelope se desdobraria com uma animação fluida e quase orgânica, como se o papel estivesse se revelando lentamente. As dobras se abririam para revelar o texto da carta. A tipografia seria elegante, mas com um toque de severidade, em tons escuros sobre um papel de fundo levemente amarelado ou acinzentado, com marcas d'água sutis do símbolo do Projeto Expurgo.
+
+Conteúdo da Carta (Sugestão de Texto):
+
+Altere a carta para ter uma estética de documento oficial, porém com um toque pessoal e ameaçador de César.
+
+[CABEÇALHO: Símbolo do Projeto Expurgo (bola esmagada por garras) e o nome "PROJETO EXPURGO"]
+
+TÍTULO: CONVITE PARA A ELITE DO FUTEBOL BRASILEIRO
+
+Prezado(a) [Nome do Destinatário, pode ser gerado aleatoriamente ou deixar em branco],
+
+É com grande satisfação que o Projeto Expurgo o convida a fazer parte de uma iniciativa sem precedentes no futebol nacional. Sua capacidade, seu faro para o gol e, acima de tudo, sua fome insaciável não passaram despercebidos.
+
+Este não é um convite comum. É a sua oportunidade de transcender o ordinário, de se desvencilhar dos grilhões da mediocridade que assola o nosso esporte. Estamos selecionando a verdadeira nata do talento brasileiro para moldar os predadores do futuro.
+
+Reporte-se ao Centro de Excelência Eclipse, localizado na [Endereço Fictício Detalhado, com coordenadas se quiser um toque extra de realismo]. Chegue pontualmente às [Hora] do dia [Data]. Um ônibus exclusivo o aguardará para levá-lo ao centro. Venha preparado para aprimorar suas habilidades e competir no mais alto nível, em um ambiente de treinamento intensivo focado na perfeição técnica e mental.
+
+Esta é uma peneira única, onde apenas os mais resilientes terão a chance de integrar as próximas gerações de atletas que revolucionarão o futebol brasileiro. Sua presença é vital para o sucesso desta empreitada.
+
+Não traga distrações. Traga sua determinação.
+
+Atenciosamente,
+
+César "O Carniceiro" Valente
+Diretor Executivo
+Projeto Expurgo
