@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import ExpurgoRadar from "@/components/ui/expurgo-radar";
-import CesarMonitor from "@/components/CesarMonitor";
+import CesarMonitor from "@/components/ui/CesarMonitor";
 import type { Character, UpdateCharacter } from "@shared/schema";
 import defaultAvatar from "@assets/c33bd226d924c0e6c81af6810cc1f723_cleanup_upscayl_3x_realesrgan-x4plus-anime_1752871326667.png";
 
