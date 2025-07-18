@@ -47,37 +47,54 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-black">
       {/* Navigation */}
-      <nav className="bg-slate-900 border-b-2 border-blue-600 sticky top-0 z-50">
+      <nav className="bg-gray-900 border-b-2 border-red-600 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 blue-lock-gradient rounded-lg flex items-center justify-center transform rotate-45">
-                <i className="fas fa-futbol text-white transform -rotate-45"></i>
+              <div className="w-10 h-10 expurgo-gradient rounded-lg flex items-center justify-center transform rotate-12">
+                <svg width="24" height="24" viewBox="0 0 24 24" className="text-white">
+                  {/* Marcas de garra - versão pequena, maiores e centralizadas */}
+                  <g transform="translate(12,12) rotate(-20) translate(-12,-12)">
+                    <path d="M4 2 L6 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M7 1 L9 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M10 0.5 L12 20.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M13 1 L15 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <path d="M16 2 L18 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  </g>
+                </svg>
               </div>
-              <h1 className="font-orbitron text-xl font-bold text-blue-500">BLUE LOCK RPG</h1>
+              <h1 className="font-bebas text-xl font-bold text-red-500 tracking-wider">PROJETO EXPURGO</h1>
             </div>
 
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/">
-                <button className="text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
+                <button className="text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 1L7 2L8 6L9 2L8 1Z"/>
+                    <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>CENTRAL DE COMANDO
                 </button>
               </Link>
               <Link href="/character">
-                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-user-edit mr-2"></i>Meu Personagem
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 8c1.5 0 3-1.5 3-3s-1.5-3-3-3-3 1.5-3 3 1.5 3 3 3zm0 1c-2 0-6 1-6 3v1h12v-1c0-2-4-3-6-3z"/>
+                  </svg>MEU SOBREVIVENTE
                 </button>
               </Link>
               <Link href="/match">
-                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-futbol mr-2"></i>Partida
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M5 8L11 8M8 5L8 11" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>COMBATES
                 </button>
               </Link>
               {user?.isAdmin && (
                 <Link href="/admin">
-                  <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
+                  <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
                     <i className="fas fa-crown mr-2"></i>Admin
                   </button>
                 </Link>
@@ -100,86 +117,86 @@ export default function Dashboard() {
       {/* Dashboard Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="font-orbitron text-3xl font-bold text-blue-400 mb-2">DASHBOARD</h2>
-          <p className="text-slate-400 font-rajdhani">Bem-vindo ao sistema Blue Lock RPG</p>
+          <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">DASHBOARD</h2>
+          <p className="text-gray-400 font-oswald tracking-wide">Bem-vindo ao sistema Projeto Expurgo</p>
         </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-slate-900 border-2 border-blue-600 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">LEVEL</p>
-                  <p className="text-2xl font-orbitron font-bold text-blue-400">
+                  <p className="text-gray-400 font-oswald text-sm">LEVEL</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {character?.level || 1}
                   </p>
                 </div>
-                <i className="fas fa-chart-line text-3xl text-blue-500"></i>
+                <i className="fas fa-chart-line text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-2 border-green-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">PARTIDAS</p>
-                  <p className="text-2xl font-orbitron font-bold text-green-400">
+                  <p className="text-gray-400 font-oswald text-sm">PARTIDAS</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {character?.matches || 0}
                   </p>
                 </div>
-                <i className="fas fa-futbol text-3xl text-green-500"></i>
+                <i className="fas fa-futbol text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-2 border-yellow-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">GOLS</p>
-                  <p className="text-2xl font-orbitron font-bold text-yellow-400">
+                  <p className="text-gray-400 font-oswald text-sm">GOLS</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {character?.goals || 0}
                   </p>
                 </div>
-                <i className="fas fa-trophy text-3xl text-yellow-500"></i>
+                <i className="fas fa-trophy text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-2 border-purple-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">RANKING</p>
-                  <p className="text-2xl font-orbitron font-bold text-purple-400">
+                  <p className="text-gray-400 font-oswald text-sm">RANKING</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     #{character?.ranking || 299}
                   </p>
                 </div>
-                <i className="fas fa-medal text-3xl text-purple-500"></i>
+                <i className="fas fa-medal text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Recent Activity */}
-        <Card className="bg-slate-900 border-2 border-slate-700">
+        <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
           <CardContent className="p-6">
-            <h3 className="font-orbitron text-xl font-bold text-blue-400 mb-4">ATIVIDADE RECENTE</h3>
+            <h3 className="font-bebas text-xl font-bold text-red-400 mb-4 tracking-wider">ATIVIDADE RECENTE</h3>
             <div className="space-y-3">
               {character ? (
-                <div className="flex items-center space-x-3 p-3 bg-slate-800 rounded-lg">
-                  <i className="fas fa-user-edit text-blue-500"></i>
-                  <span className="text-slate-300">Personagem {character.name} configurado</span>
-                  <span className="text-slate-500 text-sm ml-auto">Recente</span>
+                <div className="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg">
+                  <i className="fas fa-user-edit text-red-500"></i>
+                  <span className="text-gray-300">Sobrevivente {character.name} configurado</span>
+                  <span className="text-gray-500 text-sm ml-auto">Recente</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-3 p-3 bg-slate-800 rounded-lg">
-                  <i className="fas fa-exclamation-circle text-yellow-500"></i>
-                  <span className="text-slate-300">Configure seu personagem para começar</span>
+                <div className="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg">
+                  <i className="fas fa-exclamation-circle text-amber-500"></i>
+                  <span className="text-gray-300">Configure seu sobrevivente para começar</span>
                   <Link href="/character">
-                    <Button size="sm" className="ml-auto blue-lock-gradient">
+                    <Button size="sm" className="ml-auto bg-red-600 hover:bg-red-700 font-oswald font-semibold">
                       Configurar
                     </Button>
                   </Link>
