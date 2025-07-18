@@ -16,12 +16,21 @@ function Router() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <div className="inline-block p-4 blue-lock-gradient rounded-2xl mb-4 animate-glow">
-            <i className="fas fa-futbol text-4xl text-white"></i>
+          <div className="inline-block p-4 expurgo-gradient rounded-lg mb-4 animate-menacing-glow">
+            <svg width="48" height="48" viewBox="0 0 48 48" className="text-white">
+              {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
+              <g transform="translate(24,24) rotate(-20) translate(-24,-24)">
+                <path d="M8 4 L12 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M14 2 L18 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M20 1 L24 41" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M26 2 L30 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <path d="M32 4 L36 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+              </g>
+            </svg>
           </div>
-          <h1 className="font-orbitron text-2xl font-bold text-blue-500">Carregando...</h1>
+          <h1 className="font-bebas text-3xl font-bold text-red-500 tracking-wider">CARREGANDO EXPURGO...</h1>
         </div>
       </div>
     );
