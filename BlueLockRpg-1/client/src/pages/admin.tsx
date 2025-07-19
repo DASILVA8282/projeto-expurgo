@@ -454,30 +454,47 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-slate-950">
       {/* Navigation */}
-      <nav className="bg-slate-900 border-b-2 border-blue-600 sticky top-0 z-50">
+      <nav className="bg-gray-900 border-b-2 border-red-600 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 blue-lock-gradient rounded-lg flex items-center justify-center transform rotate-45">
-                <i className="fas fa-futbol text-white transform -rotate-45"></i>
+              <div className="w-12 h-12 predator-claws rounded-lg flex items-center justify-center animate-menacing-glow">
+                <svg width="32" height="32" viewBox="0 0 32 32" className="text-white">
+                  {/* Logo predador frontal - versão admin */}
+                  <rect x="4" y="4" width="24" height="24" fill="url(#adminGradient)" rx="3" stroke="#7f1d1d" strokeWidth="1"/>
+                  <defs>
+                    <linearGradient id="adminGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#dc2626"/>
+                      <stop offset="50%" stopColor="#991b1b"/>
+                      <stop offset="100%" stopColor="#450a0a"/>
+                    </linearGradient>
+                  </defs>
+                  <g>
+                    <path d="M8 8 L9 24" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                    <path d="M11 7 L12 25" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M14 6.5 L15 25.5" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M17 7 L18 25" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M20 8 L21 24" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                  </g>
+                </svg>
               </div>
-              <h1 className="font-orbitron text-xl font-bold text-blue-500">BLUE LOCK RPG</h1>
+              <h1 className="font-bebas text-xl font-bold text-red-500 tracking-wider">PROJETO EXPURGO</h1>
             </div>
 
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/">
-                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <i className="fas fa-tachometer-alt mr-2"></i>CENTRAL DE COMANDO
                 </button>
               </Link>
               <Link href="/character">
-                <button className="text-slate-300 hover:text-blue-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-user-edit mr-2"></i>Meu Personagem
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <i className="fas fa-user-edit mr-2"></i>MEU SOBREVIVENTE
                 </button>
               </Link>
               <Link href="/admin">
-                <button className="text-yellow-400 font-rajdhani font-semibold transition-colors">
-                  <i className="fas fa-crown mr-2"></i>Admin
+                <button className="text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <i className="fas fa-crown mr-2"></i>CONTROLE MESTRE
                 </button>
               </Link>
             </div>
@@ -495,50 +512,50 @@ export default function Admin() {
       {/* Admin Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="font-orbitron text-3xl font-bold text-yellow-400 mb-2">PAINEL ADMINISTRATIVO</h2>
-          <p className="text-slate-400 font-rajdhani">Gerencie todos os jogadores do sistema</p>
+          <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">CONTROLE MESTRE</h2>
+          <p className="text-gray-400 font-oswald tracking-wide">Comando supremo do sistema Expurgo</p>
         </div>
 
         {/* Admin Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-slate-900 border-2 border-yellow-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">TOTAL JOGADORES</p>
-                  <p className="text-2xl font-orbitron font-bold text-yellow-400">
+                  <p className="text-gray-400 font-oswald text-sm">TOTAL JOGADORES</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {stats?.totalPlayers || 0}
                   </p>
                 </div>
-                <i className="fas fa-users text-3xl text-yellow-500"></i>
+                <i className="fas fa-users text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-2 border-green-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">JOGADORES ATIVOS</p>
-                  <p className="text-2xl font-orbitron font-bold text-green-400">
+                  <p className="text-gray-400 font-oswald text-sm">SOBREVIVENTES ATIVOS</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {stats?.activePlayers || 0}
                   </p>
                 </div>
-                <i className="fas fa-user-check text-3xl text-green-500"></i>
+                <i className="fas fa-user-check text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-900 border-2 border-blue-500 hud-corner">
+          <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">PARTIDAS HOJE</p>
-                  <p className="text-2xl font-orbitron font-bold text-blue-400">
+                  <p className="text-gray-400 font-oswald text-sm">COMBATES HOJE</p>
+                  <p className="text-2xl font-bebas font-bold text-red-400">
                     {stats?.matchesToday || 0}
                   </p>
                 </div>
-                <i className="fas fa-futbol text-3xl text-blue-500"></i>
+                <i className="fas fa-futbol text-3xl text-red-500"></i>
               </div>
             </CardContent>
           </Card>
