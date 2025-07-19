@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,37 +80,83 @@ export default function Landing() {
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-block mb-4 animate-menacing-glow transform rotate-12">
-              <svg width="64" height="64" viewBox="0 0 64 64" className="drop-shadow-2xl">
-                {/* Fundo quadrado vermelho */}
-                <rect x="8" y="8" width="48" height="48" fill="url(#redGradient)" rx="4" stroke="#991b1b" strokeWidth="2"/>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.5, rotateY: 180 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="text-center mb-8"
+          >
+            <motion.div 
+              className="inline-block mb-4 animate-menacing-glow"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <svg width="80" height="80" viewBox="0 0 80 80" className="drop-shadow-2xl">
+                {/* Fundo quadrado frontal */}
+                <rect x="10" y="10" width="60" height="60" fill="url(#predatorGradient)" rx="8" stroke="#7f1d1d" strokeWidth="3"/>
                 
-                {/* Definir gradiente vermelho */}
+                {/* Definir gradiente predador */}
                 <defs>
-                  <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="predatorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#dc2626"/>
-                    <stop offset="50%" stopColor="#991b1b"/>
-                    <stop offset="100%" stopColor="#7f1d1d"/>
+                    <stop offset="30%" stopColor="#991b1b"/>
+                    <stop offset="70%" stopColor="#7f1d1d"/>
+                    <stop offset="100%" stopColor="#450a0a"/>
                   </linearGradient>
+                  <filter id="innerGlow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge> 
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
                 
-                {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
-                <g transform="translate(32,32) rotate(-20) translate(-32,-32)">
-                  <path d="M20 12 L24 52" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M26 10 L30 50" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M32 9 L36 49" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M38 10 L42 50" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M44 12 L48 52" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                {/* Marcas de garra frontais - 5 riscos verticais predadores CENTRALIZADAS */}
+                <g filter="url(#innerGlow)">
+                  <path d="M22 20 L25 60" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.95"/>
+                  <path d="M30 18 L33 62" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" fill="none"/>
+                  <path d="M38 17 L41 63" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                  <path d="M46 18 L49 62" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" fill="none"/>
+                  <path d="M54 20 L57 60" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.95"/>
                 </g>
+                
+                {/* Efeito de brilho nas bordas */}
+                <rect x="10" y="10" width="60" height="60" fill="none" stroke="url(#glowGradient)" strokeWidth="1" rx="8"/>
+                <defs>
+                  <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8"/>
+                    <stop offset="50%" stopColor="#dc2626" stopOpacity="0.3"/>
+                    <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0.1"/>
+                  </linearGradient>
+                </defs>
               </svg>
-            </div>
-            <h1 className="font-bebas text-5xl font-black text-red-500 mb-2 tracking-wider transform -skew-x-6">PROJETO EXPURGO</h1>
-            <p className="font-oswald text-lg text-amber-600 uppercase tracking-widest">SISTEMA DE EXTERMÍNIO</p>
-          </div>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="font-bebas text-5xl font-black text-red-500 mb-2 tracking-wider transform -skew-x-6"
+            >
+              PROJETO EXPURGO
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="font-oswald text-lg text-amber-600 uppercase tracking-widest"
+            >
+              SISTEMA DE EXTERMÍNIO
+            </motion.p>
+          </motion.div>
 
           {/* Auth Form */}
-          <div className="expurgo-border rounded-lg">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="expurgo-border rounded-lg"
+          >
             <Card className="bg-black/95 backdrop-blur-sm rounded-lg hud-corner border-0">
               <CardContent className="p-8">
                 <h2 className="font-bebas text-3xl font-bold text-center mb-6 text-red-500 tracking-wider">
@@ -151,13 +198,14 @@ export default function Landing() {
 
                   <Button 
                     type="submit" 
-                    className="w-full expurgo-gradient hover:opacity-90 text-white font-bebas font-bold py-3 text-lg tracking-widest transform hover:skew-x-1 transition-all duration-200"
+                    className="w-full bg-gradient-to-r from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-bebas font-bold py-4 text-xl tracking-widest transform hover:scale-105 transition-all duration-300 border-2 border-red-500 shadow-lg hover:shadow-red-500/50"
                     disabled={isLoginPending || isRegisterPending}
                   >
-                    <svg width="20" height="20" viewBox="0 0 20 20" className="mr-2" fill="currentColor">
-                      <path d="M10 2L9 3L10 8L11 3L10 2Z"/>
-                      <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-                      <path d="M6 6L14 14M14 6L6 14" stroke="currentColor" strokeWidth="1.5"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" className="mr-3" fill="currentColor">
+                      <path d="M12 2L11 4L12 10L13 4L12 2Z"/>
+                      <path d="M8 8L10 10M16 8L14 10"/>
+                      <path d="M8 16L10 14M16 16L14 14"/>
+                      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2"/>
                     </svg>
                     {isLoginMode ? 
                       (isLoginPending ? "ACESSANDO EXPURGO..." : "ENTRAR NO EXPURGO") : 
@@ -181,7 +229,7 @@ export default function Landing() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
