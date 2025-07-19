@@ -80,15 +80,27 @@ export default function Landing() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-block p-4 expurgo-gradient rounded-lg mb-4 animate-menacing-glow transform rotate-12">
-              <svg width="48" height="48" viewBox="0 0 48 48" className="text-white">
+            <div className="inline-block mb-4 animate-menacing-glow transform rotate-12">
+              <svg width="64" height="64" viewBox="0 0 64 64" className="drop-shadow-2xl">
+                {/* Fundo quadrado vermelho */}
+                <rect x="8" y="8" width="48" height="48" fill="url(#redGradient)" rx="4" stroke="#991b1b" strokeWidth="2"/>
+                
+                {/* Definir gradiente vermelho */}
+                <defs>
+                  <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#dc2626"/>
+                    <stop offset="50%" stopColor="#991b1b"/>
+                    <stop offset="100%" stopColor="#7f1d1d"/>
+                  </linearGradient>
+                </defs>
+                
                 {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
-                <g transform="translate(24,24) rotate(-20) translate(-24,-24)">
-                  <path d="M8 4 L12 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M14 2 L18 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M20 1 L24 41" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M26 2 L30 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                  <path d="M32 4 L36 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                <g transform="translate(32,32) rotate(-20) translate(-32,-32)">
+                  <path d="M20 12 L24 52" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M26 10 L30 50" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M32 9 L36 49" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M38 10 L42 50" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                  <path d="M44 12 L48 52" stroke="white" strokeWidth="3" strokeLinecap="round" fill="none"/>
                 </g>
               </svg>
             </div>
