@@ -18,15 +18,24 @@ function Router() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <div className="inline-block p-4 expurgo-gradient rounded-lg mb-4 animate-menacing-glow">
-            <svg width="48" height="48" viewBox="0 0 48 48" className="text-white">
-              {/* Marcas de garra - 5 riscos diagonais maiores e centralizados */}
-              <g transform="translate(24,24) rotate(-20) translate(-24,-24)">
-                <path d="M8 4 L12 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M14 2 L18 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M20 1 L24 41" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M26 2 L30 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                <path d="M32 4 L36 44" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
+          <div className="inline-block p-4 bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-lg mb-4 animate-menacing-glow shadow-2xl shadow-red-500/50">
+            <svg width="60" height="60" viewBox="0 0 60 60" className="text-white">
+              {/* Logo predador frontal - versão carregamento */}
+              <rect x="8" y="8" width="44" height="44" fill="url(#loadingGradient)" rx="6" stroke="#7f1d1d" strokeWidth="2"/>
+              <defs>
+                <linearGradient id="loadingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#dc2626"/>
+                  <stop offset="30%" stopColor="#991b1b"/>
+                  <stop offset="70%" stopColor="#7f1d1d"/>
+                  <stop offset="100%" stopColor="#450a0a"/>
+                </linearGradient>
+              </defs>
+              <g>
+                <path d="M15 14 L17 46" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.95"/>
+                <path d="M21 12 L23 48" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" fill="none"/>
+                <path d="M27 11 L29 49" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" fill="none"/>
+                <path d="M33 12 L35 48" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" fill="none"/>
+                <path d="M39 14 L41 46" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.95"/>
               </g>
             </svg>
           </div>
