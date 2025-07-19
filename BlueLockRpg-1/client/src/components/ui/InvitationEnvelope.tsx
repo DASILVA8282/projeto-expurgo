@@ -1,72 +1,37 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 
 interface InvitationEnvelopeProps {
   onAccept: () => void;
 }
 
-export default function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
+export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
   const [isOpened, setIsOpened] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
-  const [showGlitch, setShowGlitch] = useState(false);
 
   const handleEnvelopeClick = () => {
-    setIsOpened(true);
-    setTimeout(() => setShowLetter(true), 800);
+    if (!isOpened) {
+      setIsOpened(true);
+      setTimeout(() => {
+        setShowLetter(true);
+      }, 800);
+    }
   };
 
   const handleAccept = () => {
-    setShowGlitch(true);
-    setTimeout(() => onAccept(), 1000);
+    onAccept();
   };
 
-
-
   return (
-    <div className="fixed inset-0 bg-black overflow-hidden">
-      {/* Glitch overlay */}
-      <AnimatePresence>
-        {showGlitch && (
-          <motion.div
-            className="fixed inset-0 z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="w-full h-full bg-black animate-pulse">
-              <div className="absolute inset-0 bg-red-900 opacity-20 animate-ping"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-30 animate-pulse"></div>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-500 text-6xl font-mono animate-bounce">
-                SISTEMA INICIADO
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
-        {/* Subtle texture */}
-        <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-red-900/30 via-transparent to-red-900/30"></div>
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full opacity-30 animate-pulse"></div>
-          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-amber-500 rounded-full opacity-40 animate-pulse delay-1000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-red-400 rounded-full opacity-25 animate-pulse delay-2000"></div>
-        </div>
-      </div>
-
-      {/* Envelope */}
-      <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-8">
+      <div className="relative">
         <motion.div
           className="relative cursor-pointer"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          onClick={!isOpened ? handleEnvelopeClick : undefined}
+          onClick={handleEnvelopeClick}
+          whileHover={!isOpened ? { scale: 1.05 } : {}}
+          transition={{ duration: 0.2 }}
         >
-          {/* Envelope seal - positioned at the center of the envelope */}
+          {/* Wax seal positioned at the center of the envelope */}
           <AnimatePresence>
             {!isOpened && (
               <motion.div
@@ -168,27 +133,28 @@ export default function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps
                     {/* Letter content */}
                     <div className="space-y-3 text-justify">
                       <p>
-                        <span className="font-semibold text-red-400">Prezado destinatário,</span></p>
+                        <span className="font-semibold text-red-400">Prezado destinatário,</span>
+                      </p>
 
-                        <p>
-                          É com enorme satisfação que o Projeto Expurgo convida você a fazer parte de uma iniciativa sem precedentes no futebol nacional. Seu talento, seu faro de gol e, acima de tudo, sua fome insaciável não passaram despercebidos.
-                        </p>
+                      <p>
+                        É com enorme satisfação que o Projeto Expurgo convida você a fazer parte de uma iniciativa sem precedentes no futebol nacional. Seu talento, seu faro de gol e, acima de tudo, sua fome insaciável não passaram despercebidos.
+                      </p>
 
-                        <p>
-                          Esse não é um convite qualquer. É a sua chance de ir além do comum, de se livrar das correntes da mediocridade que ainda travam o nosso esporte. Estamos reunindo a verdadeira elite do talento brasileiro para moldar os predadores do futuro.
-                        </p>
+                      <p>
+                        Esse não é um convite qualquer. É a sua chance de ir além do comum, de se livrar das correntes da mediocridade que ainda travam o nosso esporte. Estamos reunindo a verdadeira elite do talento brasileiro para moldar os predadores do futuro.
+                      </p>
 
-                        <p>
-                          Compareça ao <span className="font-semibold text-red-700">Centro de Excelência Eclipse</span>, localizado na <strong>EPIA – Estrada Parque Indústria e Abastecimento</strong>, 1350 - Setor Industrial, Brasília - DF, CEP: 72220-140. Chegue pontualmente às <span className="font-semibold">06:00h</span> da <span className="font-semibold">segunda-feira</span>. Um ônibus exclusivo estará esperando para levá-lo até o centro.
-                        </p>
+                      <p>
+                        Compareça ao <span className="font-semibold text-red-700">Centro de Excelência Eclipse</span>, localizado na <strong>EPIA – Estrada Parque Indústria e Abastecimento</strong>, 1350 - Setor Industrial, Brasília - DF, CEP: 72220-140. Chegue pontualmente às <span className="font-semibold">06:00h</span> da <span className="font-semibold">segunda-feira</span>. Um ônibus exclusivo estará esperando para levá-lo até o centro.
+                      </p>
 
-                        <p>
-                          Essa é uma peneira diferente de tudo o que você já viu, onde só os mais determinados terão a chance de fazer parte da nova geração de atletas que vai transformar o futebol brasileiro. A sua presença é mais que...essencial.
-                        </p>
+                      <p>
+                        Essa é uma peneira diferente de tudo o que você já viu, onde só os mais determinados terão a chance de fazer parte da nova geração de atletas que vai transformar o futebol brasileiro. A sua presença é mais que...essencial.
+                      </p>
 
-                        <p className="font-semibold text-red-400">
-                          Não leve distrações. Leve apenas sua vontade.
-                        </p>
+                      <p className="font-semibold text-red-400">
+                        Não leve distrações. Leve apenas sua vontade.
+                      </p>
 
                       <div className="mt-6 pt-4 border-t border-red-800">
                         <p className="text-right">
