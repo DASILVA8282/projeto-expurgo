@@ -298,15 +298,23 @@ export default function Character() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 expurgo-gradient rounded-lg flex items-center justify-center transform rotate-12">
-                <svg width="24" height="24" viewBox="0 0 24 24" className="text-white">
-                  {/* Marcas de garra - versão pequena, maiores e centralizadas */}
-                  <g transform="translate(12,12) rotate(-20) translate(-12,-12)">
-                    <path d="M4 2 L6 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                    <path d="M7 1 L9 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                    <path d="M10 0.5 L12 20.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                    <path d="M13 1 L15 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                    <path d="M16 2 L18 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+              <div className="w-12 h-12 bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-lg flex items-center justify-center animate-menacing-glow shadow-lg shadow-red-500/50">
+                <svg width="32" height="32" viewBox="0 0 32 32" className="text-white">
+                  {/* Logo predador frontal - versão navegação */}
+                  <rect x="4" y="4" width="24" height="24" fill="url(#charNavGradient)" rx="3" stroke="#7f1d1d" strokeWidth="1"/>
+                  <defs>
+                    <linearGradient id="charNavGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#dc2626"/>
+                      <stop offset="50%" stopColor="#991b1b"/>
+                      <stop offset="100%" stopColor="#450a0a"/>
+                    </linearGradient>
+                  </defs>
+                  <g>
+                    <path d="M8 8 L9 24" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                    <path d="M11 7 L12 25" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M14 6.5 L15 25.5" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M17 7 L18 25" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" fill="none"/>
+                    <path d="M20 8 L21 24" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
                   </g>
                 </svg>
               </div>
