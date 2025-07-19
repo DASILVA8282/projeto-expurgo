@@ -752,8 +752,8 @@ export default function Match() {
               <Timer className="w-8 h-8 text-red-500" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Carregando Sistema de Partidas</h2>
-          <p className="text-gray-400">Conectando ao Blue Lock...</p>
+          <h2 className="text-2xl font-bebas text-red-500 mb-2 tracking-wider">CARREGANDO SISTEMA DE COMBATE</h2>
+          <p className="text-gray-400 font-oswald">Conectando ao Projeto Expurgo...</p>
         </motion.div>
       </div>
     );
@@ -870,8 +870,8 @@ export default function Match() {
                     >
                       <Trophy className="w-8 h-8 text-white" />
                     </motion.div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Nova Partida</h2>
-                    <p className="text-red-100">Configure os times para começar</p>
+                    <h2 className="text-3xl font-bebas text-white mb-2 tracking-wider">NOVO COMBATE</h2>
+                    <p className="text-red-100 font-oswald tracking-wide">Configure os predadores para a batalha</p>
                   </div>
                 </div>
 
@@ -882,9 +882,9 @@ export default function Match() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
                     >
-                      <Label htmlFor="teamV" className="text-white text-lg font-semibold flex items-center gap-2">
+                      <Label htmlFor="teamV" className="text-white text-lg font-oswald font-semibold flex items-center gap-2 tracking-wide">
                         <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                        Team V
+                        PREDADORES V
                       </Label>
                       <Input
                         id="teamV"
@@ -900,9 +900,9 @@ export default function Match() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <Label htmlFor="teamZ" className="text-white text-lg font-semibold flex items-center gap-2">
+                      <Label htmlFor="teamZ" className="text-white text-lg font-oswald font-semibold flex items-center gap-2 tracking-wide">
                         <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                        Team Z
+                        PREDADORES Z
                       </Label>
                       <Input
                         id="teamZ"
@@ -931,7 +931,7 @@ export default function Match() {
                         ) : (
                           <div className="flex items-center gap-2">
                             <Play className="w-5 h-5" />
-                            Criar Partida
+                            INICIAR COMBATE
                           </div>
                         )}
                       </Button>
@@ -997,9 +997,9 @@ export default function Match() {
                 <motion.div 
                   animate={{ 
                     boxShadow: [
-                      "0 0 20px rgba(6, 182, 212, 0.5)",
-                      "0 0 30px rgba(6, 182, 212, 0.8)",
-                      "0 0 20px rgba(6, 182, 212, 0.5)"
+                      "0 0 20px rgba(220, 38, 38, 0.5)",
+                      "0 0 30px rgba(220, 38, 38, 0.8)",
+                      "0 0 20px rgba(220, 38, 38, 0.5)"
                     ]
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
