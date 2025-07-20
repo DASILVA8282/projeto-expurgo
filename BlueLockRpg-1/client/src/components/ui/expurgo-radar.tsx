@@ -58,7 +58,7 @@ const getRankColor = (rank: string): string => {
 };
 
 export default function ExpurgoRadar({ stats, onStatChange, readonly = false, remainingPoints = 0 }: ExpurgoRadarProps) {
-  // Mapeamento correto: Físicos e Técnicos como na imagem do Blue Lock
+  // Mapeamento correto: Físicos e Técnicos como no sistema do Projeto Expurgo
   const statLabels = ['VELOCIDADE', 'DEFESA', 'OFENSA', 'CHUTE', 'PASSE', 'DRIBLE'];
   
   // Calcular os valores do hexágono baseado nos atributos básicos com lógica de influência
