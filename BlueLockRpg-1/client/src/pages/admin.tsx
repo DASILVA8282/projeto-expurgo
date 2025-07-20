@@ -11,7 +11,7 @@ import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/api";
-import { WildCardAdmin } from "@/components/WildCardAdmin";
+import { WildCardAdmin } from "@/components/ui/WildCardAdmin";
 
 // Ranking Manager Component
 function RankingManager({ character, userId }: { character: any; userId: number }) {
