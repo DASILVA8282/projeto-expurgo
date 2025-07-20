@@ -67,7 +67,7 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
       <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center"
         style={{
-          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+          background: 'linear-gradient(135deg, #1a0000 0%, #2d0000 50%, #400000 100%)',
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -80,7 +80,7 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
           {Array.from({ length: 8 }, (_, i) => (
             <motion.div
               key={i}
-              className="absolute h-0.5 bg-gradient-to-r from-blue-400 to-cyan-300"
+              className="absolute h-0.5 bg-gradient-to-r from-red-500 to-amber-600"
               style={{
                 top: `${20 + i * 10}%`,
                 left: '-100%',
@@ -104,7 +104,7 @@ export default function CharacterIntroduction({ character, isVisible, onComplete
           {Array.from({ length: 15 }, (_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-cyan-400 rounded-full"
+              className="absolute w-2 h-2 bg-red-500 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
