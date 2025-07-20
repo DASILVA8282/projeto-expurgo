@@ -6,7 +6,7 @@
   import { Button } from "@/components/ui/button";
   import { Link } from "wouter";
   import { useWebSocket } from "@/hooks/useWebSocket";
-  import { WildCardModal } from "@/components/WildCardModal";
+  import { WildCardModal } from "@/components/ui/WildCardModal";
   
   export default function Dashboard() {
     const { user, logout } = useAuth();
