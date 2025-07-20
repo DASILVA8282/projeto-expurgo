@@ -17,13 +17,13 @@ export default function CesarMonitor({ onClose }: CesarMonitorProps) {
 
   const fullText = `Atenção, meu caro Expurgador,
 
-Você está prestes a vestir uma nova pele pra entrar no abatedouro. E enfia na sua cabeça de uma vez: o Projeto Expurgo não tem espaço pra ninguém bonzinho. Aqui, fair play não passa de uma piada. O que a gente procura são sobreviventes.
+Você está prestes a vestir uma nova pele para entrar no abatedouro e enfiar de vez em sua cabeça: o Projeto Expurgo não tem espaço para ninguém bonzinho. Aqui, "fair play" não passa de uma piada. O que procuramos são sobreviventes.
 
-Seu personagem tem que ter fome. Tem que ter a frieza de atacar quando o outro comete um erro, de esmagar quando a mente do rival trinca. Acha mesmo que futebol é sobre coleguismo? Aqui é só sobre quem sobrevive.
+Seu personagem tem que ter fome. Ele tem que ter a frieza de atacar quando o outro comete um erro, de esmagar quando a mente do rival trinca. Acha mesmo que futebol é sobre coleguismo? Aqui, é só sobre quem sobrevive.
 
-Não tô pedindo um vilão de novela mexicana. Tô pedindo alguém que entenda o jogo como ele é. O que move um vencedor de verdade? Fome. Obsessão. Devorar seus próprios parceiros para permanecer sendo o centro das atenções, só assim para não voltar pra sua vida mediocre.
+Não estou pedindo um vilão de novela mexicana. Estou pedindo alguém que entenda o jogo como ele é. O que move um vencedor de verdade? Fome, obsessão. Devorar seus próprios parceiros para permanecer sendo o centro das atenções: só assim para não voltar para sua vida medíocre.
 
-Pensa em dar pro seu personagem traços que façam ele alguém incômodo. Um cara que olha pro companheiro e enxerga um rival. Um narcisista, que acredita que o gramado inteiro gira ao redor do próprio umbigo... Você pode criar um perfeccionista doente, que trata cada passe errado como um crime seja o passe vindo dele mesmo ou dos companheiros. Não há limitação nesse aspecto e os jogadores não podem julgar uns aos outros por isso na mesa.`;
+Pense em dar ao seu personagem traços que o tornem alguém incômodo. Um cara que olha para o companheiro e enxerga um rival. Um narcisista, que acredita que o gramado inteiro gira ao redor do próprio umbigo... Você pode criar um perfeccionista doente, que trata cada passe errado como um crime, seja o passe vindo dele mesmo ou dos companheiros. Não há limitação nesse aspecto e os jogadores não podem julgar uns aos outros por isso na mesa.`;
 
 
   const words = fullText.split(' ');
