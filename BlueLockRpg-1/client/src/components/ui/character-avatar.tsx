@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import defaultAvatar from "@assets/c33bd226d924c0e6c81af6810cc1f723_cleanup_upscayl_3x_realesrgan-x4plus-anime_1752871326667.png";
 
 interface CharacterAvatarProps {
   src?: string;
@@ -14,7 +15,7 @@ export default function CharacterAvatar({
   onImageChange,
   className = "w-32 h-32"
 }: CharacterAvatarProps) {
-  const [imageUrl, setImageUrl] = useState(src || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300");
+  const [imageUrl, setImageUrl] = useState(src || defaultAvatar);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
