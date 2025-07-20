@@ -11,7 +11,7 @@ import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/api";
-import { WildCardAdmin } from "@/components/ui/WildCardAdmin";
+import { WildCardAdmin } from "@/components/WildCardAdmin";
 
 // Ranking Manager Component
 function RankingManager({ character, userId }: { character: any; userId: number }) {
@@ -212,7 +212,7 @@ function MatchAdmin() {
                           <Button
                             size="sm"
                             onClick={() => setSelectedMatch(match)}
-                            className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
+                            className="bg-red-600 hover:bg-red-700 font-rajdhani font-semibold"
                           >
                             <i className="fas fa-eye mr-1"></i>Ver
                           </Button>
@@ -484,17 +484,40 @@ export default function Admin() {
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/">
                 <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                  <i className="fas fa-tachometer-alt mr-2"></i>CENTRAL DE COMANDO
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 1L7 2L8 6L9 2L8 1Z"/>
+                    <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>CENTRAL DE COMANDO
                 </button>
               </Link>
               <Link href="/character">
                 <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                  <i className="fas fa-user-edit mr-2"></i>MEU SOBREVIVENTE
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 8c1.5 0 3-1.5 3-3s-1.5-3-3-3-3 1.5-3 3 1.5 3 3 3zm0 1c-2 0-6 1-6 3v1h12v-1c0-2-4-3-6-3z"/>
+                  </svg>MEU SOBREVIVENTE
+                </button>
+              </Link>
+              <Link href="/match">
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M5 8L11 8M8 5L8 11" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>COMBATES
+                </button>
+              </Link>
+              <Link href="/guide">
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M3 2h10v12H3V2zm2 2v8h6V4H5zm1 1h4v1H6V5zm0 2h4v1H6V7zm0 2h2v1H6V9z"/>
+                  </svg>MANUAL
                 </button>
               </Link>
               <Link href="/admin">
                 <button className="text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                  <i className="fas fa-crown mr-2"></i>CONTROLE MESTRE
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 2L3 4v4c0 3.5 3 6 5 6s5-2.5 5-6V4L8 2zm0 2l3.5 1.5v3c0 2-1.5 3.5-3.5 3.5s-3.5-1.5-3.5-3.5v-3L8 4z"/>
+                    <circle cx="8" cy="7.5" r="1.5"/>
+                  </svg>CONTROLE MESTRE
                 </button>
               </Link>
             </div>
@@ -513,7 +536,7 @@ export default function Admin() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">CONTROLE MESTRE</h2>
-          <p className="text-gray-400 font-oswald tracking-wide">Comando supremo do sistema Expurgo</p>
+          <p className="text-gray-400 font-oswald tracking-wide">Comando supremo do sistema Projeto Expurgo.</p>
         </div>
 
         {/* Admin Stats */}
@@ -522,7 +545,7 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 font-oswald text-sm">TOTAL JOGADORES</p>
+                  <p className="text-gray-400 font-oswald text-sm">TOTAL DE JOGADORES</p>
                   <p className="text-2xl font-bebas font-bold text-red-400">
                     {stats?.totalPlayers || 0}
                   </p>
@@ -550,7 +573,7 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 font-oswald text-sm">COMBATES HOJE</p>
+                  <p className="text-gray-400 font-oswald text-sm">COMBATES DE HOJE</p>
                   <p className="text-2xl font-bebas font-bold text-red-400">
                     {stats?.matchesToday || 0}
                   </p>
@@ -564,7 +587,7 @@ export default function Admin() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-slate-400 font-rajdhani text-sm">TOTAL GOLS</p>
+                  <p className="text-slate-400 font-rajdhani text-sm">TOTAL DE GOLS</p>
                   <p className="text-2xl font-orbitron font-bold text-red-400">
                     {stats?.totalGoals || 0}
                   </p>
@@ -578,13 +601,13 @@ export default function Admin() {
         {/* Admin Tabs */}
         <Tabs defaultValue="players" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-slate-800 border-2 border-slate-700">
-            <TabsTrigger value="players" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+            <TabsTrigger value="players" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
               <i className="fas fa-users mr-2"></i>Jogadores
             </TabsTrigger>
-            <TabsTrigger value="matches" className="data-[state=active]:bg-green-600 data-[state=active]:text-white">
+            <TabsTrigger value="matches" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
               <i className="fas fa-futbol mr-2"></i>Partidas
             </TabsTrigger>
-            <TabsTrigger value="wildcard" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            <TabsTrigger value="wildcard" className="data-[state=active]:bg-red-600 data-[state=active]:text-white">
               <i className="fas fa-bolt mr-2"></i>Wild Card
             </TabsTrigger>
           </TabsList>
@@ -599,8 +622,8 @@ export default function Admin() {
                 <thead>
                   <tr className="border-b-2 border-slate-700">
                     <th className="font-rajdhani font-bold text-slate-300 py-3">JOGADOR</th>
-                    <th className="font-rajdhani font-bold text-slate-300 py-3">POSIÇÃO</th>
-                    <th className="font-rajdhani font-bold text-slate-300 py-3">LEVEL</th>
+                    <th className="font-rajdhani font-bold text-slate-300 py-3">CLASSE</th>
+                    <th className="font-rajdhani font-bold text-slate-300 py-3">NÍVEL</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">RANKING</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">GOLS</th>
                     <th className="font-rajdhani font-bold text-slate-300 py-3">STATUS</th>
@@ -621,7 +644,7 @@ export default function Admin() {
                           <img 
                             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&h=50" 
                             alt="Avatar do jogador" 
-                            className="w-10 h-10 rounded-full border-2 border-blue-500 object-cover"
+                            className="w-10 h-10 rounded-full border-2 border-red-500 object-cover"
                           />
                           <div>
                             <p className="font-semibold text-white">{userData.character?.name || "Sem personagem"}</p>
@@ -629,8 +652,8 @@ export default function Admin() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 text-blue-400 font-rajdhani font-semibold">
-                        {userData.character?.position || "N/A"}
+                      <td className="py-4 text-red-400 font-rajdhani font-semibold">
+                        {userData.character?.classe || "N/A"}
                       </td>
                       <td className="py-4 text-green-400 font-orbitron font-bold">
                         {userData.character?.level || 1}
@@ -639,7 +662,7 @@ export default function Admin() {
                         <div className="flex items-center space-x-2">
                           <span className={`text-orbitron font-bold ${
                             userData.character?.ranking <= 10 ? 'text-yellow-400' :
-                            userData.character?.ranking <= 50 ? 'text-blue-400' :
+                            userData.character?.ranking <= 50 ? 'text-red-400' :
                             userData.character?.ranking <= 100 ? 'text-green-400' : 'text-slate-400'
                           }`}>
                             #{userData.character?.ranking || "N/A"}
@@ -671,15 +694,15 @@ export default function Admin() {
                                 <DialogTrigger asChild>
                                   <Button 
                                     size="sm" 
-                                    className="bg-blue-600 hover:bg-blue-700 font-rajdhani font-semibold"
+                                    className="bg-red-600 hover:bg-red-700 font-rajdhani font-semibold"
                                     onClick={() => setSelectedPlayer(userData)}
                                   >
                                     <i className="fas fa-eye mr-1"></i>Ver Ficha
                                   </Button>
                                 </DialogTrigger>
-                              <DialogContent className="max-w-4xl bg-slate-900 border-2 border-blue-600 max-h-[90vh] overflow-y-auto">
+                              <DialogContent className="max-w-4xl bg-slate-900 border-2 border-red-600 max-h-[90vh] overflow-y-auto">
                                 <DialogHeader>
-                                  <DialogTitle className="font-orbitron text-2xl text-blue-400">
+                                  <DialogTitle className="font-orbitron text-2xl text-red-400">
                                     FICHA COMPLETA - {userData.character?.name}
                                   </DialogTitle>
                                 </DialogHeader>
@@ -687,9 +710,9 @@ export default function Admin() {
                                 {/* Character Sheet */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
                                   {/* Basic Info */}
-                                  <Card className="bg-slate-800 border-blue-500">
+                                  <Card className="bg-slate-800 border-red-500">
                                     <CardContent className="p-4">
-                                      <h3 className="font-orbitron font-bold text-blue-400 mb-3">INFORMAÇÕES BÁSICAS</h3>
+                                      <h3 className="font-orbitron font-bold text-red-400 mb-3">INFORMAÇÕES BÁSICAS</h3>
                                       <div className="space-y-2">
                                         <div className="flex justify-between">
                                           <span className="text-slate-400">Nome:</span>
@@ -700,8 +723,12 @@ export default function Admin() {
                                           <span className="text-white">{userData.username}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Posição:</span>
-                                          <Badge className="bg-blue-600">{userData.character?.position}</Badge>
+                                          <span className="text-slate-400">Classe:</span>
+                                          <Badge className="bg-red-600">{userData.character?.classe || 'N/A'}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Subclasse:</span>
+                                          <Badge className="bg-purple-600">{userData.character?.subclasse || 'N/A'}</Badge>
                                         </div>
                                         <div className="flex justify-between">
                                           <span className="text-slate-400">Idade:</span>
@@ -712,8 +739,16 @@ export default function Admin() {
                                           <span className="text-white">{userData.character?.height || 'N/A'}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                          <span className="text-slate-400">Arma:</span>
-                                          <span className="text-white">{userData.character?.weapon || 'N/A'}</span>
+                                          <span className="text-slate-400">Origem:</span>
+                                          <Badge className="bg-green-600">{userData.character?.origin || 'N/A'}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Motivação:</span>
+                                          <span className="text-white">{userData.character?.motivacao || 'N/A'}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Habilidades:</span>
+                                          <span className="text-white text-sm">{userData.character?.weapon || 'N/A'}</span>
                                         </div>
                                       </div>
                                     </CardContent>
@@ -748,32 +783,169 @@ export default function Admin() {
                                     </CardContent>
                                   </Card>
 
-                                  {/* Stats */}
+                                  {/* Classes e Subclasses */}
+                                  <Card className="bg-slate-800 border-red-500">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-red-400 mb-3">CLASSE</h3>
+                                      <div className="space-y-2">
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Classe:</span>
+                                          <Badge className="bg-red-600 font-orbitron">{userData.character?.classe || 'N/A'}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Subclasse:</span>
+                                          <Badge className="bg-orange-600 font-orbitron">{userData.character?.subclasse || 'N/A'}</Badge>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Flow Color:</span>
+                                          <div className="flex items-center space-x-2">
+                                            <div 
+                                              className={`w-4 h-4 rounded-full border-2 border-white`}
+                                              style={{ backgroundColor: userData.character?.flowColor || '#ff0000' }}
+                                            />
+                                            <span className="text-white text-sm">{userData.character?.flowColor || 'red'}</span>
+                                          </div>
+                                        </div>
+                                        <div className="flex justify-between">
+                                          <span className="text-slate-400">Frase Flow:</span>
+                                          <span className="text-white text-sm italic">{userData.character?.flowPhrase || 'N/A'}</span>
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Atributos Básicos */}
                                   <Card className="bg-slate-800 border-purple-500 lg:col-span-2">
                                     <CardContent className="p-4">
-                                      <h3 className="font-orbitron font-bold text-purple-400 mb-4">ATRIBUTOS</h3>
-                                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                      <h3 className="font-orbitron font-bold text-purple-400 mb-4">ATRIBUTOS BÁSICOS</h3>
+                                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {[
-                                          { name: 'Velocidade', value: userData.character?.speed, color: 'bg-blue-500' },
-                                          { name: 'Força', value: userData.character?.strength, color: 'bg-red-500' },
-                                          { name: 'Resistência', value: userData.character?.stamina, color: 'bg-green-500' },
-                                          { name: 'Finalização', value: userData.character?.shooting, color: 'bg-yellow-500' },
-                                          { name: 'Passe', value: userData.character?.passing, color: 'bg-purple-500' },
-                                          { name: 'Drible', value: userData.character?.dribbling, color: 'bg-cyan-500' }
+                                          { name: 'FÍSICO', value: userData.character?.fisico, color: 'bg-red-500' },
+                                          { name: 'VELOCIDADE', value: userData.character?.velocidade, color: 'bg-red-500' },
+                                          { name: 'INTELECTO', value: userData.character?.intelecto, color: 'bg-purple-500' },
+                                          { name: 'CARISMA', value: userData.character?.carisma, color: 'bg-green-500' },
                                         ].map((stat) => (
                                           <div key={stat.name} className="bg-slate-700 p-3 rounded-lg">
                                             <div className="flex items-center justify-between mb-2">
-                                              <span className="text-slate-300 text-sm">{stat.name}</span>
-                                              <span className="text-white font-bold">{stat.value}</span>
+                                              <span className="text-slate-300 text-sm font-bold">{stat.name}</span>
+                                              <span className="text-white font-bold text-lg">{stat.value || 3}</span>
                                             </div>
                                             <div className="w-full bg-slate-600 rounded-full h-2">
                                               <div 
                                                 className={`h-2 rounded-full ${stat.color}`}
-                                                style={{ width: `${(stat.value / 100) * 100}%` }}
+                                                style={{ width: `${((stat.value || 3) / 5) * 100}%` }}
                                               />
                                             </div>
                                           </div>
                                         ))}
+                                      </div>
+                                      <div className="mt-4 p-3 bg-slate-700 rounded-lg">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-slate-300 font-bold">EGOÍSMO</span>
+                                          <span className="text-yellow-400 font-bold text-lg">{userData.character?.egoismo || 5}</span>
+                                        </div>
+                                        <div className="w-full bg-slate-600 rounded-full h-2 mt-2">
+                                          <div 
+                                            className="h-2 rounded-full bg-yellow-500"
+                                            style={{ width: `${((userData.character?.egoismo || 5) / 5) * 100}%` }}
+                                          />
+                                        </div>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Perícias Principais */}
+                                  <Card className="bg-slate-800 border-amber-500 lg:col-span-2">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-amber-400 mb-4">PERÍCIAS PRINCIPAIS</h3>
+                                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        {[
+                                          { name: 'Chute', value: userData.character?.chute || 0 },
+                                          { name: 'Precisão', value: userData.character?.precisao || 0 },
+                                          { name: 'Roubo', value: userData.character?.roubo || 0 },
+                                          { name: 'Análise', value: userData.character?.analise || 0 },
+                                          { name: 'Determinação', value: userData.character?.determinacao || 0 },
+                                          { name: 'Estratégia', value: userData.character?.estrategia || 0 },
+                                          { name: 'Intuição', value: userData.character?.intuicao || 0 },
+                                          { name: 'Interação Social', value: userData.character?.interacao_social || 0 },
+                                          { name: 'Corrida', value: userData.character?.corrida || 0 },
+                                          { name: 'Cruzamento', value: userData.character?.cruzamento || 0 },
+                                          { name: 'Defesa', value: userData.character?.defesa || 0 },
+                                          { name: 'Drible', value: userData.character?.drible || 0 },
+                                          { name: 'Passe', value: userData.character?.passe || 0 },
+                                          { name: 'Performance', value: userData.character?.performance || 0 },
+                                          { name: 'Comemoração', value: userData.character?.comemoracao || 0 },
+                                          { name: 'Língua Estrangeira', value: userData.character?.lingua_estrangeira || 0 }
+                                        ].map((skill) => (
+                                          <div key={skill.name} className="bg-slate-700 p-2 rounded text-center">
+                                            <div className="text-slate-300 text-xs font-semibold mb-1">{skill.name}</div>
+                                            <div className={`text-sm font-bold ${
+                                              skill.value === 0 ? 'text-gray-400' :
+                                              skill.value <= 2 ? 'text-red-400' :
+                                              skill.value <= 4 ? 'text-yellow-400' :
+                                              'text-green-400'
+                                            }`}>
+                                              CLASSE {skill.value === 0 ? '—' : ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][skill.value - 1] || skill.value}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+
+                                  {/* Perícias Livres & Reação */}
+                                  <Card className="bg-slate-800 border-cyan-500 lg:col-span-2">
+                                    <CardContent className="p-4">
+                                      <h3 className="font-orbitron font-bold text-cyan-400 mb-4">PERÍCIAS ESPECIAIS</h3>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                          <h4 className="text-green-400 font-semibold mb-2">Perícias Livres</h4>
+                                          <div className="grid grid-cols-2 gap-2">
+                                            {[
+                                              { name: 'Fortitude', value: userData.character?.fortitude || 0 },
+                                              { name: 'Finta', value: userData.character?.finta || 0 },
+                                              { name: 'Furtividade', value: userData.character?.furtividade || 0 },
+                                              { name: 'Iniciativa', value: userData.character?.iniciativa || 0 },
+                                              { name: 'Percepção', value: userData.character?.percepcao || 0 },
+                                              { name: 'Sorte', value: userData.character?.sorte || 0 }
+                                            ].map((skill) => (
+                                              <div key={skill.name} className="bg-slate-700 p-2 rounded text-center">
+                                                <div className="text-slate-300 text-xs font-semibold mb-1">{skill.name}</div>
+                                                <div className={`text-xs font-bold ${
+                                                  skill.value === 0 ? 'text-gray-400' :
+                                                  skill.value <= 2 ? 'text-red-400' :
+                                                  skill.value <= 4 ? 'text-yellow-400' :
+                                                  'text-green-400'
+                                                }`}>
+                                                  {skill.value === 0 ? '—' : `CL.${skill.value}`}
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <h4 className="text-orange-400 font-semibold mb-2">Perícias de Reação</h4>
+                                          <div className="grid grid-cols-2 gap-2">
+                                            {[
+                                              { name: 'Domínio', value: userData.character?.dominio || 0 },
+                                              { name: 'Cabeceio', value: userData.character?.cabeceio || 0 },
+                                              { name: 'Interceptação', value: userData.character?.interceptacao || 0 },
+                                              { name: 'Reação', value: userData.character?.reacao || 0 }
+                                            ].map((skill) => (
+                                              <div key={skill.name} className="bg-slate-700 p-2 rounded text-center">
+                                                <div className="text-slate-300 text-xs font-semibold mb-1">{skill.name}</div>
+                                                <div className={`text-xs font-bold ${
+                                                  skill.value === 0 ? 'text-gray-400' :
+                                                  skill.value <= 2 ? 'text-red-400' :
+                                                  skill.value <= 4 ? 'text-yellow-400' :
+                                                  'text-green-400'
+                                                }`}>
+                                                  {skill.value === 0 ? '—' : `CL.${skill.value}`}
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
                                       </div>
                                     </CardContent>
                                   </Card>

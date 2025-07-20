@@ -10,8 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import ExpurgoRadar from "@/components/ui/expurgo-radar";
-import CesarMonitor from "@/components/ui/CesarMonitor";
+
+import CesarMonitor from "@/components/CesarMonitor";
+import { SkillsSystem } from "@/components/ui/skills-system";
+import { CharacterOrigins } from "@/components/ui/character-origins";
+import { ClassSystem } from "@/components/ui/class-system";
+import { CharacterMotivations } from "@/components/ui/character-motivations";
+import { WeaponSelection } from "@/components/ui/weapon-selection";
+import { applyClassSkills, getGrantedSkills, getRemainingSkillChoices } from "@/utils/class-helpers";
 import type { Character, UpdateCharacter } from "@shared/schema";
 import defaultAvatar from "@assets/c33bd226d924c0e6c81af6810cc1f723_cleanup_upscayl_3x_realesrgan-x4plus-anime_1752871326667.png";
 
@@ -27,40 +33,102 @@ export default function Character() {
 
   const [formData, setFormData] = useState({
     name: "",
-    position: "",
+    motivacao: "",
     age: "",
     height: "",
     bio: "",
     weapon: "",
-    speed: 50,
-    strength: 50,
-    stamina: 50,
-    shooting: 50,
-    passing: 50,
-    dribbling: 50,
-    flowColor: "cyan",
+    origin: "",
+    classe: "",
+    subclasse: "",
+    fisico: 3,
+    velocidade: 3,
+    intelecto: 3,
+    carisma: 3,
+    egoismo: 3,
+    // Perícias começam em 1 (valor base)
+    chute: 1,
+    precisao: 1,
+    roubo: 1,
+    analise: 1,
+    determinacao: 1,
+    estrategia: 1,
+    intuicao: 1,
+    interacao_social: 1,
+    lingua_estrangeira: 1,
+    corrida: 1,
+    cruzamento: 1,
+    defesa: 1,
+    drible: 1,
+    passe: 1,
+    performance: 1,
+    comemoracao: 1,
+    fortitude: 1,
+    finta: 1,
+    furtividade: 1,
+    iniciativa: 1,
+    percepcao: 1,
+    sorte: 1,
+    dominio: 1,
+    cabeceio: 1,
+    interceptacao: 1,
+    reacao: 1,
+    flowColor: "red",
     flowPhrase: "É hora de dominar o campo!",
   });
 
   const [showCesarMonitor, setShowCesarMonitor] = useState(false);
 
+  // Calculated values for attributes
+  const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
+  const remainingAttributePoints = Math.max(0, 18 - totalAttributes);
+
   useEffect(() => {
-    if (character) {
+    if (character && typeof character === 'object') {
       setFormData({
-        name: character.name || "",
-        position: character.position || "",
-        age: character.age?.toString() || "",
-        height: character.height || "",
-        bio: character.bio || "",
-        weapon: character.weapon || "",
-        speed: character.speed,
-        strength: character.strength,
-        stamina: character.stamina,
-        shooting: character.shooting,
-        passing: character.passing,
-        dribbling: character.dribbling,
-        flowColor: character.flowColor || "cyan",
-        flowPhrase: character.flowPhrase || "É hora de dominar o campo!",
+        name: (character as any).name || "",
+        motivacao: (character as any).motivacao || "",
+        age: (character as any).age?.toString() || "",
+        height: (character as any).height || "",
+        bio: (character as any).bio || "",
+        weapon: (character as any).weapon || "",
+        origin: (character as any).origin || "",
+        classe: (character as any).classe || "",
+        subclasse: (character as any).subclasse || "",
+        fisico: (character as any).fisico || 3,
+        velocidade: (character as any).velocidade || 3,
+        intelecto: (character as any).intelecto || 3,
+        carisma: (character as any).carisma || 3,
+        egoismo: (character as any).egoismo || 3,
+        // Perícias começam em 1 (valor base)
+        chute: (character as any).chute || 1,
+        precisao: (character as any).precisao || 1,
+        roubo: (character as any).roubo || 1,
+        analise: (character as any).analise || 1,
+        determinacao: (character as any).determinacao || 1,
+        estrategia: (character as any).estrategia || 1,
+        intuicao: (character as any).intuicao || 1,
+        interacao_social: (character as any).interacao_social || 1,
+        lingua_estrangeira: (character as any).lingua_estrangeira || 1,
+        corrida: (character as any).corrida || 1,
+        cruzamento: (character as any).cruzamento || 1,
+        defesa: (character as any).defesa || 1,
+        drible: (character as any).drible || 1,
+        passe: (character as any).passe || 1,
+        performance: (character as any).performance || 1,
+        comemoracao: (character as any).comemoracao || 1,
+        fortitude: (character as any).fortitude || 1,
+        finta: (character as any).finta || 1,
+        furtividade: (character as any).furtividade || 1,
+        iniciativa: (character as any).iniciativa || 1,
+        percepcao: (character as any).percepcao || 1,
+        sorte: (character as any).sorte || 1,
+        dominio: (character as any).dominio || 1,
+        cabeceio: (character as any).cabeceio || 1,
+        interceptacao: (character as any).interceptacao || 1,
+        reacao: (character as any).reacao || 1,
+        flowColor: (character as any).flowColor || "red",
+        flowPhrase: (character as any).flowPhrase || "É hora de dominar o campo!",
       });
     }
   }, [character]);
@@ -157,17 +225,120 @@ export default function Character() {
     });
   };
 
-  const handleSelectChange = (value: string) => {
-    setFormData({
-      ...formData,
-      position: value,
-    });
-  };
+
 
   const handleFlowColorChange = (value: string) => {
     setFormData({
       ...formData,
       flowColor: value,
+    });
+  };
+
+  const handleOriginSelect = (origin: string) => {
+    setFormData({
+      ...formData,
+      origin: origin,
+    });
+  };
+
+  const handleMotivationChange = (motivacao: string) => {
+    setFormData({
+      ...formData,
+      motivacao: motivacao,
+    });
+  };
+
+  const handleWeaponSelect = (weaponId: string) => {
+    setFormData({
+      ...formData,
+      weapon: weaponId,
+    });
+  };
+
+  const handleClassChange = (className: string) => {
+    const updatedData = {
+      ...formData,
+      classe: className,
+      subclasse: "", // Reset subclass when class changes
+    };
+    
+    // Apply class skills automatically
+    const updatedSkills = applyClassSkills({
+      chute: formData.chute,
+      precisao: formData.precisao,
+      roubo: formData.roubo,
+      analise: formData.analise,
+      determinacao: formData.determinacao,
+      estrategia: formData.estrategia,
+      intuicao: formData.intuicao,
+      interacao_social: formData.interacao_social,
+      lingua_estrangeira: formData.lingua_estrangeira,
+      corrida: formData.corrida,
+      cruzamento: formData.cruzamento,
+      defesa: formData.defesa,
+      drible: formData.drible,
+      passe: formData.passe,
+      performance: formData.performance,
+      comemoracao: formData.comemoracao,
+      fortitude: formData.fortitude,
+      finta: formData.finta,
+      furtividade: formData.furtividade,
+      iniciativa: formData.iniciativa,
+      percepcao: formData.percepcao,
+      sorte: formData.sorte,
+      dominio: formData.dominio,
+      cabeceio: formData.cabeceio,
+      interceptacao: formData.interceptacao,
+      reacao: formData.reacao,
+    }, className, "");
+
+    setFormData({
+      ...updatedData,
+      ...updatedSkills,
+    });
+  };
+
+
+
+  const handleSubclassChange = (subclassName: string) => {
+    const updatedData = {
+      ...formData,
+      subclasse: subclassName,
+    };
+
+    // Apply class and subclass skills automatically
+    const updatedSkills = applyClassSkills({
+      chute: formData.chute,
+      precisao: formData.precisao,
+      roubo: formData.roubo,
+      analise: formData.analise,
+      determinacao: formData.determinacao,
+      estrategia: formData.estrategia,
+      intuicao: formData.intuicao,
+      interacao_social: formData.interacao_social,
+      lingua_estrangeira: formData.lingua_estrangeira,
+      corrida: formData.corrida,
+      cruzamento: formData.cruzamento,
+      defesa: formData.defesa,
+      drible: formData.drible,
+      passe: formData.passe,
+      performance: formData.performance,
+      comemoracao: formData.comemoracao,
+      fortitude: formData.fortitude,
+      finta: formData.finta,
+      furtividade: formData.furtividade,
+      iniciativa: formData.iniciativa,
+      percepcao: formData.percepcao,
+      sorte: formData.sorte,
+      dominio: formData.dominio,
+      cabeceio: formData.cabeceio,
+      interceptacao: formData.interceptacao,
+      reacao: formData.reacao,
+    }, formData.classe, subclassName);
+
+    setFormData({
+      ...updatedData,
+      ...updatedSkills,
     });
   };
 
@@ -189,6 +360,13 @@ export default function Character() {
     setFormData({
       ...formData,
       [stat]: value,
+    });
+  };
+
+  const handleSkillChange = (skillName: string, value: number) => {
+    setFormData({
+      ...formData,
+      [skillName]: value,
     });
   };
 
@@ -230,10 +408,10 @@ export default function Character() {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.position) {
+    if (!formData.name || !formData.motivacao) {
       toast({
         title: "Campos obrigatórios",
-        description: "Preencha nome e posição do personagem",
+        description: "Preencha nome e motivação do personagem",
         variant: "destructive",
       });
       return;
@@ -241,17 +419,49 @@ export default function Character() {
 
     const characterData = {
       name: formData.name,
-      position: formData.position,
+      motivacao: formData.motivacao,
       age: formData.age ? parseInt(formData.age) : null,
       height: formData.height,
       bio: formData.bio,
       weapon: formData.weapon,
-      speed: formData.speed,
-      strength: formData.strength,
-      stamina: formData.stamina,
-      shooting: formData.shooting,
-      passing: formData.passing,
-      dribbling: formData.dribbling,
+      origin: formData.origin,
+      classe: formData.classe,
+      subclasse: formData.subclasse,
+      fisico: formData.fisico,
+      velocidade: formData.velocidade,
+      intelecto: formData.intelecto,
+      carisma: formData.carisma,
+      egoismo: formData.egoismo,
+      // Perícias originais
+      chute: formData.chute,
+      precisao: formData.precisao,
+      roubo: formData.roubo,
+      analise: formData.analise,
+      determinacao: formData.determinacao,
+      estrategia: formData.estrategia,
+      intuicao: formData.intuicao,
+      interacao_social: formData.interacao_social,
+      lingua_estrangeira: formData.lingua_estrangeira,
+      // Novas perícias
+      corrida: formData.corrida,
+      cruzamento: formData.cruzamento,
+      defesa: formData.defesa,
+      drible: formData.drible,
+      passe: formData.passe,
+      performance: formData.performance,
+      comemoracao: formData.comemoracao,
+      // Perícias livres
+      fortitude: formData.fortitude,
+      finta: formData.finta,
+      furtividade: formData.furtividade,
+      iniciativa: formData.iniciativa,
+      percepcao: formData.percepcao,
+      sorte: formData.sorte,
+      // Perícias de reação
+      dominio: formData.dominio,
+      cabeceio: formData.cabeceio,
+      interceptacao: formData.interceptacao,
+      reacao: formData.reacao,
       flowColor: formData.flowColor,
       flowPhrase: formData.flowPhrase,
     };
@@ -273,9 +483,19 @@ export default function Character() {
     }
   };
 
-  const totalStats = formData.speed + formData.strength + formData.stamina + 
-                    formData.shooting + formData.passing + formData.dribbling;
-  const remainingPoints = Math.max(0, 600 - totalStats);
+  // Duplicate removed - already declared above
+
+  // Sistema de Classes: jogador escolhe 8 perícias iniciais que começam em Classe I
+  const selectedSkillsCount = Object.values({
+    chute: formData.chute, precisao: formData.precisao, roubo: formData.roubo,
+    analise: formData.analise, determinacao: formData.determinacao, estrategia: formData.estrategia,
+    intuicao: formData.intuicao, interacao_social: formData.interacao_social, lingua_estrangeira: formData.lingua_estrangeira,
+    corrida: formData.corrida, cruzamento: formData.cruzamento, defesa: formData.defesa,
+    drible: formData.drible, passe: formData.passe, performance: formData.performance, comemoracao: formData.comemoracao,
+    fortitude: formData.fortitude, finta: formData.finta, furtividade: formData.furtividade,
+    iniciativa: formData.iniciativa, percepcao: formData.percepcao, sorte: formData.sorte,
+    dominio: formData.dominio, cabeceio: formData.cabeceio, interceptacao: formData.interceptacao, reacao: formData.reacao
+  }).filter(value => value > 0).length;
 
   if (isLoading) {
     return (
@@ -324,18 +544,41 @@ export default function Character() {
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/">
                 <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                  <i className="fas fa-tachometer-alt mr-2"></i>CENTRAL DE COMANDO
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 1L7 2L8 6L9 2L8 1Z"/>
+                    <circle cx="8" cy="8" r="5" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>CENTRAL DE COMANDO
                 </button>
               </Link>
               <Link href="/character">
                 <button className="text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                  <i className="fas fa-user-edit mr-2"></i>MEU SOBREVIVENTE
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 8c1.5 0 3-1.5 3-3s-1.5-3-3-3-3 1.5-3 3 1.5 3 3 3zm0 1c-2 0-6 1-6 3v1h12v-1c0-2-4-3-6-3z"/>
+                  </svg>MEU SOBREVIVENTE
+                </button>
+              </Link>
+              <Link href="/match">
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    <path d="M5 8L11 8M8 5L8 11" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>COMBATES
+                </button>
+              </Link>
+              <Link href="/guide">
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M3 2h10v12H3V2zm2 2v8h6V4H5zm1 1h4v1H6V5zm0 2h4v1H6V7zm0 2h2v1H6V9z"/>
+                  </svg>MANUAL
                 </button>
               </Link>
               {user?.isAdmin && (
                 <Link href="/admin">
                   <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                    <i className="fas fa-crown mr-2"></i>Admin
+                    <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                      <path d="M8 2L3 4v4c0 3.5 3 6 5 6s5-2.5 5-6V4L8 2zm0 2l3.5 1.5v3c0 2-1.5 3.5-3.5 3.5s-3.5-1.5-3.5-3.5v-3L8 4z"/>
+                      <circle cx="8" cy="7.5" r="1.5"/>
+                    </svg>CONTROLE MESTRE
                   </button>
                 </Link>
               )}
@@ -355,7 +598,7 @@ export default function Character() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">MEU SOBREVIVENTE</h2>
-          <p className="text-gray-400 font-oswald tracking-wide">Configure e edite sua ficha de sobrevivente</p>
+          <p className="text-gray-400 font-oswald tracking-wide">Configure e edite sua ficha de sobrevivente.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -369,7 +612,7 @@ export default function Character() {
                 <div className="text-center mb-6">
                   <div className="relative">
                     <img 
-                      src={character?.avatar || defaultAvatar}
+                      src={(character as any)?.avatar || defaultAvatar}
                       alt="Avatar do personagem" 
                       className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-500 object-cover"
                     />
@@ -415,22 +658,9 @@ export default function Character() {
                     />
                   </div>
 
-                  <div>
-                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
-                      POSIÇÃO
-                    </Label>
-                    <Select value={formData.position} onValueChange={handleSelectChange}>
-                      <SelectTrigger className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white">
-                        <SelectValue placeholder="Selecione a posição" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="atacante">Atacante</SelectItem>
-                        <SelectItem value="meio-campo">Meio-Campo</SelectItem>
-                        <SelectItem value="defensor">Defensor</SelectItem>
-                        <SelectItem value="goleiro">Goleiro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+
+
+
 
                   <div>
                     <Label className="block text-gray-300 font-oswald font-semibold mb-2">
@@ -466,34 +696,205 @@ export default function Character() {
             </Card>
           </div>
 
-          {/* Character Stats */}
-          <div className="lg:col-span-2">
+          {/* Character Origins */}
+          <div className="lg:col-span-3">
             <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
-                <h3 className="font-bebas text-xl font-bold text-red-400 mb-6 tracking-wider">ATRIBUTOS</h3>
+                <CharacterOrigins 
+                  selectedOrigin={formData.origin}
+                  onOriginSelect={handleOriginSelect}
+                />
+              </CardContent>
+            </Card>
+          </div>
 
-                {/* Blue Lock Radar Chart */}
+          {/* Character Motivations */}
+          <div className="lg:col-span-3">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
+              <CardContent className="p-6">
+                <CharacterMotivations 
+                  selectedMotivation={formData.motivacao}
+                  onMotivationChange={handleMotivationChange}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Character Classes */}
+          <div className="lg:col-span-3">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
+              <CardContent className="p-6">
+                <ClassSystem 
+                  selectedClass={formData.classe}
+                  selectedSubclass={formData.subclasse}
+                  onClassChange={handleClassChange}
+                  onSubclassChange={handleSubclassChange}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Weapon Selection */}
+          <div className="lg:col-span-3">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
+              <CardContent className="p-6">
+                <WeaponSelection 
+                  selectedWeapon={formData.weapon}
+                  onWeaponSelect={handleWeaponSelect}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Character Stats */}
+          <div className="lg:col-span-3">
+            <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
+              <CardContent className="p-6">
+                {/* Novo Sistema de Atributos */}
                 <div className="mb-6">
-                  <ExpurgoRadar
-                    stats={{
-                      speed: formData.speed,
-                      strength: formData.strength,
-                      stamina: formData.stamina,
-                      shooting: formData.shooting,
-                      passing: formData.passing,
-                      dribbling: formData.dribbling,
-                    }}
-                    onStatChange={handleStatChange}
-                    remainingPoints={remainingPoints}
-                  />
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h3 className="font-bebas text-2xl text-red-400 tracking-wider mb-2">ATRIBUTOS</h3>
+                      <p className="text-gray-300 font-oswald">
+                        Definem o limite das capacidades do seu sobrevivente.<br/>
+                        <span className="text-red-400 font-bold">Você tem {remainingAttributePoints} pontos restantes para distribuir (máximo de 10 por atributo).</span>
+                      </p>
+                    </div>
+
+                    <div className="grid gap-4">
+                      {[
+                        { name: "fisico", displayName: "FÍSICO", description: "Força bruta e resistência", value: formData.fisico },
+                        { name: "velocidade", displayName: "VELOCIDADE", description: "Reflexos, agilidade e resposta rápida", value: formData.velocidade },
+                        { name: "intelecto", displayName: "INTELECTO", description: "Estratégia, leitura de jogo e tomada de decisão", value: formData.intelecto },
+                        { name: "carisma", displayName: "CARISMA", description: "Como lida com a fama, fãs e relações fora de campo", value: formData.carisma },
+                        { name: "egoismo", displayName: "EGOÍSMO", description: "Sua ambição individual — a fome de ser o número 1", value: formData.egoismo }
+                      ].map((attr) => (
+                        <div key={attr.name} className="bg-red-800/20 border border-red-700/30 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <h4 className="font-bebas text-lg text-red-400 tracking-wide">
+                                {attr.displayName}
+                              </h4>
+                              <p className="text-gray-300 font-oswald text-sm">
+                                {attr.description}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => attr.value > 0 && handleStatChange(attr.name, attr.value - 1)}
+                                disabled={attr.value <= 0}
+                                className="h-8 w-8 p-0 hover:bg-red-700/30 disabled:opacity-30"
+                              >
+                                -
+                              </Button>
+                              
+                              <div className="flex items-center gap-1 min-w-[200px] justify-center flex-wrap">
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dot) => (
+                                  <div
+                                    key={dot}
+                                    className={`w-3 h-3 rounded-full border-2 ${
+                                      dot <= attr.value
+                                        ? "bg-red-500 border-red-500"
+                                        : "border-red-700/50"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => attr.value < 10 && remainingAttributePoints > 0 && handleStatChange(attr.name, attr.value + 1)}
+                                disabled={attr.value >= 10 || remainingAttributePoints <= 0}
+                                className="h-8 w-8 p-0 hover:bg-red-700/30 disabled:opacity-30"
+                              >
+                                +
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="text-center">
+                            <span className="font-bebas text-xl text-red-400">
+                              NÍVEL {attr.value}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Total Stats Display */}
                 <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
-                    <span className="font-oswald font-bold text-red-400">TOTAL DE PONTOS USADOS:</span>
-                    <span className="font-bebas text-lg font-bold text-red-400">{totalStats}/600</span>
+                    <span className="font-oswald font-bold text-red-400">ATRIBUTOS DISTRIBUÍDOS:</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/18</span>
                   </div>
+                  {remainingAttributePoints === 0 && (
+                    <p className="text-gray-300 font-oswald text-sm mt-2 text-center">
+                      ✓ Todos os pontos de atributos distribuídos
+                    </p>
+                  )}
+                </div>
+
+                {/* Granted Skills Info */}
+                {formData.classe && (
+                  <div className="mt-8 p-4 bg-red-950/30 border border-red-800 rounded-lg">
+                    <h3 className="text-red-400 font-bebas text-lg mb-3">
+                      PERÍCIAS CONCEDIDAS AUTOMATICAMENTE
+                    </h3>
+                    <div className="space-y-2">
+                      {getGrantedSkills(formData.classe, formData.subclasse).map((skill) => (
+                        <div key={skill} className="flex items-center text-green-400 font-oswald text-sm">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                          {skill.charAt(0).toUpperCase() + skill.slice(1)} (Classe I)
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-gray-400 font-oswald text-xs mt-3">
+                      Essas perícias começam automaticamente em CLASSE I
+                    </p>
+                  </div>
+                )}
+
+                {/* Skills Section */}
+                <div className="mt-8">
+                  <SkillsSystem 
+                    skills={{
+                      chute: formData.chute,
+                      precisao: formData.precisao,
+                      roubo: formData.roubo,
+                      analise: formData.analise,
+                      determinacao: formData.determinacao,
+                      estrategia: formData.estrategia,
+                      intuicao: formData.intuicao,
+                      interacao_social: formData.interacao_social,
+                      lingua_estrangeira: formData.lingua_estrangeira,
+                      corrida: formData.corrida,
+                      cruzamento: formData.cruzamento,
+                      defesa: formData.defesa,
+                      drible: formData.drible,
+                      passe: formData.passe,
+                      performance: formData.performance,
+                      comemoracao: formData.comemoracao,
+                      fortitude: formData.fortitude,
+                      finta: formData.finta,
+                      furtividade: formData.furtividade,
+                      iniciativa: formData.iniciativa,
+                      percepcao: formData.percepcao,
+                      sorte: formData.sorte,
+                      dominio: formData.dominio,
+                      cabeceio: formData.cabeceio,
+                      interceptacao: formData.interceptacao,
+                      reacao: formData.reacao,
+                    }}
+                    onSkillChange={handleSkillChange}
+                    grantedSkills={getGrantedSkills(formData.classe, formData.subclasse)}
+                  />
                 </div>
 
                 {/* Save Button */}
@@ -530,15 +931,14 @@ export default function Character() {
 
                   <div>
                     <Label className="block text-gray-300 font-oswald font-semibold mb-2">
-                      WEAPON (HABILIDADE ESPECIAL)
+                      HABILIDADES ESPECIAIS
                     </Label>
-                    <Input
-                      type="text"
+                    <Textarea
                       name="weapon"
                       value={formData.weapon}
                       onChange={handleInputChange}
-                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
-                      placeholder="Ex: Golpe Devastador, Velocidade Letal..."
+                      className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white h-24"
+                      placeholder="Descreva as habilidades únicas do seu personagem, técnicas especiais, jogadas favoritas..."
                     />
                   </div>
                 </div>

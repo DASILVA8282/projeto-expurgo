@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+  import { useState, useEffect } from "react";
   import { motion } from "framer-motion";
   import { useQuery } from "@tanstack/react-query";
   import { useAuth } from "@/hooks/useAuth";
@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
   import { Button } from "@/components/ui/button";
   import { Link } from "wouter";
   import { useWebSocket } from "@/hooks/useWebSocket";
-  import { WildCardModal } from "@/components/ui/WildCardModal";
+  import { WildCardModal } from "@/components/WildCardModal";
   
   export default function Dashboard() {
     const { user, logout } = useAuth();
@@ -101,10 +101,20 @@ import { useState, useEffect } from "react";
                     </svg>COMBATES
                   </button>
                 </Link>
+                <Link href="/guide">
+                  <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                    <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                      <path d="M3 2h10v12H3V2zm2 2v8h6V4H5zm1 1h4v1H6V5zm0 2h4v1H6V7zm0 2h2v1H6V9z"/>
+                    </svg>MANUAL
+                  </button>
+                </Link>
                 {user?.isAdmin && (
                   <Link href="/admin">
                     <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
-                      <i className="fas fa-crown mr-2"></i>Admin
+                      <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                        <path d="M8 2L3 4v4c0 3.5 3 6 5 6s5-2.5 5-6V4L8 2zm0 2l3.5 1.5v3c0 2-1.5 3.5-3.5 3.5s-3.5-1.5-3.5-3.5v-3L8 4z"/>
+                        <circle cx="8" cy="7.5" r="1.5"/>
+                      </svg>CONTROLE MESTRE
                     </button>
                   </Link>
                 )}
@@ -132,7 +142,7 @@ import { useState, useEffect } from "react";
             className="mb-8"
           >
             <h2 className="font-bebas text-4xl font-bold text-red-500 mb-2 tracking-wider">DASHBOARD</h2>
-            <p className="text-gray-400 font-oswald tracking-wide">Bem-vindo ao sistema Projeto Expurgo</p>
+            <p className="text-gray-400 font-oswald tracking-wide">Bem-vindo ao sistema Projeto Expurgo.</p>
           </motion.div>
   
           {/* Stats Overview */}
@@ -152,7 +162,7 @@ import { useState, useEffect } from "react";
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 font-oswald text-sm">LEVEL</p>
+                      <p className="text-gray-400 font-oswald text-sm">NÍVEL</p>
                       <p className="text-2xl font-bebas font-bold text-red-400">
                         {character?.level || 1}
                       </p>
@@ -240,7 +250,7 @@ import { useState, useEffect } from "react";
                 {character ? (
                   <div className="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg">
                     <i className="fas fa-user-edit text-red-500"></i>
-                    <span className="text-gray-300">Sobrevivente {character.name} configurado</span>
+                    <span className="text-gray-300">Sobrevivente {character.name} configurado.</span>
                     <span className="text-gray-500 text-sm ml-auto">Recente</span>
                   </div>
                 ) : (

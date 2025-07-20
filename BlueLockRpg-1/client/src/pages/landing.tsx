@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { InvitationEnvelope } from "@/components/ui/InvitationEnvelope";
+import { InvitationEnvelope } from "@/components/InvitationEnvelope";
 
 export default function Landing() {
   const { login, register, isLoginPending, isRegisterPending } = useAuth();
@@ -174,7 +174,7 @@ export default function Landing() {
                       value={formData.username}
                       onChange={handleInputChange}
                       className="w-full bg-gray-900 border-2 border-gray-700 focus:border-red-500 text-white font-mono"
-                      placeholder={isLoginMode ? "Digite sua identificação" : "Escolha uma identificação"}
+                      placeholder={isLoginMode ? "Digite sua identificação" : "Escolha sua identificação"}
                       required
                     />
                   </div>
@@ -191,7 +191,7 @@ export default function Landing() {
                       value={formData.password}
                       onChange={handleInputChange}
                       className="w-full bg-gray-900 border-2 border-gray-700 focus:border-red-500 text-white font-mono"
-                      placeholder={isLoginMode ? "Digite seu código de acesso" : "Crie um código de acesso"}
+                      placeholder={isLoginMode ? "Digite seu código de acesso" : "Crie seu código de acesso"}
                       required
                     />
                   </div>
@@ -221,7 +221,7 @@ export default function Landing() {
                     className="text-amber-500 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide"
                   >
                     {isLoginMode ? (
-                      <>Não foi recrutado? <span className="underline text-red-500">Inscreva-se no Expurgo</span></>
+                      <>Não foi recrutado? <span className="underline text-red-500">Inscreva-se no Projeto Expurgo</span></>
                     ) : (
                       <>Já faz parte? <span className="underline text-red-500">Acesse sua conta</span></>
                     )}
