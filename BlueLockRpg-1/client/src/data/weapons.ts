@@ -438,6 +438,111 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'drible-de-maquina',
+    name: 'Drible de Máquina',
+    category: 'Técnico',
+    description: 'Esses dribles seguem um estilo mecânico e fechado, com movimentos padronizados e certeiros, sem margem para erros ou falhas, e mesmo sendo "previsíveis" até certo ponto, são difíceis de serem impedidos.',
+    specialization: ['Drible', 'Precisão', 'Programação'],
+    levels: [
+      {
+        name: 'Movimentos Programados',
+        description: 'Dribles com total precisão que se adaptam à reação do adversário. Após falhar um drible, pode gastar 10 FOL para refazer o teste, descrevendo como o drible se adapta exatamente à forma que o defensor venceu.'
+      },
+      {
+        name: 'Previsão Robótica',
+        description: 'Gastando 4 FOL e 5 INT, programa 3 dribles. Se a descrição do defensor for inferior tecnicamente ao seu drible programado, passa automaticamente. Cada drible programado só pode ser usado uma vez.'
+      },
+      {
+        name: 'Sistema Mecânico Tecnológico',
+        description: 'Pode programar quantos dribles quiser, gastando apenas 2 FOL com eles. Para cada Drible Programado bem-sucedido, ganha direito a programar uma Ação também.'
+      }
+    ]
+  },
+  {
+    id: 'fingir-falta',
+    name: 'Fingir Falta',
+    category: 'Mental',
+    description: 'Uma técnica maliciosa que se aproveita da enganação e da "ocultação" de movimentos do árbitro para tirar vantagem. É uma arma perigosa, e se bem usada, pode causar muitos problemas aos adversários.',
+    specialization: ['Enganação', 'Interação Social', 'Malícia'],
+    levels: [
+      {
+        name: 'Definitivamente Foi Falta',
+        description: 'Em interações físicas, o adversário tem -4 no valor puro para critérios de faltas, quedas e lesões. Gastando 10 FOL, aumenta para -8.'
+      },
+      {
+        name: 'Olha o Cartãozinho!',
+        description: 'Ao usar "Definitivamente Foi Falta", teste Interação Social (DT 24) para fingir algo mais sério. 10 FOL = Cartão Amarelo (uma vez). Se já tinha amarelo: -2 na perícia usada (20 FOL = -6).'
+      },
+      {
+        name: 'Tua Mãe Aquela #@!$&*',
+        description: 'No mano a mano, teste Interação Social vs Determinação do adversário. Se vencer, ele te ofende e recebe penalizações que variam de aviso até Cartão Vermelho. 3 FOL e Ação Mental.'
+      }
+    ]
+  },
+  {
+    id: 'forca-de-vontade',
+    name: 'Força de Vontade',
+    category: 'Mental',
+    description: 'Essa Arma mostra sua determinação e força de vontade inabalável, que te farão resistir até o fim. Sempre que derrubado, você voltará mais forte, e mais ardente, pronto para tornar-se o melhor.',
+    specialization: ['Determinação', 'Resistência', 'Vontade'],
+    levels: [
+      {
+        name: 'Vontade Ardente',
+        description: 'Para cada 1 FOL gasto, anula 1 de penalidade (dados). Limite = NT +1 para cada 2 Classes em Determinação. Primeira Condição Negativa pode ser anulada. Pode anular lesões.'
+      },
+      {
+        name: 'Determinação Inalcançável',
+        description: 'Ao ser interrompido, gaste 5 FOL para teste extra de Determinação e penalidade no adversário = dobro das Classes Determinação. Com diferença de NT, pode gastar 2 CA para passar automaticamente.'
+      },
+      {
+        name: 'Me Devore, Que Eu Voltarei Mais Forte!',
+        description: 'Na primeira vez Devorado por partida, gaste todo FOL para converter penalidades em bônus. Sob Condição "Devorado", pode ativar Despertar, anulando a Condição enquanto durar.'
+      }
+    ]
+  },
+  {
+    id: 'marcacao-stalker',
+    name: 'Marcação Stalker',
+    category: 'Defensivo',
+    description: 'A Marcação Stalker é um tipo diferenciado de marcar o adversário, mantendo uma distância de 2 metros no formato de um semicírculo, similar a um transferidor. Essa marcação não dificulta os movimentos adversários, mas limita suas opções de jogo.',
+    specialization: ['Marcação', 'Pressão', 'Controle'],
+    levels: [
+      {
+        name: 'Pé no Saco',
+        description: 'Sustentando 3 FOL, acompanha alvo a qualquer ponto do campo. +2 Interceptação para impedir passes, +4 contra dribles. Alvo pode sustentar até 6 FOL para anular bônus (1 FOL anula 1 bônus).'
+      },
+      {
+        name: 'Transferidor Sexy',
+        description: 'Semicírculo de 2m priva opções do adversário. +4 Interceptação, +6 contra dribles. Pode impedir até 2 alvos de receber/passar bola. Alvo pode sustentar até 10 FOL.'
+      },
+      {
+        name: 'Diâmetro de Pressão',
+        description: 'Domínio total em 2m. Intercepta automaticamente passes ao alvo, bloqueia até 3 opções de passe dele. 5 FOL para "frear" movimento (limita deslocamento ao seu se ele tiver mais).'
+      }
+    ]
+  },
+  {
+    id: 'monstruosidade-egoica',
+    name: 'Monstruosidade Egóica',
+    category: 'Mental',
+    description: 'A "Monstruosidade Egóica" é uma Arma Menor que complementa seu estilo de jogo, aprimorando cada característica sua, o que te permite um jogo "solo", somente avançando e devorando tudo pela frente.',
+    specialization: ['Egoísmo', 'Individualismo', 'Devoração'],
+    levels: [
+      {
+        name: 'Uma Fera Dentro de Campo',
+        description: 'Ao ultrapassar adversário, bônus baseado no valor puro: 12-15 (+15m, +2 testes), 16-19 (move até próximo, +3 testes), 20 (move até próximo, +1 Ação Física, +4 testes). 1 CA aumenta patamar em 1.'
+      },
+      {
+        name: 'Gingado Monstruoso',
+        description: 'Bola grudada no pé confunde adversário. Só adversário testa, você gasta Deslocamento para reduzir resultado dele (limite = dobro Mod. VEL, mín. 2). Se vencer, move metros = Velocidade.'
+      },
+      {
+        name: 'Consumação Egoísta',
+        description: 'Sustentando 4 FOL, recebe turno extra junto do original. Ao final, escolhe qual usar. +1 acumulativo em perícias usadas no turno não utilizado.'
+      }
+    ]
+  },
+  {
     id: 'fisico-escultural',
     name: 'Físico Escultural',
     category: 'Físico',
