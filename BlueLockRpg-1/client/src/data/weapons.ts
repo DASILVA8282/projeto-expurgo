@@ -14,6 +14,238 @@ export interface Weapon {
 
 export const weaponsData: Weapon[] = [
   {
+    id: 'dribles-magicos',
+    name: 'Dribles Mágicos',
+    category: 'Técnico',
+    description: 'Os Dribles Mágicos são o tipo de Drible mais voltado para a enganação, usando de toda sua criatividade e "magia" para ultrapassar todo e qualquer oponente.',
+    specialization: ['Drible', 'Finta', 'Criatividade'],
+    levels: [
+      {
+        name: 'Truque de Mágica',
+        description: 'Os "Dribles Mágicos" visam fazer jogadas criativas e "estranhas". Gastando 5 FOL, você pode usar "Você não contava que..." para fazer algo surpreendente. DT varia entre 12-30 baseada na criatividade.'
+      },
+      {
+        name: 'O Cartoleiro Louco',
+        description: 'Você recebe movimento "Cartola" (gasto 1 FOL, DT 28, precisa teste Reação DT 25). Usar Cartola 3 vezes seguidas anula gasto do próximo drible e vira Ação Livre.'
+      },
+      {
+        name: 'Abracadabra',
+        description: 'Gastando 15 FOL e Ação Mental, use "Abracadabra" com d6 mágico. Cada face tem efeito escolhido por você com aprovação do Mestre (ex: movimento extra, acerto garantido).'
+      },
+      {
+        name: 'Truque de Encerramento',
+        description: 'Durante Acréscimos: gasto da "Cartola" anulado, "Truque de Mágica" custa 1 FOL, todas as DTs viram 15.'
+      },
+      {
+        name: 'Ilusionismo',
+        description: 'Gastando 20 FOL, crie ilusões em todos que interagiram com você no turno. Movimentos impossíveis e absurdos. Máximo 3x por partida, ganha 20-100 fama por uso.'
+      }
+    ]
+  },
+  {
+    id: 'dribles-passivos',
+    name: 'Dribles Passivos',
+    category: 'Técnico',
+    description: 'O drible mais técnico que tem, os Dribles Passivos utilizam da própria movimentação do adversário contra ele, se aproveitando de deslizes para ultrapassá-los facilmente.',
+    specialization: ['Drible', 'Análise', 'Contra-ataque'],
+    levels: [
+      {
+        name: 'Contra Drible',
+        description: 'Observe testes de Roubo ruins do adversário, teste Análise (DT 26) para registrar resultado. Quando driblar ele, use o valor registrado em vez de dados.'
+      },
+      {
+        name: 'Quebra de Movimentação',
+        description: 'Se adversário tirar resultado "Medíocre" ou menor em teste de Drible, você passa automaticamente sem precisar testar.'
+      },
+      {
+        name: 'Drible Fluido',
+        description: 'Passando por 1 defensor, gaste 15 FOL para passar por todos em 15m dele (exceto goleiro). Basta um para passar por todos.'
+      },
+      {
+        name: 'Sucesso Sucessivo',
+        description: 'Com Sucesso Automático por 20 puro, anule para "guardar" e receber +6. Use o Sucesso guardado em outro teste de Drible.'
+      },
+      {
+        name: 'Drible Genial',
+        description: 'Contra Drible usado 2x, Quebra funciona até "Bom", Drible Fluido alcança 15m, Sucesso Sucessivo dá +10.'
+      }
+    ]
+  },
+  {
+    id: 'forca-fisica',
+    name: 'Força Física',
+    category: 'Físico',
+    description: 'A Força Física é uma arma natural que consiste em um poder muscular imenso e descontrolado, usado principalmente por brutamontes para neutralizar qualquer tentativa de movimentação oposta.',
+    specialization: ['Físico', 'Corpo a Corpo', 'Intimidação'],
+    levels: [
+      {
+        name: 'Brutamonte',
+        description: 'Seu corpo é incrivelmente forte, um verdadeiro saco de músculos. Você recebe +1 Classe em 3 Perícias Físicas à sua escolha.'
+      },
+      {
+        name: 'Jogo de Ombros',
+        description: 'Recebe movimento "Jogo de Ombros" e "Forçar Corpo a Corpo". DT para tomar bola: 10 + FÍS + Mod. FÍS. Gasto: 2 FOL/turno, perde 1 Ação Física.'
+      },
+      {
+        name: 'Ego Protein',
+        description: 'Soma Modificador de Egoísmo no seu Físico, e pode usar pontos de EGO para repor pontos de FÍS.'
+      },
+      {
+        name: 'Músculo Ambulante',
+        description: 'Gastando 2 Pontos FÍS, troque dados de perícia para valor = Mod. FÍS. +2 Pontos para fazer mesmo com bônus.'
+      },
+      {
+        name: 'Monstro Imparável',
+        description: 'Em vez de gastar Pontos Físico no bônus, gaste para somar no resultado puro. Força inacreditável no corpo a corpo.'
+      }
+    ]
+  },
+  {
+    id: 'fisico-escultural',
+    name: 'Físico Escultural',
+    category: 'Físico',
+    description: 'Similar à Força Física, mas prioriza a inteligência corporal e "construção corporal" ao invés de força descontrolada. Meta de vários jogadores.',
+    specialization: ['Físico', 'Técnica Corporal', 'Versatilidade'],
+    levels: [
+      {
+        name: 'Construtor Corporal',
+        description: 'Com 5 FOL, use primeiro poder de: Velocidade, Aríete, Imperador X1, Dribles Agressivos, Marcação Stalker. 2 rodadas, depois não pode mais usar na partida.'
+      },
+      {
+        name: 'Físico Versátil',
+        description: 'Recebe Especialidade em +1 Perícia Física. Converte 1 CA em +1d Perícia Física, 2 CA transforma Perícia Livre em Física até fim da partida.'
+      },
+      {
+        name: 'Treinamento Pesado',
+        description: 'Todos treinamentos físicos (exceto Perícias Físicas) +1 Nível. Cada 5 CA com Perícias Físicas = 1 Treinamento (limite = Mod. Físico).'
+      },
+      {
+        name: 'Corpo Sincronizado',
+        description: 'Habilidades 10- FOL custam 1d4. 0 FOL: perde só 1 Ação Física, primeira vez ganha 1d20+5. Recebe todas Perícias Físicas (+1 Classe se já tinha).'
+      },
+      {
+        name: 'Colosso do Futebol',
+        description: 'Início da partida: gire 10d20, guarde resultados. Use como resultado definitivo 1x cada. Valores "20" podem ser usados 2x.'
+      }
+    ]
+  },
+  {
+    id: 'imperador-x1',
+    name: 'Imperador do X1',
+    category: 'Mental',
+    description: 'A Arma "Imperador do X1" te tornará um verdadeiro mestre das disputas corpo a corpo, com técnicas especializadas para essa área, alcançando o nível de Imperador.',
+    specialization: ['1v1', 'Adrenalina', 'Domínio'],
+    levels: [
+      {
+        name: 'Solo de Adrenalina',
+        description: 'Em 1v1: +1 Classe todas Perícias, +1 Ação Livre, FOL-3. Vencer 1v1: +1 todas Perícias até fim (acumula até 5+NT). Empolgado: +1 Ação Livre no X1.'
+      },
+      {
+        name: 'Explorador de Brechas',
+        description: 'Reta 10+NT metros. Passar por aliado/adversário: teste Corrida vs Reação. +1 por 3 FOL. Aliado = proteção. Final: ação +2 por adversário, +1d por aliado.'
+      },
+      {
+        name: 'Quebra de Postura',
+        description: 'Recebe "Hold Up" (gasto anulado). Se alvo falhar, diferença resultado-DT vira bônus para ultrapassar + volta dobrado como deslocamento.'
+      },
+      {
+        name: 'Reflexos de Imperador',
+        description: 'Recebe "Reflexos" limitado a: Carrinho, adversário partir pra cima, posicionar para impedir, marcar. Se já tinha, bônus/penalidades dobrados no X1.'
+      },
+      {
+        name: 'Hardcore Mode',
+        description: 'Adicione +1 a +10 teste adversário, -1 a -10 seu. Vencendo: 5=+1d acumula +3d, 10=Fluxo, 15=1 NT temporário, 20=Sub Despertar 5 PD.'
+      }
+    ]
+  },
+  {
+    id: 'passes-magicos',
+    name: 'Passes Mágicos',
+    category: 'Técnico',
+    description: 'Os passes mágicos são uma técnica de passe de bola voltada para sua criatividade e talento sobrenatural. Use de toda sua "magia" para tocá-la, criando um show visual.',
+    specialization: ['Passe', 'Criatividade', 'Magia'],
+    levels: [
+      {
+        name: 'Num Passe de Mágica!',
+        description: 'Passe mágico com show de luzes. Descreva trajetória/sensações. Alvo ganha: +2 Dominar OU +1d testes OU +10m alcance OU +1 Ação Física OU FOL-5. Gasta 3 FOL.'
+      },
+      {
+        name: 'Cruzamento Ilusório',
+        description: 'Cruzamento com múltiplas linhas possíveis. Alvo usa 2 Ações Físicas. Se ineficaz, refaça passe (8 FOL). Quem reagiu não pode reagir ao novo.'
+      },
+      {
+        name: 'Pérola Perfuradora Celeste',
+        description: 'Passe anula reação de 2 defensores. Receptor pode chutar direto com "Voleio". Se já tinha, FOL anulado. Com arma chute: anula reações (goleiro -6 DP).'
+      },
+      {
+        name: 'Wätcher des Schnees',
+        description: 'Passes geram "Elixir Mágico". 5 EM = "Observador das Neves" com 3 Feitiços. Cada feitiço tem 3 efeitos compráveis com EM para combinações mágicas.'
+      },
+      {
+        name: 'Ápice de Feitiçaria',
+        description: 'Crie 3 movimentos exclusivos "Magias" com palavras-chave: Ilusório, Mímico, Sobrenatural, Sensacional, Inspirador. Gastos: 1, 2 ou 3 EM.'
+      }
+    ]
+  },
+  {
+    id: 'passes-travessos',
+    name: 'Passes Travessos',
+    category: 'Técnico',
+    description: 'Uma arma de passes sem muitas limitações, onde a verdadeira magia é sua imprevisibilidade e mutabilidade, correspondendo às vontades do usuário.',
+    specialization: ['Passe', 'Imprevisibilidade', 'Flexibilidade'],
+    levels: [
+      {
+        name: 'Passes Pervertidos',
+        description: 'Passes anormais sem lógica. Passe sem alvo definido, estipule DT. Próximos da bola fazem teste Domínio. Maior resultado pega bola + bônus = DT.'
+      },
+      {
+        name: 'Passes Perseguidores',
+        description: 'Reação ao turno aliado: gaste 8 FOL. Bola acompanha movimentos dele durante turno, cai nos pés ao terminar (Passe DT 27).'
+      },
+      {
+        name: 'Passes Maestros',
+        description: 'Passe 17+ puro: gaste 6 FOL para "Ações Maestras". Decida características: curvatura, trajetória, toques NPC. Não interrompível. 3 Ações Maestras.'
+      },
+      {
+        name: 'Bola Perfeita',
+        description: 'Teste puro 16: gaste 10 FOL, receptor +1 Ação Física. Cada +2 no valor puro = +1 Ação adicional.'
+      },
+      {
+        name: 'Voilà Mon Football!',
+        description: '3 passes seguidos bem-sucedidos = Fluxo até errar ou parar de passar. Se 3 passes para mesma pessoa = Sinergia (manter 2 passes a cada 5).'
+      }
+    ]
+  },
+  {
+    id: 'perfeicao',
+    name: 'Perfeição',
+    category: 'Mental',
+    description: 'Essa arma aprimora todas as suas características: chute, passe, corrida, corpo a corpo. Aquele que a usar terá direito ao título de "Jogador Perfeito".',
+    specialization: ['Perfeição', 'Precisão', 'Excelência'],
+    levels: [
+      {
+        name: 'Parábola Perfeita',
+        description: 'Curvatura perfeita: alcance e potência equivalentes. Se resultado > alcance = novo alcance. Se alcance > resultado: +1 puro/10m. Alcance base chute = 35m.'
+      },
+      {
+        name: 'Perfeição Sinuosa',
+        description: 'Valor puro = 20 - Classes Precisão: receba 1 Ponto para somar no puro durante partida. Efeito 20 puro aplica, mas sem CA. Pontos resetam.'
+      },
+      {
+        name: 'Execução Exímia',
+        description: 'Pontos eternos entre partidas. Gaste 3 Pontos: +2 bônus, DT-2, gasto anulado, alcance+4m. Recebe CA por 20 puro. Troque 15 FOL por 1 Ponto.'
+      },
+      {
+        name: 'Jogador Perfeito',
+        description: '+1 Classe todas Perícias, +3 todos Atributos, +1 Habilidade Geral, 1°+2° Nível Estilo. Sucessos automáticos superiores. 1v1: bônus adversário ≤ seu.'
+      },
+      {
+        name: 'Das Cinzas Nasce a Perfeição',
+        description: 'Fluxo: sacrifique Foco para ativar. Cada falha: +1 Classe temporária (até X). Perícia X: +1 PA temporário. 5 Perícias X: nova Aura. 10: nova Arma.'
+      }
+    ]
+  },
+  {
     id: 'ariete',
     name: 'Aríete',
     category: 'Ofensivo',
