@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt';
 
 export async function initializeDatabase() {
   try {
+    console.log('=== RENDER DATABASE INITIALIZATION DEBUG ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Database URL exists:', !!process.env.DATABASE_URL);
+    console.log('Database URL starts with:', process.env.DATABASE_URL?.substring(0, 20));
     console.log('Verificando e criando tabelas do banco...');
     
     // Criar tabela users se não existir
@@ -103,7 +107,7 @@ export async function initializeDatabase() {
       )
     `);
 
-    console.log('Tabelas criadas/verificadas com sucesso!');
+    console.log('=== RENDER DEBUG: Tabelas criadas/verificadas com sucesso! ===');
 
     // Migração: Adicionar colunas flow_color e flow_phrase se não existirem
     try {
@@ -271,13 +275,18 @@ export async function initializeDatabase() {
         INSERT INTO users (username, password, is_admin)
         VALUES ('mestre', ${hashedPassword}, true)
       `);
-      console.log('Default admin user created: mestre / admin123');
+      console.log('RENDER DEBUG: Default admin user created: mestre / admin123');
     } else {
-      console.log('Admin user already exists');
+      console.log('RENDER DEBUG: Admin user already exists');
     }
 
   } catch (error) {
+    console.error('=== RENDER DEBUG: ERRO CRÍTICO AO INICIALIZAR BANCO ===');
     console.error('Erro ao inicializar banco:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
     throw error;
   }
 }
