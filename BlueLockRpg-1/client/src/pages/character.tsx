@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
-import CesarMonitor from "@/components/CesarMonitor";
+import CesarMonitor from "@/components/ui/CesarMonitor";
 import { SkillsSystem } from "@/components/ui/skills-system";
 import { CharacterOrigins } from "@/components/ui/character-origins";
 import { ClassSystem } from "@/components/ui/class-system";
