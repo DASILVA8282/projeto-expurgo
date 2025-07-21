@@ -24,7 +24,7 @@ export async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(id) NOT NULL,
         name VARCHAR(100) NOT NULL,
-        position VARCHAR(50) NOT NULL,
+        position VARCHAR(50),
         age INTEGER,
         height VARCHAR(20),
         bio TEXT,
@@ -244,6 +244,17 @@ export async function initializeDatabase() {
       console.log('Coluna motivacao adicionada/verificada');
     } catch (error) {
       console.log('Coluna motivacao já existe ou erro:', error);
+    }
+
+    // Migração: Remover constraint NOT NULL do campo position (fix para character creation)
+    try {
+      await db.execute(sql`
+        ALTER TABLE characters 
+        ALTER COLUMN position DROP NOT NULL
+      `);
+      console.log('Constraint NOT NULL removida do campo position');
+    } catch (error) {
+      console.log('Constraint position já foi removida ou erro:', error);
     }
 
     // Verificar se já existe o usuário admin
