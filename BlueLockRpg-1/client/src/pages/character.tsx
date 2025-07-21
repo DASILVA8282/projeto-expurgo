@@ -86,7 +86,8 @@ export default function Character() {
   const remainingAttributePoints = Math.max(0, 18 - totalAttributes);
 
   useEffect(() => {
-    if (character && typeof character === 'object') {
+    if (character && typeof character === 'object' && !hasInitializedForm) {
+      // Only initialize form from character data on first load, not after mutations
       setFormData({
         name: (character as any).name || "",
         position: (character as any).position || "Atacante",
@@ -134,11 +135,8 @@ export default function Character() {
         flowPhrase: (character as any).flowPhrase || "É hora de dominar o campo!",
       });
       setHasInitializedForm(true);
-    } else if (!character && !isLoading && !hasInitializedForm) {
-      // Only reset to defaults if we haven't initialized the form yet (first load with no character)
-      // This prevents resetting when character temporarily becomes null during query invalidation
     }
-  }, [character, isLoading, hasInitializedForm]);
+  }, [character, hasInitializedForm]);
 
   // Show César's monitor when user doesn't have a character and hasn't seen it before
   useEffect(() => {
@@ -156,8 +154,16 @@ export default function Character() {
       return response.json();
     },
     onSuccess: () => {
+      // Don't invalidate queries immediately to prevent form reset
+      // Instead, update query data directly with current form data
+      queryClient.setQueryData(["/api/characters/me"], (oldData: any) => ({
+        ...oldData,
+        ...formData,
+        age: formData.age ? parseInt(formData.age) : null,
+      }));
+      
       setHasInitializedForm(true); // Mark as initialized to prevent form reset
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+      
       toast({
         title: "Personagem criado com sucesso!",
         description: "Sua ficha foi salva no sistema.",
@@ -178,8 +184,16 @@ export default function Character() {
       return response.json();
     },
     onSuccess: () => {
+      // Don't invalidate queries immediately to prevent form reset
+      // Instead, update query data directly with current form data
+      queryClient.setQueryData(["/api/characters/me"], (oldData: any) => ({
+        ...oldData,
+        ...formData,
+        age: formData.age ? parseInt(formData.age) : null,
+      }));
+      
       setHasInitializedForm(true); // Mark as initialized to prevent form reset
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+      
       toast({
         title: "Personagem atualizado com sucesso!",
         description: "Suas alterações foram salvas.",
