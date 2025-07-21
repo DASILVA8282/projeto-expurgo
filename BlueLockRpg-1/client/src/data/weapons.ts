@@ -333,6 +333,111 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'ambidestria',
+    name: 'Ambidestria',
+    category: 'Técnico',
+    description: 'A Ambidestria é uma Arma Menor que oscila entre mental e corporal, usando capacidade cognitiva para controlar perfeitamente o setor esquerdo e direito de seu corpo.',
+    specialization: ['Ambidestria', 'Controle Corporal', 'Imprevisibilidade'],
+    levels: [
+      {
+        name: 'Maestria Ambidestra',
+        description: 'Imune a penalidades por marcação na perna boa (se duas pessoas te marcarem). +2 no primeiro teste de Chute, Passe, Cruzamento e Precisão por partida. Todo turno gira 1d6: 1-3 = Esquerda, 4-6 = Direita. +2 em ações do lado da "Perna Superior".'
+      },
+      {
+        name: 'Habilidoso (Destro)',
+        description: 'Durante "Perna Superior" Direita, todas suas perícias são uma Classe superior (se Classe X, ganha Sucesso Automático).'
+      },
+      {
+        name: 'Sinistro (Canhoto)',
+        description: 'Durante "Perna Superior" Esquerda, pode usar habilidades de Nível 1 das Armas: Dribles Mágicos, Controle de Bola, Domínio de Bola, Kaiser Impact, Genialidade.'
+      }
+    ]
+  },
+  {
+    id: 'atacante-fantasma',
+    name: 'Atacante Fantasma',
+    category: 'Técnico',
+    description: 'O Atacante Fantasma cumpre o papel de segundo atacante pela surdina, se movendo pelas sombras como um auxiliar para o atacante principal, aprimorando o jogo coletivo.',
+    specialization: ['Furtividade', 'Apoio', 'Jogo Coletivo'],
+    levels: [
+      {
+        name: 'A Sombra',
+        description: 'Funciona a 20m do Atacante Principal enquanto furtivo. Escolha "Receptor" (recebe bola quando Principal perderia, +1/+2/+3 Classes por 5 FOL) ou "Doador" (passe com +1/+3/+5/+7/+9/+11 por 3 FOL). Cada 5/3 FOL extra aumenta bônus em 1.'
+      },
+      {
+        name: 'A Sombra (2)',
+        description: 'Distância aumenta para 30m, gastos reduzem para 5/2 FOL, +2 em Furtividade, pode trocar Ação Mental por Física sob efeito.'
+      },
+      {
+        name: 'Inversão Fantasmagórica',
+        description: 'Se ambos gastarem FOL, pode trocar papéis, você vira Atacante Principal e ele segue sua escolha anterior. Troca pode ser feita como Reação no seu turno ou do antigo Principal.'
+      }
+    ]
+  },
+  {
+    id: 'contato-visual',
+    name: 'Contato Visual',
+    category: 'Mental',
+    description: 'O Contato Visual é uma Arma Menor de dupla que permite manter um ritmo de evolução e sincronia com um aliado constantemente, enquanto consigam se olhar.',
+    specialization: ['Sinergia', 'Comunicação', 'Trabalho em Equipe'],
+    levels: [
+      {
+        name: 'Linha de Contato',
+        description: 'Mantendo contato visual com aliado: +3 em todos testes, +6 em testes conjuntos. NT 13+ inclui terceiro personagem. Condições: não furtivo, dentro alcance reação, sem inimigos entre. Se ambos têm arma: +4/+8.'
+      },
+      {
+        name: 'Olhar Sinérgico',
+        description: 'Enquanto se olharem, sempre em Sinergia com Módulo variável. Durante Sinergia, bônus vira +4/+8. Se ambos têm arma: +5/+10.'
+      },
+      {
+        name: 'Olho por Olho',
+        description: 'Habilidades visuais (Olho do Predador, Meta Visão) compartilhadas mesmo sem possuir. Quem não tem acessa quantidade -1. Bônus +5/+10, ou +6/+12 se ambos têm arma.'
+      }
+    ]
+  },
+  {
+    id: 'chute-todo-poderoso',
+    name: 'Chute Todo Poderoso',
+    category: 'Ofensivo',
+    description: 'O Chute Todo Poderoso é uma arma que aprimora os poderes das armas "Chute Direto", "Kaiser Impact" ou "Chute Explosivo", tornando-as ainda mais poderosas.',
+    specialization: ['Chute', 'Aprimoramento', 'Poder'],
+    levels: [
+      {
+        name: 'Impacto Divino',
+        description: 'CHUTE DIRETO: Troca Precisão por Chute, +1 em Chute para cada 2 Classes Precisão. KAISER IMPACT: Voleio Imperial com até 5 pessoas, Lightning Strike só parado com Meta Visão. CHUTE EXPLOSIVO: +1 Vibração Celular por rodada (+1 no Fluxo, +1 com habilidades especiais).'
+      },
+      {
+        name: 'Força Total',
+        description: 'CHUTE DIRETO: Recebe "Faro de Gol" (+12 se já tinha), usa múltiplas vezes (-2 por uso). KAISER IMPACT: Usa em Tiro Meta/Pênaltis/Livre/Passes 15m (Magnus: +Escanteios/Passes/Cruzamentos). CHUTE EXPLOSIVO: "Ímpeto Explosivo" em Escanteios/Faltas, +3 Vibração por cartão amarelo.'
+      },
+      {
+        name: 'Impacto Divino',
+        description: 'CHUTE DIRETO: "Voleio Três Armas" (+3 Classes perna boa/-3 adversários, perna ruim dobra penalidades mas +1 Nível Ambidestria). KAISER IMPACT: +1 uso Kaiser Magnus por 30 FOL. CHUTE EXPLOSIVO: 15 Vibração = próximo nível (Nível 5 = Despertar, Despertado = +10 PD).'
+      }
+    ]
+  },
+  {
+    id: 'diagnostico',
+    name: 'Diagnóstico',
+    category: 'Mental',
+    description: 'O Diagnóstico tem como objetivo analisar e avaliar os jogadores em campo, explorando seus pontos fortes e fracos para superá-los.',
+    specialization: ['Análise', 'Estratégia', 'Avaliação'],
+    levels: [
+      {
+        name: 'Consultar',
+        description: 'Classifica jogadores (Velocistas, Defensores, Suportes, Craques, Atacantes, Oportunistas) por 5 FOL. Recebe bônus específicos contra cada tipo. Máximo = Classe Análise.'
+      },
+      {
+        name: 'Examinar',
+        description: 'Após consultar, ranqueia em C/B/A/S por 5 FOL. Rank C: sucesso automático se 2+ Classes maior. Rank B-: gasta 4 FOL ou refaz teste. Rank A-: +1/-1 Classes. Rank S-: +2 acumulativo após falhar.'
+      },
+      {
+        name: 'Inspecionar',
+        description: 'Revela consultas em intervalos. Classifica aliados: Ofensivos (+1 Classe em disputas iniciadas), Balanceados (-7 FOL total/turno), Defensivos (reação extra se ultrapassado). 5 FOL por inspeção.'
+      }
+    ]
+  },
+  {
     id: 'fisico-escultural',
     name: 'Físico Escultural',
     category: 'Físico',
