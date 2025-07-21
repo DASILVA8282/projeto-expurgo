@@ -543,6 +543,48 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'muralha-de-ferro',
+    name: 'Muralha de Ferro',
+    category: 'Defensivo',
+    description: 'A Muralha de Ferro é um conjunto de técnicas defensivas baseada nos personagens do "Quarteto Muralha de Ferro" da Seleção Japonesa Sub-20. Os três níveis são totalmente distintos um dos outros, seguindo uma ordem de força e utilidade.',
+    specialization: ['Defesa', 'Pressão', 'Percepção'],
+    levels: [
+      {
+        name: 'Pressão Física',
+        description: 'Aplica mais força na marcação. Barra de "Pressão" inicia em 5, gasta pontos para aumentar penalidade por marcação. Ao vencer disputa marcando alvo, ganha 1d3 de pressão.'
+      },
+      {
+        name: 'Aceleração Explosiva',
+        description: 'Quando time defende com sucesso, ganha +5m deslocamento (só no seu campo). Com Mod. VEL 5: 45m = Nível 1 Velocidade Aceleração, 90m = Nível 1 Velocidade Explosão.'
+      },
+      {
+        name: 'Previsão Olfática',
+        description: 'Detecta 5 cheiros (2 FOL cada): Suor (anula gastos FOL ≤15), Emoção (rouba 1d3 CA), Raiva (reduz Fúria), Perigo (+1d defesa, +2d se NT 40+), Fluxo (usa 1 Foco contra adversário, 11 FOL).'
+      }
+    ]
+  },
+  {
+    id: 'passe-backspin',
+    name: 'Passe Backspin',
+    category: 'Técnico',
+    description: 'O Passe backspin utiliza da rotação inferior da bola no solo, criando um passe terrestre moldável e variável, cuja rota ninguém saberá dizer ao certo até que chegue ao fim.',
+    specialization: ['Passe', 'Rotação', 'Controle'],
+    levels: [
+      {
+        name: 'Retorno Giratório',
+        description: 'Passe terrestre 15m com rota inconstante, pode fazer trajetórias curvas e alterar destinatário. Use Ações Físicas para mover bola. 3 FOL = -1 interceptação adversários.'
+      },
+      {
+        name: 'Rotação Perfeita',
+        description: 'Por movimentação, teste Precisão (DT 25) para +5m movimento. Repete 1 + primeiro dígito NT vezes (+2 DT por uso). Penalidade inicia -4, reduz -1 por movimento até -1.'
+      },
+      {
+        name: 'Chute Backspin',
+        description: 'Chute/passe com controle total de rotação até o gol. Goleiro -2 DP por defensor que falhou. Se errar, 10 FOL altera rota para passe automático com Goleiro Surpreso.'
+      }
+    ]
+  },
+  {
     id: 'fisico-escultural',
     name: 'Físico Escultural',
     category: 'Físico',
