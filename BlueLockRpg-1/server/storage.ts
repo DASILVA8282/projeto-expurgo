@@ -12,21 +12,21 @@ export interface IStorage {
   getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined>;
   getAllUsersWithCharacters(): Promise<UserWithCharacter[]>;
   markCesarMonitorSeen(userId: number): Promise<void>;
-  
+
   // Character operations
   getCharacter(userId: number): Promise<Character | undefined>;
   createCharacter(character: InsertCharacter): Promise<Character>;
   updateCharacter(userId: number, updates: UpdateCharacter): Promise<Character>;
   deleteCharacter(userId: number): Promise<void>;
   getEliminatedCharacters(): Promise<Character[]>;
-  
+
   // Wild Card operations
   createWildCardInvitation(invitation: InsertWildCardInvitation): Promise<WildCardInvitation>;
   getWildCardInvitation(userId: number): Promise<WildCardInvitation | undefined>;
   updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation>;
   getPendingWildCardInvitations(): Promise<WildCardInvitation[]>;
   getAllWildCardInvitations(): Promise<WildCardInvitation[]>;
-  
+
   // Match operations
   createMatch(match: InsertMatch): Promise<Match>;
   getMatch(id: number): Promise<Match | undefined>;
@@ -34,11 +34,11 @@ export interface IStorage {
   updateMatch(id: number, updates: UpdateMatch): Promise<Match>;
   getAllMatches(): Promise<Match[]>;
   getActiveMatch(): Promise<Match | undefined>;
-  
+
   // Goal operations
   createGoal(goal: InsertGoal): Promise<Goal>;
   getGoalsForMatch(matchId: number): Promise<(Goal & { player: User })[]>;
-  
+
   // Flow State operations
   createFlowState(flowState: InsertFlowState): Promise<FlowState>;
   getActiveFlowState(matchId: number): Promise<FlowStateWithPlayer | undefined>;
@@ -131,15 +131,27 @@ export class DatabaseStorage implements IStorage {
     console.log("=== STORAGE DEBUG: Updating character ===");
     console.log("User ID:", userId);
     console.log("Updates:", updates);
+
     try {
+      // Garantir que valores 0 sejam preservados explicitamente
+      const safeUpdates = { ...updates };
+
+      // Log para debug dos valores sendo salvos
+      console.log("STORAGE DEBUG: Safe updates before save:", safeUpdates);
+
       const [updated] = await db
         .update(characters)
         .set({
-          ...updates,
+          ...safeUpdates,
           updatedAt: new Date(),
         })
         .where(eq(characters.userId, userId))
         .returning();
+
+      if (!updated) {
+        throw new Error("Character not found");
+      }
+
       console.log("STORAGE DEBUG: Character updated successfully:", updated);
       return updated;
     } catch (error) {
@@ -176,17 +188,17 @@ export class DatabaseStorage implements IStorage {
 
   async updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation> {
     const updateData: any = { ...updates };
-    
+
     // Only set respondedAt if status is being updated to accepted/rejected
     if (updates.status && updates.status !== "pending") {
       updateData.respondedAt = new Date();
     }
-    
+
     // If explicitly setting respondedAt to null (for resend), keep it null
     if (updates.respondedAt === null) {
       updateData.respondedAt = null;
     }
-    
+
     const [updated] = await db
       .update(wildCardInvitations)
       .set(updateData)
@@ -225,7 +237,7 @@ export class DatabaseStorage implements IStorage {
   async getMatchWithGoals(id: number): Promise<MatchWithGoals | undefined> {
     const match = await this.getMatch(id);
     if (!match) return undefined;
-    
+
     const matchGoals = await this.getGoalsForMatch(id);
     return {
       ...match,
