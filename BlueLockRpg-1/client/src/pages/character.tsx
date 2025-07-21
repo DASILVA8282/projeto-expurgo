@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
-import CesarMonitor from "@/components/ui/CesarMonitor";
+import CesarMonitor from "@/components/CesarMonitor";
 import { SkillsSystem } from "@/components/ui/skills-system";
 import { CharacterOrigins } from "@/components/ui/character-origins";
 import { ClassSystem } from "@/components/ui/class-system";
@@ -33,6 +33,7 @@ export default function Character() {
 
   const [formData, setFormData] = useState({
     name: "",
+    position: "Atacante",
     motivacao: "",
     age: "",
     height: "",
@@ -87,6 +88,7 @@ export default function Character() {
     if (character && typeof character === 'object') {
       setFormData({
         name: (character as any).name || "",
+        position: (character as any).position || "Atacante",
         motivacao: (character as any).motivacao || "",
         age: (character as any).age?.toString() || "",
         height: (character as any).height || "",
@@ -419,6 +421,7 @@ export default function Character() {
 
     const characterData = {
       name: formData.name,
+      position: formData.position,
       motivacao: formData.motivacao,
       age: formData.age ? parseInt(formData.age) : null,
       height: formData.height,
@@ -658,10 +661,22 @@ export default function Character() {
                     />
                   </div>
 
-
-
-
-
+                  <div>
+                    <Label className="block text-gray-300 font-oswald font-semibold mb-2">
+                      POSIÇÃO
+                    </Label>
+                    <Select value={formData.position} onValueChange={(value) => setFormData({...formData, position: value})}>
+                      <SelectTrigger className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white">
+                        <SelectValue placeholder="Selecione uma posição" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-700">
+                        <SelectItem value="Atacante" className="text-white">Atacante</SelectItem>
+                        <SelectItem value="Meio-campo" className="text-white">Meio-campo</SelectItem>
+                        <SelectItem value="Defensor" className="text-white">Defensor</SelectItem>
+                        <SelectItem value="Goleiro" className="text-white">Goleiro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div>
                     <Label className="block text-gray-300 font-oswald font-semibold mb-2">
                       IDADE
