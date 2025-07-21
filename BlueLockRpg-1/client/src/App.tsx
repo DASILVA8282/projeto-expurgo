@@ -12,7 +12,7 @@ import Character from "@/pages/character";
 import Admin from "@/pages/admin";
 import Match from "@/pages/match";
 import Guide from "@/pages/guide";
-import WeaponsManualPage from "@/pages/weapons-manual";
+import WeaponsManual from "@/pages/weapons-manual";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -72,7 +72,7 @@ function Router() {
           <Route path="/admin" component={Admin} />
           <Route path="/match" component={Match} />
           <Route path="/guide" component={Guide} />
-          <Route path="/weapons-manual" component={WeaponsManualPage} />
+          <Route path="/weapons-manual" component={WeaponsManual} />
         </>
       )}
       <Route component={NotFound} />
