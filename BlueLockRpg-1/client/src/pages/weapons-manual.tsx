@@ -24,7 +24,7 @@ const categoryIcons = {
   'Mental': Brain
 };
 
-export function WeaponsManual() {
+export default function WeaponsManual() {
   const [currentWeaponIndex, setCurrentWeaponIndex] = useState(0);
   const currentWeapon = weaponsData[currentWeaponIndex];
 
