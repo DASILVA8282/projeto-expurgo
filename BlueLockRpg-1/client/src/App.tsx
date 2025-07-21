@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,11 +11,26 @@ import Dashboard from "@/pages/dashboard";
 import Character from "@/pages/character";
 import Admin from "@/pages/admin";
 import Match from "@/pages/match";
+import Guide from "@/pages/guide";
+import WeaponsManualPage from "@/pages/weapons-manual";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
-  if (isLoading) {
+  // Force timeout for loading screen to prevent infinite loops
+  const [forceLoad, setForceLoad] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log("Force loading timeout reached, showing landing page");
+      setForceLoad(true);
+    }, 2500); // 2.5 second timeout
+    return () => clearTimeout(timeout);
+  }, []);
+
+  console.log("Router state:", { isAuthenticated, isLoading, user: !!user, forceLoad });
+
+  // If loading for too long or if there's an authentication error, show the landing page
+  if (isLoading && !forceLoad) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
@@ -47,7 +63,7 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
+      {!isAuthenticated || !user ? (
         <Route path="/" component={Landing} />
       ) : (
         <>
@@ -55,6 +71,8 @@ function Router() {
           <Route path="/character" component={Character} />
           <Route path="/admin" component={Admin} />
           <Route path="/match" component={Match} />
+          <Route path="/guide" component={Guide} />
+          <Route path="/weapons-manual" component={WeaponsManualPage} />
         </>
       )}
       <Route component={NotFound} />
