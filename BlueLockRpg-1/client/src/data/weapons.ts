@@ -101,6 +101,238 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'mestre-da-finta',
+    name: 'Mestre da Finta',
+    category: 'Técnico',
+    description: 'Essa Arma te dá habilidades invejáveis nas fintas, que te permitem enganar adversários sem parar, ultrapassando-os e os vencendo em disputas de um contra um.',
+    specialization: ['Finta', 'Drible', 'Enganação'],
+    levels: [
+      {
+        name: 'Arsenal de Fintas',
+        description: 'Você tem capacidades extremamente versáteis e adaptáveis de Finta. Recebe +2 Classes em Finta, e ganha habilidades especiais para Drible, Chute e Roubo usando 3 FOL.'
+      },
+      {
+        name: 'Aplicação de Fintas',
+        description: 'Recebe +1 Classe em Finta, e pode aplicá-la em Escanteio, Lateral e Tiro Livre por 3 FOL cada, criando vantagens táticas para sua equipe.'
+      },
+      {
+        name: 'Finta Visionária',
+        description: 'Desenvolve habilidade especial baseada nas visões que possua: Meta Visão (modifica teste após resultado) ou Olho do Predador (ativa habilidades após 11 Fintas).'
+      },
+      {
+        name: 'Fintas Exímias',
+        description: 'Para cada finta realizada em um turno, recebe +1 em todos os testes no próximo teste de outra perícia sem ser Finta, gastando 7 FOL (ou 14 se ultrapassar +10).'
+      },
+      {
+        name: 'Fintas de Mestre',
+        description: 'Após qualquer ação física, gaste 3 FOL para realizar Finta (DT 25 + 1 por uso). Se passar, recebe +1 Ação Física e pode escolher dois alvos para não reagirem.'
+      }
+    ]
+  },
+  {
+    id: 'movimentacao-zumbi',
+    name: 'Movimentação Zumbi',
+    category: 'Físico',
+    description: 'A Movimentação Zumbi é uma Arma que utiliza como habilidade a movimentação errática e estranha de seu corpo, te tornando imprevisível e difícil de ler.',
+    specialization: ['Drible', 'Imprevisibilidade', 'Resistência'],
+    levels: [
+      {
+        name: 'Drible Zumbi',
+        description: 'Impedindo que o adversário leia seu centro de gravidade, para cada 2 Classes que possuir em Drible, o alvo recebe -1 Classe no teste contra seu drible.'
+      },
+      {
+        name: 'Morto-Vivo',
+        description: 'Sua condição corporal te faz parecer morto. Recebe modificações passivas: lógica contrária nos testes (5 FOL), jogar com 0 FOL, deslocamento total fora do turno (10 FOL), turnos não contam para rodadas.'
+      },
+      {
+        name: 'Centro de Gravidade Zumbificada',
+        description: 'Movimentação completamente imprevisível. Teste Drible (DT 32 - 2 por Especialização) para anular efeitos de habilidades de Leitura, Controle, Contato Físico, Cópia, etc.'
+      },
+      {
+        name: 'Descoordenação Cadavérica',
+        description: 'Durante um turno: DT vira valor que NÃO pode atingir, pode trocar tipo de Movimento, trocar Finta/Corrida/Domínio/Roubo por Drible. Usos = Especializações (mínimo 1).'
+      },
+      {
+        name: 'Cemitério de Egoístas',
+        description: 'Ao vencer adversário com Morto Vivo, gaste 11 FOL para criar "lápide" (-2 penalidade). Com -12, remove Arma/Habilidades do adversário. Pode devorar jogadores.'
+      }
+    ]
+  },
+  {
+    id: 'torre-de-vigia',
+    name: 'Torre de Vigia',
+    category: 'Mental',
+    description: 'A Torre de Vigia é uma Arma estratégica e mental, que cumpre o papel de "Sentinela", observando todo o campo e coletando informações.',
+    specialization: ['Análise', 'Percepção', 'Estratégia'],
+    levels: [
+      {
+        name: 'Farol',
+        description: 'Começa com perícias: Análise, Percepção, Estratégia e Reação (ou Especialidade em todas). Gastando 2 FOL, recebe +2/+4/+6/+8/+10 em teste de uma delas.'
+      },
+      {
+        name: 'Coleta de Informações',
+        description: 'No seu campo, gaste 3 FOL para registrar resultados em "Pontos de Informação" (≥17 = PI Positivo, ≤3 = PI Negativo). Use para dar bônus/penalidades.'
+      },
+      {
+        name: 'Dados & Análises',
+        description: 'Quando alguém realiza Ação, gaste 6 Pontos INT para ter estudado ela. Realize turno extra antes para alterar o resultado, recebe +1 PI (aumenta a cada uso).'
+      },
+      {
+        name: 'Olhar do Vigia',
+        description: 'Detecta automaticamente qualquer um em 30m e pode pará-los. +1d para habilidades imparáveis, DT para PI vira 15/7, gaste 3 PI para anular Sucesso Automático.'
+      },
+      {
+        name: 'Sentinela',
+        description: 'Sustentando com Ação Mental, aliados ganham "Olhar do Vigia" e "Coleta de Informações", e +6 em testes de Defesa, Interceptação e Roubo.'
+      }
+    ]
+  },
+  {
+    id: 'velocidade-aceleracao',
+    name: 'Velocidade: Aceleração',
+    category: 'Físico',
+    description: 'Esse tipo de velocidade permite que você se mantenha sempre energizado e em constante aceleração, correndo sem parar pelo campo com sua força de velocidade e capacidade de corrida.',
+    specialization: ['Corrida', 'Velocidade', 'Resistência'],
+    levels: [
+      {
+        name: 'Corrida Constante',
+        description: 'Recebe +10m metros de deslocamento, e recebe uma Ação Física extra somente para correr.'
+      },
+      {
+        name: 'Corrida da Vitória',
+        description: 'Alcance do Chute máximo é igual ao seu deslocamento (limitado em 60m). Se estiver fora do alcance, gaste 7 FOL para correr direto ao alcance (limite 20m de diferença).'
+      },
+      {
+        name: 'Medalhista em Maratona',
+        description: 'Velocidade surpreendente em todos movimentos. Com 0 FOL, desde que percorra 40m todo turno, ainda pode jogar normalmente, usando habilidades de até 3 FOL.'
+      },
+      {
+        name: 'Corrida de Captura',
+        description: 'Quando adversário estiver com bola, gaste 15 FOL para, se roubar ela, receber bônus baseado na distância: 15-29m = +1 PA, 30-59m = +1 CA, 60+m = 20 FOL.'
+      },
+      {
+        name: 'A Velocidade',
+        description: 'Gastando 25 FOL, atravessa o campo inteiro. Com teste de Roubar (DT 35), pega a bola se ela estiver no fim da travessia.'
+      }
+    ]
+  },
+  {
+    id: 'velocidade-divina',
+    name: 'Velocidade: Divina',
+    category: 'Físico',
+    description: 'A Velocidade: Divina é a mais poderosa "Velocidades", representando um tipo de movimento de corrida que é capaz de ultrapassar a compreensão visual. É um estilo subjetivo, mas com uma força imensa.',
+    specialization: ['Velocidade', 'Transcendência', 'Movimento Divino'],
+    levels: [
+      {
+        name: 'Ascensão Velocímetra',
+        description: 'Sua aceleração se torna surreal. Baseado na Velocidade anterior: Aceleração (deslocamento dobrado sustentando 3 VEL), Explosão (parar 2 turnos para 150m no próximo), Ninjutsu (mover para qualquer ponto do campo).'
+      },
+      {
+        name: 'Velocidade Transcendental',
+        description: 'Seus movimentos transcendem a física normal. Pode ignorar obstáculos, atravessar múltiplos adversários sem ser interceptado, e realizar ações impossíveis de velocidade.'
+      },
+      {
+        name: 'Ruptura Temporal',
+        description: 'Sua velocidade afeta o tempo ao redor. Pode "pausar" o jogo por um momento para reposicionar-se, ou criar múltiplas imagens de movimento simultâneo.'
+      },
+      {
+        name: 'Omnipresença Veloz',
+        description: 'Pode estar em múltiplos lugares ao mesmo tempo durante uma jogada. Seus movimentos se tornam tão rápidos que parecem estar em todos os lugares simultaneamente.'
+      },
+      {
+        name: 'Velocidade Absoluta',
+        description: 'Atinge a velocidade máxima concebível. Pode atravessar o campo instantaneamente, interferir em qualquer jogada no campo, e seus movimentos se tornam imparáveis por meios convencionais.'
+      }
+    ]
+  },
+  {
+    id: 'velocidade-explosao',
+    name: 'Velocidade: Explosão',
+    category: 'Físico',
+    description: 'A Velocidade de Explosão permite que você realize explosões de velocidade extremamente poderosas, disparando de um ponto até o outro, mas sem muita cadência.',
+    specialization: ['Velocidade', 'Explosão', 'Corrida'],
+    levels: [
+      {
+        name: 'Combustão Instantânea',
+        description: 'Uma vez por turno, gastando 5 FOL, pode aumentar seu deslocamento em +24m. Pode reagir a ações além do alcance de reação, até 5m + Mod. VEL além do limite.'
+      },
+      {
+        name: 'Trem Bala Maglev',
+        description: 'Ao disputar corrida, gastando 1 CA, pague FOL à escolha para aumentar resultado puro (+1 por FOL). Com 20 puro, ganha +5m DESL permanente (limite ⅓ do deslocamento padrão).'
+      },
+      {
+        name: 'Jet Counter',
+        description: 'Contra múltiplos defensores, gaste 7 FOL para teste Correr (DT 22 +1 por defensor, +2 se tiver Velocidade). Se passar, move 5m por defensor e ultrapassa todos.'
+      },
+      {
+        name: 'Velocidade Explosiva',
+        description: 'Pode usar "Combustão Instantânea" duas vezes por turno, DT base de "Jet Counter" vira 20, anula bônus extra de velocistas defensores.'
+      },
+      {
+        name: 'Rei Velocista',
+        description: 'Velocidade "mais rápida que o som". Meta exclusiva: mover 1500 metros por partida. Se cumprir, entra em Fluxo automaticamente.'
+      }
+    ]
+  },
+  {
+    id: 'velocidade-ninjutsu',
+    name: 'Velocidade: Ninjutsu',
+    category: 'Físico',
+    description: 'A Velocidade: Ninjutsu não foca na constância de corrida, e sim na forma que ela é realizada, através de passos ligeiros e silenciosos, como um verdadeiro ninja.',
+    specialization: ['Furtividade', 'Ninjutsu', 'Velocidade'],
+    levels: [
+      {
+        name: 'Jutsu da Folha: Som da Ventania',
+        description: 'Enquanto furtivo, qualquer oponente atrás de você conta como "Ultrapassado". Sempre estará no Ponto Cego dos adversários enquanto furtivo.'
+      },
+      {
+        name: 'Jutsu da Folha: Arte da Ocultação',
+        description: 'Não perde furtividade ao falhar teste gastando 3 FOL. Sustentando 5 FOL, fica furtivo com a bola. No Ponto Cego, pode trocar perícia de referência para Furtividade.'
+      },
+      {
+        name: 'Jutsu da Folha: Maestria Ninja',
+        description: 'Turnos não contam para andamento das Rodadas. Gastando 2 CA, pode usar 3 Ações Físicas despercebido (2 com bola). Pode trocar perícias físicas/livres por Furtividade.'
+      },
+      {
+        name: 'Ninjutsu Secreto: Espionagem Shinobi',
+        description: 'Sustentando Furtividade (DT 25), fica furtivo a 15m de alvo que estava a 30m. Pode interromper ações dele, removendo bônus ou aplicando "Surpreso"/"Ponto Cego".'
+      },
+      {
+        name: 'Ninjutsu Final: Técnica do Passo do Dragão',
+        description: 'Gastando 15 FOL: "Sabotagem" (-16 em perícias no próximo turno, máximo 2x por alvo) ou "Infiltração" (ativa "Espionagem Shinobi" automaticamente).'
+      }
+    ]
+  },
+  {
+    id: 'visao-fria-calculista',
+    name: 'Visão Fria e Calculista',
+    category: 'Mental',
+    description: 'Uma Arma mental extremamente certeira e precisa, que amplifica sua visão de jogo, permitindo um julgamento equilibrado, ações exatas e leitura de jogo otimizada.',
+    specialization: ['Análise', 'Frieza Mental', 'Cálculo'],
+    levels: [
+      {
+        name: 'Friamente Certeiro',
+        description: 'Com 15+ puro em teste de Análise, ganha "Carga Analítica". Ao usar cargas, gira teste de Análise como secundário, podendo escolher qual resultado usar.'
+      },
+      {
+        name: 'Calculadora Mental',
+        description: 'Ao usar Carga Analítica, recebe "Alerta" personalizado. Quando evento acontecer, move automaticamente para 30m do local e +5 para reagir. Pode transferir para aliado.'
+      },
+      {
+        name: 'Frieza',
+        description: 'Ao tentarem interromper ações, gaste Carga Analítica para reduzir categoria do teste inimigo em um nível. Para ações em outros jogadores, gaste 2 Cargas para reduzir duas vezes.'
+      },
+      {
+        name: 'Cabeça Fria',
+        description: 'Imune a condições mentais. Não pode usar Fúria, recebe +1 FOL no lugar de Pontos de Fúria. Quando fosse maximizar Fúria, entra em Fluxo.'
+      },
+      {
+        name: 'Calculismo Álgido',
+        description: 'Pode ser afetado por condições mentais positivas. Cargas Analíticas obtidas com 10 no dado. Alcances de "Calculadora Mental" reduzidos. "Frieza" mantém 1 Carga para outros jogadores.'
+      }
+    ]
+  },
+  {
     id: 'fisico-escultural',
     name: 'Físico Escultural',
     category: 'Físico',
