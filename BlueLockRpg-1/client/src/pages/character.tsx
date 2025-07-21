@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
-import CesarMonitor from "@/components/ui/CesarMonitor";
+import CesarMonitor from "@/components/CesarMonitor";
 import { SkillsSystem } from "@/components/ui/skills-system";
 import { CharacterOrigins } from "@/components/ui/character-origins";
 import { ClassSystem } from "@/components/ui/class-system";
@@ -79,6 +79,7 @@ export default function Character() {
   });
 
   const [showCesarMonitor, setShowCesarMonitor] = useState(false);
+  const [hasInitializedForm, setHasInitializedForm] = useState(false);
 
   // Calculated values for attributes
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
@@ -132,8 +133,12 @@ export default function Character() {
         flowColor: (character as any).flowColor || "red",
         flowPhrase: (character as any).flowPhrase || "É hora de dominar o campo!",
       });
+      setHasInitializedForm(true);
+    } else if (!character && !isLoading && !hasInitializedForm) {
+      // Only reset to defaults if we haven't initialized the form yet (first load with no character)
+      // This prevents resetting when character temporarily becomes null during query invalidation
     }
-  }, [character]);
+  }, [character, isLoading, hasInitializedForm]);
 
   // Show César's monitor when user doesn't have a character and hasn't seen it before
   useEffect(() => {
@@ -151,6 +156,7 @@ export default function Character() {
       return response.json();
     },
     onSuccess: () => {
+      setHasInitializedForm(true); // Mark as initialized to prevent form reset
       queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
       toast({
         title: "Personagem criado com sucesso!",
@@ -172,6 +178,7 @@ export default function Character() {
       return response.json();
     },
     onSuccess: () => {
+      setHasInitializedForm(true); // Mark as initialized to prevent form reset
       queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
       toast({
         title: "Personagem atualizado com sucesso!",
