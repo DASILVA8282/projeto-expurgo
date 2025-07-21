@@ -1,292 +1,424 @@
-import { db } from './db';
-import { sql } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import { users, characters, wildCardInvitations, matches, goals, flowStates, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals, type InsertFlowState, type FlowState, type FlowStateWithPlayer } from "@shared/schema";
+import { db } from "./db";
+import { eq, or, desc, and } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
-export async function initializeDatabase() {
-  try {
-    console.log('=== RENDER DATABASE INITIALIZATION DEBUG ===');
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('Database URL exists:', !!process.env.DATABASE_URL);
-    console.log('Database URL starts with:', process.env.DATABASE_URL?.substring(0, 20));
-    console.log('Verificando e criando tabelas do banco...');
-    
-    // Criar tabela users se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(50) NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        is_admin BOOLEAN DEFAULT FALSE NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-      )
-    `);
+export interface IStorage {
+  // User operations
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined>;
+  getAllUsersWithCharacters(): Promise<UserWithCharacter[]>;
+  markCesarMonitorSeen(userId: number): Promise<void>;
 
-    // Criar tabela characters se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS characters (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) NOT NULL,
-        name VARCHAR(100) NOT NULL,
-        position VARCHAR(50),
-        age INTEGER,
-        height VARCHAR(20),
-        bio TEXT,
-        weapon VARCHAR(255),
-        avatar TEXT,
-        level INTEGER DEFAULT 1 NOT NULL,
-        experience INTEGER DEFAULT 0 NOT NULL,
-        matches INTEGER DEFAULT 0 NOT NULL,
-        goals INTEGER DEFAULT 0 NOT NULL,
-        ranking INTEGER DEFAULT 299 NOT NULL,
-        speed INTEGER DEFAULT 50 NOT NULL,
-        strength INTEGER DEFAULT 50 NOT NULL,
-        stamina INTEGER DEFAULT 50 NOT NULL,
-        shooting INTEGER DEFAULT 50 NOT NULL,
-        passing INTEGER DEFAULT 50 NOT NULL,
-        dribbling INTEGER DEFAULT 50 NOT NULL,
-        is_eliminated BOOLEAN DEFAULT FALSE NOT NULL,
-        flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL,
-        flow_phrase VARCHAR(255) DEFAULT 'É hora de dominar o campo!' NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-      )
-    `);
+  // Character operations
+  getCharacter(userId: number): Promise<Character | undefined>;
+  createCharacter(character: InsertCharacter): Promise<Character>;
+  updateCharacter(userId: number, updates: UpdateCharacter): Promise<Character>;
+  deleteCharacter(userId: number): Promise<void>;
+  getEliminatedCharacters(): Promise<Character[]>;
 
-    // Criar tabela wild_card_invitations se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS wild_card_invitations (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id) NOT NULL UNIQUE,
-        status VARCHAR(20) DEFAULT 'pending' NOT NULL,
-        responded_at TIMESTAMP,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-      )
-    `);
+  // Wild Card operations
+  createWildCardInvitation(invitation: InsertWildCardInvitation): Promise<WildCardInvitation>;
+  getWildCardInvitation(userId: number): Promise<WildCardInvitation | undefined>;
+  updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation>;
+  getPendingWildCardInvitations(): Promise<WildCardInvitation[]>;
+  getAllWildCardInvitations(): Promise<WildCardInvitation[]>;
 
-    // Criar tabela matches se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS matches (
-        id SERIAL PRIMARY KEY,
-        team_v VARCHAR(100) NOT NULL,
-        team_z VARCHAR(100) NOT NULL,
-        score_v INTEGER DEFAULT 0 NOT NULL,
-        score_z INTEGER DEFAULT 0 NOT NULL,
-        status VARCHAR(20) DEFAULT 'preparing' NOT NULL,
-        start_time TIMESTAMP,
-        end_time TIMESTAMP,
-        current_minute INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-      )
-    `);
+  // Match operations
+  createMatch(match: InsertMatch): Promise<Match>;
+  getMatch(id: number): Promise<Match | undefined>;
+  getMatchWithGoals(id: number): Promise<MatchWithGoals | undefined>;
+  updateMatch(id: number, updates: UpdateMatch): Promise<Match>;
+  getAllMatches(): Promise<Match[]>;
+  getActiveMatch(): Promise<Match | undefined>;
 
-    // Criar tabela goals se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS goals (
-        id SERIAL PRIMARY KEY,
-        match_id INTEGER REFERENCES matches(id) NOT NULL,
-        player_id INTEGER REFERENCES users(id) NOT NULL,
-        team VARCHAR(1) NOT NULL CHECK (team IN ('V', 'Z')),
-        minute INTEGER NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL
-      )
-    `);
+  // Goal operations
+  createGoal(goal: InsertGoal): Promise<Goal>;
+  getGoalsForMatch(matchId: number): Promise<(Goal & { player: User })[]>;
 
-    // Criar tabela flow_states se não existir
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS flow_states (
-        id SERIAL PRIMARY KEY,
-        match_id INTEGER REFERENCES matches(id) NOT NULL,
-        player_id INTEGER REFERENCES users(id) NOT NULL,
-        is_active BOOLEAN DEFAULT TRUE NOT NULL,
-        flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL,
-        activated_at TIMESTAMP DEFAULT NOW() NOT NULL,
-        ended_at TIMESTAMP
-      )
-    `);
+  // Flow State operations
+  createFlowState(flowState: InsertFlowState): Promise<FlowState>;
+  getActiveFlowState(matchId: number): Promise<FlowStateWithPlayer | undefined>;
+  endFlowState(matchId: number, playerId: number): Promise<void>;
+  getFlowStateForPlayer(matchId: number, playerId: number): Promise<FlowState | undefined>;
+}
 
-    console.log('=== RENDER DEBUG: Tabelas criadas/verificadas com sucesso! ===');
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
 
-    // Migração: Adicionar colunas flow_color e flow_phrase se não existirem
-    try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS flow_color VARCHAR(20) DEFAULT 'cyan' NOT NULL
-      `);
-      console.log('Coluna flow_color adicionada/verificada');
-    } catch (error) {
-      console.log('Coluna flow_color já existe ou erro:', error);
-    }
-    
-    try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS flow_phrase VARCHAR(255) DEFAULT 'É hora de dominar o campo!' NOT NULL
-      `);
-      console.log('Coluna flow_phrase adicionada/verificada');
-    } catch (error) {
-      console.log('Coluna flow_phrase já existe ou erro:', error);
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async markCesarMonitorSeen(userId: number): Promise<void> {
+    await db.update(users).set({ cesarMonitorSeen: true }).where(eq(users.id, userId));
+  }
+
+
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const hashedPassword = await bcrypt.hash(insertUser.password, 10);
+    const [user] = await db
+      .insert(users)
+      .values({
+        ...insertUser,
+        password: hashedPassword,
+      })
+      .returning();
+    return user;
+  }
+
+  async getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined> {
+    const user = await this.getUserById(id);
+    if (!user) return undefined;
+
+    const character = await this.getCharacter(id);
+    return {
+      ...user,
+      character,
+    };
+  }
+
+  async getAllUsersWithCharacters(): Promise<UserWithCharacter[]> {
+    const allUsers = await db.select().from(users);
+    const result: UserWithCharacter[] = [];
+
+    for (const user of allUsers) {
+      const character = await this.getCharacter(user.id);
+      result.push({
+        ...user,
+        character,
+      });
     }
 
-    // Migração: Adicionar coluna cesar_monitor_seen na tabela users
-    try {
-      await db.execute(sql`
-        ALTER TABLE users 
-        ADD COLUMN IF NOT EXISTS cesar_monitor_seen BOOLEAN DEFAULT FALSE NOT NULL
-      `);
-      console.log('Coluna cesar_monitor_seen adicionada/verificada');
-    } catch (error) {
-      console.log('Coluna cesar_monitor_seen já existe ou erro:', error);
-    }
+    return result;
+  }
 
-    // Migração: Adicionar coluna origin na tabela characters
-    try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS origin VARCHAR(50)
-      `);
-      console.log('Coluna origin adicionada/verificada');
-    } catch (error) {
-      console.log('Coluna origin já existe ou erro:', error);
-    }
+  async getCharacter(userId: number): Promise<Character | undefined> {
+    const [character] = await db.select().from(characters).where(eq(characters.userId, userId));
+    return character;
+  }
 
-    // Migração: Adicionar colunas de classe e subclasse na tabela characters
+  async createCharacter(character: InsertCharacter): Promise<Character> {
+    console.log("=== STORAGE DEBUG: Creating character ===");
+    console.log("Input data:", character);
     try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS classe VARCHAR(50)
-      `);
-      console.log('Coluna classe adicionada/verificada');
+      const [newCharacter] = await db
+        .insert(characters)
+        .values(character)
+        .returning();
+      console.log("STORAGE DEBUG: Character created successfully:", newCharacter);
+      return newCharacter;
     } catch (error) {
-      console.log('Coluna classe já existe ou erro:', error);
+      console.error("STORAGE DEBUG: Database error during character creation:", error);
+      throw error;
     }
+  }
+
+  async updateCharacter(userId: number, updates: UpdateCharacter): Promise<Character> {
+    console.log("=== STORAGE DEBUG: Updating character ===");
+    console.log("User ID:", userId);
+    console.log("Updates:", updates);
 
     try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS subclasse VARCHAR(50)
-      `);
-      console.log('Coluna subclasse adicionada/verificada');
-    } catch (error) {
-      console.log('Coluna subclasse já existe ou erro:', error);
-    }
+      // Garantir que valores 0 sejam preservados explicitamente
+      const safeUpdates = { ...updates };
 
-    // Migração: Adicionar novos atributos na tabela characters
-    const newAttributes = [
-      'fisico',
-      'velocidade', 
-      'intelecto',
-      'carisma',
-      'egoismo'
-    ];
+      // Log para debug dos valores sendo salvos
+      console.log("STORAGE DEBUG: Safe updates before save:", safeUpdates);
 
-    for (const attrName of newAttributes) {
-      try {
-        await db.execute(sql`
-          ALTER TABLE characters 
-          ADD COLUMN IF NOT EXISTS ${sql.raw(attrName)} INTEGER DEFAULT 0 NOT NULL
-        `);
-        console.log(`Coluna ${attrName} adicionada/verificada`);
-      } catch (error) {
-        console.log(`Coluna ${attrName} já existe ou erro:`, error);
+      const [updated] = await db
+        .update(characters)
+        .set({
+          ...safeUpdates,
+          updatedAt: new Date(),
+        })
+        .where(eq(characters.userId, userId))
+        .returning();
+
+      if (!updated) {
+        throw new Error("Character not found");
       }
-    }
 
-    // Migração: Adicionar perícias na tabela characters
-    const newSkills = [
-      'chute',
-      'precisao', 
-      'roubo',
-      'analise',
-      'determinacao',
-      'estrategia',
-      'intuicao',
-      'interacao_social',
-      'lingua_estrangeira',
-      // Novas perícias do documento
-      'corrida',
-      'cruzamento',
-      'defesa',
-      'drible',
-      'passe',
-      'performance',
-      'comemoracao',
-      // Perícias livres
-      'fortitude',
-      'finta',
-      'furtividade',
-      'iniciativa',
-      'percepcao',
-      'sorte',
-      // Perícias de reação
-      'dominio',
-      'cabeceio',
-      'interceptacao',
-      'reacao'
-    ];
-
-    for (const skillName of newSkills) {
-      try {
-        await db.execute(sql`
-          ALTER TABLE characters 
-          ADD COLUMN IF NOT EXISTS ${sql.raw(skillName)} INTEGER DEFAULT 0 NOT NULL
-        `);
-        console.log(`Coluna ${skillName} adicionada/verificada`);
-      } catch (error) {
-        console.log(`Coluna ${skillName} já existe ou erro:`, error);
-      }
-    }
-
-    // Migração: Adicionar coluna de motivação
-    try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS motivacao VARCHAR(50)
-      `);
-      console.log('Coluna motivacao adicionada/verificada');
+      console.log("STORAGE DEBUG: Character updated successfully:", updated);
+      return updated;
     } catch (error) {
-      console.log('Coluna motivacao já existe ou erro:', error);
+      console.error("STORAGE DEBUG: Database error during character update:", error);
+      throw error;
+    }
+  }
+
+  async deleteCharacter(userId: number): Promise<void> {
+    await db.delete(characters).where(eq(characters.userId, userId));
+  }
+
+  async getEliminatedCharacters(): Promise<Character[]> {
+    const eliminatedCharacters = await db.select().from(characters).where(eq(characters.isEliminated, true));
+    return eliminatedCharacters;
+  }
+
+  // Wild Card operations
+  async createWildCardInvitation(invitation: InsertWildCardInvitation): Promise<WildCardInvitation> {
+    const [newInvitation] = await db
+      .insert(wildCardInvitations)
+      .values(invitation)
+      .returning();
+    return newInvitation;
+  }
+
+  async getWildCardInvitation(userId: number): Promise<WildCardInvitation | undefined> {
+    const [invitation] = await db
+      .select()
+      .from(wildCardInvitations)
+      .where(eq(wildCardInvitations.userId, userId));
+    return invitation;
+  }
+
+  async updateWildCardInvitation(userId: number, updates: UpdateWildCardInvitation): Promise<WildCardInvitation> {
+    const updateData: any = { ...updates };
+
+    // Only set respondedAt if status is being updated to accepted/rejected
+    if (updates.status && updates.status !== "pending") {
+      updateData.respondedAt = new Date();
     }
 
-    // Migração: Remover constraint NOT NULL do campo position (fix para character creation)
-    try {
-      await db.execute(sql`
-        ALTER TABLE characters 
-        ALTER COLUMN position DROP NOT NULL
-      `);
-      console.log('Constraint NOT NULL removida do campo position');
-    } catch (error) {
-      console.log('Constraint position já foi removida ou erro:', error);
+    // If explicitly setting respondedAt to null (for resend), keep it null
+    if (updates.respondedAt === null) {
+      updateData.respondedAt = null;
     }
 
-    // Verificar se já existe o usuário admin
-    const adminCheck = await db.execute(sql`
-      SELECT COUNT(*) as count FROM users WHERE username = 'mestre'
-    `);
+    const [updated] = await db
+      .update(wildCardInvitations)
+      .set(updateData)
+      .where(eq(wildCardInvitations.userId, userId))
+      .returning();
+    return updated;
+  }
 
-    const adminCount = Number(adminCheck.rows[0]?.count) || 0;
+  async getPendingWildCardInvitations(): Promise<WildCardInvitation[]> {
+    const pending = await db
+      .select()
+      .from(wildCardInvitations)
+      .where(eq(wildCardInvitations.status, "pending"));
+    return pending;
+  }
 
-    if (adminCount === 0) {
-      // Criar usuário admin padrão
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      await db.execute(sql`
-        INSERT INTO users (username, password, is_admin)
-        VALUES ('mestre', ${hashedPassword}, true)
-      `);
-      console.log('RENDER DEBUG: Default admin user created: mestre / admin123');
-    } else {
-      console.log('RENDER DEBUG: Admin user already exists');
-    }
+  async getAllWildCardInvitations(): Promise<WildCardInvitation[]> {
+    const allInvitations = await db.select().from(wildCardInvitations);
+    return allInvitations;
+  }
 
-  } catch (error) {
-    console.error('=== RENDER DEBUG: ERRO CRÍTICO AO INICIALIZAR BANCO ===');
-    console.error('Erro ao inicializar banco:', error);
-    if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-    }
-    throw error;
+  // Match operations
+  async createMatch(match: InsertMatch): Promise<Match> {
+    const [newMatch] = await db
+      .insert(matches)
+      .values(match)
+      .returning();
+    return newMatch;
+  }
+
+  async getMatch(id: number): Promise<Match | undefined> {
+    const [match] = await db.select().from(matches).where(eq(matches.id, id));
+    return match;
+  }
+
+  async getMatchWithGoals(id: number): Promise<MatchWithGoals | undefined> {
+    const match = await this.getMatch(id);
+    if (!match) return undefined;
+
+    const matchGoals = await this.getGoalsForMatch(id);
+    return {
+      ...match,
+      goals: matchGoals
+    };
+  }
+
+  async updateMatch(id: number, updates: UpdateMatch): Promise<Match> {
+    const [updatedMatch] = await db
+      .update(matches)
+      .set(updates)
+      .where(eq(matches.id, id))
+      .returning();
+    return updatedMatch;
+  }
+
+  async getAllMatches(): Promise<Match[]> {
+    return await db.select().from(matches);
+  }
+
+  async getActiveMatch(): Promise<Match | undefined> {
+    const [match] = await db.select().from(matches).where(
+      or(eq(matches.status, "active"), eq(matches.status, "preparing"))
+    ).orderBy(desc(matches.createdAt));
+    return match;
+  }
+
+  // Goal operations
+  async createGoal(goal: InsertGoal): Promise<Goal> {
+    const [newGoal] = await db
+      .insert(goals)
+      .values(goal)
+      .returning();
+    return newGoal;
+  }
+
+  async getGoalsForMatch(matchId: number): Promise<(Goal & { player: User & { character?: Character } })[]> {
+    return await db
+      .select({
+        id: goals.id,
+        matchId: goals.matchId,
+        playerId: goals.playerId,
+        team: goals.team,
+        minute: goals.minute,
+        createdAt: goals.createdAt,
+        player: {
+          id: users.id,
+          username: users.username,
+          isAdmin: users.isAdmin,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+          password: users.password
+        },
+        character: {
+          id: characters.id,
+          name: characters.name,
+          position: characters.position,
+          age: characters.age,
+          height: characters.height,
+          bio: characters.bio,
+          weapon: characters.weapon,
+          avatar: characters.avatar,
+          level: characters.level,
+          experience: characters.experience,
+          matches: characters.matches,
+          goals: characters.goals,
+          ranking: characters.ranking,
+          speed: characters.speed,
+          strength: characters.strength,
+          stamina: characters.stamina,
+          shooting: characters.shooting,
+          passing: characters.passing,
+          dribbling: characters.dribbling,
+          isEliminated: characters.isEliminated,
+          userId: characters.userId,
+          createdAt: characters.createdAt,
+          updatedAt: characters.updatedAt
+        }
+      })
+      .from(goals)
+      .innerJoin(users, eq(goals.playerId, users.id))
+      .leftJoin(characters, eq(users.id, characters.userId))
+      .where(eq(goals.matchId, matchId))
+      .then(rows => rows.map(row => ({
+        ...row,
+        player: {
+          ...row.player,
+          character: row.character
+        }
+      })));
+  }
+
+  // Flow State operations
+  async createFlowState(flowState: InsertFlowState): Promise<FlowState> {
+    const [newFlowState] = await db
+      .insert(flowStates)
+      .values(flowState)
+      .returning();
+    return newFlowState;
+  }
+
+  async getActiveFlowState(matchId: number): Promise<FlowStateWithPlayer | undefined> {
+    const [flowState] = await db
+      .select({
+        id: flowStates.id,
+        matchId: flowStates.matchId,
+        playerId: flowStates.playerId,
+        isActive: flowStates.isActive,
+        flowColor: flowStates.flowColor,
+        activatedAt: flowStates.activatedAt,
+        endedAt: flowStates.endedAt,
+        player: {
+          id: users.id,
+          username: users.username,
+          isAdmin: users.isAdmin,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+        },
+        character: {
+          id: characters.id,
+          userId: characters.userId,
+          name: characters.name,
+          position: characters.position,
+          age: characters.age,
+          height: characters.height,
+          bio: characters.bio,
+          weapon: characters.weapon,
+          avatar: characters.avatar,
+          level: characters.level,
+          experience: characters.experience,
+          matches: characters.matches,
+          goals: characters.goals,
+          ranking: characters.ranking,
+          speed: characters.speed,
+          strength: characters.strength,
+          stamina: characters.stamina,
+          shooting: characters.shooting,
+          passing: characters.passing,
+          dribbling: characters.dribbling,
+          isEliminated: characters.isEliminated,
+          createdAt: characters.createdAt,
+          updatedAt: characters.updatedAt,
+        },
+      })
+      .from(flowStates)
+      .leftJoin(users, eq(flowStates.playerId, users.id))
+      .leftJoin(characters, eq(users.id, characters.userId))
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.isActive, true)))
+      .orderBy(desc(flowStates.activatedAt))
+      .limit(1);
+
+    if (!flowState) return undefined;
+
+    return {
+      ...flowState,
+      player: {
+        ...flowState.player,
+        character: flowState.character || undefined,
+      },
+    };
+  }
+
+  async endFlowState(matchId: number, playerId: number): Promise<void> {
+    await db
+      .update(flowStates)
+      .set({
+        isActive: false,
+        endedAt: new Date(),
+      })
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.playerId, playerId)));
+  }
+
+  async getFlowStateForPlayer(matchId: number, playerId: number): Promise<FlowState | undefined> {
+    const [flowState] = await db
+      .select()
+      .from(flowStates)
+      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.playerId, playerId), eq(flowStates.isActive, true)))
+      .limit(1);
+
+    return flowState;
   }
 }
+
+export const storage = new DatabaseStorage();
