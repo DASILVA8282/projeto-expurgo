@@ -210,7 +210,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Character routes
   app.post("/api/characters", requireAuth, async (req, res) => {
     try {
+      console.log("=== RENDER DEBUG: CHARACTER CREATION ===");
+      console.log("Environment:", process.env.NODE_ENV);
+      console.log("Database URL exists:", !!process.env.DATABASE_URL);
+      console.log("User ID from session:", req.session.userId);
       console.log("Received character data:", req.body);
+      
       const characterData = insertCharacterSchema.parse({
         ...req.body,
         userId: req.session.userId,
@@ -220,44 +225,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user already has a character
       const existingCharacter = await storage.getCharacter(req.session.userId!);
       if (existingCharacter) {
+        console.log("RENDER DEBUG: Character already exists for user");
         return res.status(400).json({ message: "Character already exists for this user" });
       }
 
+      console.log("RENDER DEBUG: Creating character in database...");
       const character = await storage.createCharacter(characterData);
-      console.log("Created character:", character);
+      console.log("RENDER DEBUG: Character created successfully:", character);
       res.json(character);
     } catch (error) {
+      console.error("=== RENDER DEBUG: CREATE CHARACTER ERROR ===");
       console.error("Create character error:", error);
       if (error instanceof Error) {
         console.error("Error message:", error.message);
         console.error("Error stack:", error.stack);
       }
-      res.status(400).json({ message: "Invalid character data", error: error.message });
+      res.status(400).json({ message: "Invalid character data", error: (error as Error)?.message || 'Unknown error' });
     }
   });
 
   app.put("/api/characters", requireAuth, async (req, res) => {
     try {
+      console.log("=== RENDER DEBUG: CHARACTER UPDATE ===");
+      console.log("Environment:", process.env.NODE_ENV);
+      console.log("User ID from session:", req.session.userId);
       console.log("Received update data:", req.body);
+      
       const updates = updateCharacterSchema.parse(req.body);
       console.log("Parsed update data:", updates);
       
       // Check if character exists
+      console.log("RENDER DEBUG: Checking if character exists...");
       const existingCharacter = await storage.getCharacter(req.session.userId!);
       if (!existingCharacter) {
+        console.log("RENDER DEBUG: Character not found for user");
         return res.status(404).json({ message: "Character not found" });
       }
 
+      console.log("RENDER DEBUG: Updating character in database...");
       const character = await storage.updateCharacter(req.session.userId!, updates);
-      console.log("Updated character:", character);
+      console.log("RENDER DEBUG: Character updated successfully:", character);
       res.json(character);
     } catch (error) {
+      console.error("=== RENDER DEBUG: UPDATE CHARACTER ERROR ===");
       console.error("Update character error:", error);
       if (error instanceof Error) {
         console.error("Error message:", error.message);
         console.error("Error stack:", error.stack);
       }
-      res.status(400).json({ message: "Invalid character data", error: error.message });
+      res.status(400).json({ message: "Invalid character data", error: (error as Error)?.message || 'Unknown error' });
     }
   });
 
@@ -385,8 +401,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Calculate rank based on total stats, level, goals, etc.
-      const totalStats = character.speed + character.strength + character.stamina + 
-                        character.shooting + character.passing + character.dribbling;
+      const totalStats = character.velocidade + character.fisico + character.intelecto + 
+                        character.chute + character.passe + character.drible;
       const levelBonus = character.level * 10;
       const goalBonus = character.goals * 5;
       const matchBonus = character.matches * 2;
@@ -436,8 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (existingInvitation) {
         // Update existing invitation to pending status (resend)
         invitation = await storage.updateWildCardInvitation(userId, { 
-          status: "pending",
-          respondedAt: null 
+          status: "pending"
         });
       } else {
         // Create new invitation
@@ -657,14 +672,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Message being sent:", JSON.stringify(message, null, 2));
         
         // Broadcast para todos os conectados
-        for (const [userId, connection] of matchPageConnections) {
+        matchPageConnections.forEach((connection, userId) => {
           if (connection.readyState === WebSocket.OPEN) {
             console.log("Sending character sequence to user:", userId);
             connection.send(JSON.stringify(message));
           } else {
             console.log("Connection not open for user:", userId);
           }
-        }
+        });
       } else {
         console.log("No characters to show, skipping WebSocket broadcast");
       }
@@ -1043,13 +1058,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     ws.on('close', () => {
       // Remove connection from both maps when user disconnects
-      for (const [userId, connection] of userConnections.entries()) {
+      userConnections.forEach((connection, userId) => {
         if (connection === ws) {
           userConnections.delete(userId);
           matchPageConnections.delete(userId);
-          break;
         }
-      }
+      });
     });
   });
   
