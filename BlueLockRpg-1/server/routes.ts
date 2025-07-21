@@ -30,9 +30,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     rolling: true, // Reset expiry on activity
     cookie: {
       secure: false, // Set to true in production with HTTPS
-      httpOnly: true,
+      httpOnly: false, // Allow JavaScript access for debugging
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'lax', // Better cross-site support
+      domain: undefined, // Don't set domain for localhost
     },
   }));
 
