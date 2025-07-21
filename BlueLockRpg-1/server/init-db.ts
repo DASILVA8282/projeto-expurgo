@@ -422,3 +422,10 @@ export class DatabaseStorage implements IStorage {
 }
 
 export const storage = new DatabaseStorage();
+
+export async function initializeDatabase() {
+  // Se quiser colocar lógica de verificação ou seed, você pode
+  console.log("Banco de dados inicializado (sem migrations explícitas).");
+  // Apenas retorna o storage por enquanto
+  return storage;
+}
