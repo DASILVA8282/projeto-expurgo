@@ -186,7 +186,7 @@ export async function initializeDatabase() {
       try {
         await db.execute(sql`
           ALTER TABLE characters 
-          ADD COLUMN IF NOT EXISTS ${sql.raw(attrName)} INTEGER DEFAULT 3 NOT NULL
+          ADD COLUMN IF NOT EXISTS ${sql.raw(attrName)} INTEGER DEFAULT 0 NOT NULL
         `);
         console.log(`Coluna ${attrName} adicionada/verificada`);
       } catch (error) {
@@ -231,7 +231,7 @@ export async function initializeDatabase() {
       try {
         await db.execute(sql`
           ALTER TABLE characters 
-          ADD COLUMN IF NOT EXISTS ${sql.raw(skillName)} INTEGER DEFAULT 1 NOT NULL
+          ADD COLUMN IF NOT EXISTS ${sql.raw(skillName)} INTEGER DEFAULT 0 NOT NULL
         `);
         console.log(`Coluna ${skillName} adicionada/verificada`);
       } catch (error) {
