@@ -117,8 +117,9 @@ export default function Character() {
     if (character && typeof character === 'object') {
       console.log("CARREGANDO DADOS DO BANCO:", character);
       console.log("Dados específicos - origin:", (character as any).origin, "motivacao:", (character as any).motivacao, "classe:", (character as any).classe);
-      // Always load character data from database when available
-      setFormData({
+      
+      // FORCE update form data - even if values are empty strings, load them from database
+      const newFormData = {
         name: (character as any).name || "",
         position: (character as any).position || "Atacante",
         motivacao: (character as any).motivacao || "",
@@ -163,8 +164,17 @@ export default function Character() {
         reacao: (character as any).reacao || 1,
         flowColor: (character as any).flowColor || "red",
         flowPhrase: (character as any).flowPhrase || "É hora de dominar o campo!",
-      });
+      };
+      
+      console.log("DEFININDO NOVOS DADOS NO FORM:", newFormData);
+      setFormData(newFormData);
       setHasInitializedForm(true);
+      
+      console.log("FORM ATUALIZADO - Verificando valores carregados:");
+      console.log("- Origin carregado:", newFormData.origin);
+      console.log("- Motivação carregada:", newFormData.motivacao);
+      console.log("- Classe carregada:", newFormData.classe);
+      console.log("- Weapon carregada:", newFormData.weapon);
     }
   }, [character]);
 
