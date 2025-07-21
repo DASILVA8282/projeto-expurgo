@@ -112,23 +112,40 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCharacter(character: InsertCharacter): Promise<Character> {
-    const [newCharacter] = await db
-      .insert(characters)
-      .values(character)
-      .returning();
-    return newCharacter;
+    console.log("=== STORAGE DEBUG: Creating character ===");
+    console.log("Input data:", character);
+    try {
+      const [newCharacter] = await db
+        .insert(characters)
+        .values(character)
+        .returning();
+      console.log("STORAGE DEBUG: Character created successfully:", newCharacter);
+      return newCharacter;
+    } catch (error) {
+      console.error("STORAGE DEBUG: Database error during character creation:", error);
+      throw error;
+    }
   }
 
   async updateCharacter(userId: number, updates: UpdateCharacter): Promise<Character> {
-    const [updated] = await db
-      .update(characters)
-      .set({
-        ...updates,
-        updatedAt: new Date(),
-      })
-      .where(eq(characters.userId, userId))
-      .returning();
-    return updated;
+    console.log("=== STORAGE DEBUG: Updating character ===");
+    console.log("User ID:", userId);
+    console.log("Updates:", updates);
+    try {
+      const [updated] = await db
+        .update(characters)
+        .set({
+          ...updates,
+          updatedAt: new Date(),
+        })
+        .where(eq(characters.userId, userId))
+        .returning();
+      console.log("STORAGE DEBUG: Character updated successfully:", updated);
+      return updated;
+    } catch (error) {
+      console.error("STORAGE DEBUG: Database error during character update:", error);
+      throw error;
+    }
   }
 
   async deleteCharacter(userId: number): Promise<void> {
