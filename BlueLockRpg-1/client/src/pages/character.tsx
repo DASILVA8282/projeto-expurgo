@@ -153,16 +153,58 @@ export default function Character() {
       const response = await apiRequest("POST", "/api/characters", data);
       return response.json();
     },
-    onSuccess: () => {
-      // Don't invalidate queries immediately to prevent form reset
-      // Instead, update query data directly with current form data
-      queryClient.setQueryData(["/api/characters/me"], (oldData: any) => ({
-        ...oldData,
-        ...formData,
-        age: formData.age ? parseInt(formData.age) : null,
-      }));
+    onSuccess: (savedCharacter) => {
+      // Use the actual saved character data from server instead of local form data
+      queryClient.setQueryData(["/api/characters/me"], savedCharacter);
       
       setHasInitializedForm(true); // Mark as initialized to prevent form reset
+      
+      // Update form data to match the saved character to ensure consistency
+      setFormData({
+        name: savedCharacter.name || "",
+        position: savedCharacter.position || "Atacante",
+        motivacao: savedCharacter.motivacao || "",
+        age: savedCharacter.age?.toString() || "",
+        height: savedCharacter.height || "",
+        bio: savedCharacter.bio || "",
+        weapon: savedCharacter.weapon || "",
+        origin: savedCharacter.origin || "",
+        classe: savedCharacter.classe || "",
+        subclasse: savedCharacter.subclasse || "",
+        fisico: savedCharacter.fisico || 3,
+        velocidade: savedCharacter.velocidade || 3,
+        intelecto: savedCharacter.intelecto || 3,
+        carisma: savedCharacter.carisma || 3,
+        egoismo: savedCharacter.egoismo || 3,
+        chute: savedCharacter.chute || 1,
+        precisao: savedCharacter.precisao || 1,
+        roubo: savedCharacter.roubo || 1,
+        analise: savedCharacter.analise || 1,
+        determinacao: savedCharacter.determinacao || 1,
+        estrategia: savedCharacter.estrategia || 1,
+        intuicao: savedCharacter.intuicao || 1,
+        interacao_social: savedCharacter.interacao_social || 1,
+        lingua_estrangeira: savedCharacter.lingua_estrangeira || 1,
+        corrida: savedCharacter.corrida || 1,
+        cruzamento: savedCharacter.cruzamento || 1,
+        defesa: savedCharacter.defesa || 1,
+        drible: savedCharacter.drible || 1,
+        passe: savedCharacter.passe || 1,
+        performance: savedCharacter.performance || 1,
+        comemoracao: savedCharacter.comemoracao || 1,
+        fortitude: savedCharacter.fortitude || 1,
+        finta: savedCharacter.finta || 1,
+        furtividade: savedCharacter.furtividade || 1,
+        iniciativa: savedCharacter.iniciativa || 1,
+        percepcao: savedCharacter.percepcao || 1,
+        sorte: savedCharacter.sorte || 1,
+        dominio: savedCharacter.dominio || 1,
+        cabeceio: savedCharacter.cabeceio || 1,
+        interceptacao: savedCharacter.interceptacao || 1,
+        reacao: savedCharacter.reacao || 1,
+        flowColor: savedCharacter.flowColor || "red",
+        flowPhrase: savedCharacter.flowPhrase || "É hora de dominar o campo!",
+      });
       
       toast({
         title: "Personagem criado com sucesso!",
@@ -183,16 +225,58 @@ export default function Character() {
       const response = await apiRequest("PUT", "/api/characters", data);
       return response.json();
     },
-    onSuccess: () => {
-      // Don't invalidate queries immediately to prevent form reset
-      // Instead, update query data directly with current form data
-      queryClient.setQueryData(["/api/characters/me"], (oldData: any) => ({
-        ...oldData,
-        ...formData,
-        age: formData.age ? parseInt(formData.age) : null,
-      }));
+    onSuccess: (savedCharacter) => {
+      // Use the actual saved character data from server instead of local form data
+      queryClient.setQueryData(["/api/characters/me"], savedCharacter);
       
       setHasInitializedForm(true); // Mark as initialized to prevent form reset
+      
+      // Update form data to match the saved character to ensure consistency
+      setFormData({
+        name: savedCharacter.name || "",
+        position: savedCharacter.position || "Atacante",
+        motivacao: savedCharacter.motivacao || "",
+        age: savedCharacter.age?.toString() || "",
+        height: savedCharacter.height || "",
+        bio: savedCharacter.bio || "",
+        weapon: savedCharacter.weapon || "",
+        origin: savedCharacter.origin || "",
+        classe: savedCharacter.classe || "",
+        subclasse: savedCharacter.subclasse || "",
+        fisico: savedCharacter.fisico || 3,
+        velocidade: savedCharacter.velocidade || 3,
+        intelecto: savedCharacter.intelecto || 3,
+        carisma: savedCharacter.carisma || 3,
+        egoismo: savedCharacter.egoismo || 3,
+        chute: savedCharacter.chute || 1,
+        precisao: savedCharacter.precisao || 1,
+        roubo: savedCharacter.roubo || 1,
+        analise: savedCharacter.analise || 1,
+        determinacao: savedCharacter.determinacao || 1,
+        estrategia: savedCharacter.estrategia || 1,
+        intuicao: savedCharacter.intuicao || 1,
+        interacao_social: savedCharacter.interacao_social || 1,
+        lingua_estrangeira: savedCharacter.lingua_estrangeira || 1,
+        corrida: savedCharacter.corrida || 1,
+        cruzamento: savedCharacter.cruzamento || 1,
+        defesa: savedCharacter.defesa || 1,
+        drible: savedCharacter.drible || 1,
+        passe: savedCharacter.passe || 1,
+        performance: savedCharacter.performance || 1,
+        comemoracao: savedCharacter.comemoracao || 1,
+        fortitude: savedCharacter.fortitude || 1,
+        finta: savedCharacter.finta || 1,
+        furtividade: savedCharacter.furtividade || 1,
+        iniciativa: savedCharacter.iniciativa || 1,
+        percepcao: savedCharacter.percepcao || 1,
+        sorte: savedCharacter.sorte || 1,
+        dominio: savedCharacter.dominio || 1,
+        cabeceio: savedCharacter.cabeceio || 1,
+        interceptacao: savedCharacter.interceptacao || 1,
+        reacao: savedCharacter.reacao || 1,
+        flowColor: savedCharacter.flowColor || "red",
+        flowPhrase: savedCharacter.flowPhrase || "É hora de dominar o campo!",
+      });
       
       toast({
         title: "Personagem atualizado com sucesso!",
