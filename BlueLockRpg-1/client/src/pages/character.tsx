@@ -26,10 +26,37 @@ export default function Character() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: character, isLoading } = useQuery({
+  const { data: character, isLoading, error } = useQuery({
     queryKey: ["/api/characters/me"],
+    queryFn: async () => {
+      console.log("EXECUTANDO QUERY PARA BUSCAR PERSONAGEM...");
+      try {
+        const res = await fetch("/api/characters/me", {
+          credentials: "include",
+        });
+        
+        if (res.status === 401 || res.status === 403) {
+          console.log("Usuário não autenticado - retornando null");
+          return null;
+        }
+        
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("DADOS DO PERSONAGEM RECEBIDOS DA API:", data);
+        return data;
+      } catch (error) {
+        console.error("Erro ao buscar personagem:", error);
+        throw error;
+      }
+    },
     retry: false,
+    enabled: !!user, // Só executa a query quando há usuário autenticado
   });
+
+  console.log("Query status:", { character, isLoading, error, user: !!user });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -86,8 +113,10 @@ export default function Character() {
   const remainingAttributePoints = Math.max(0, 18 - totalAttributes);
 
   useEffect(() => {
+    console.log("useEffect triggered - character:", character, "type:", typeof character, "hasInitializedForm:", hasInitializedForm);
     if (character && typeof character === 'object') {
-      console.log("Loading character data into form:", character);
+      console.log("CARREGANDO DADOS DO BANCO:", character);
+      console.log("Dados específicos - origin:", (character as any).origin, "motivacao:", (character as any).motivacao, "classe:", (character as any).classe);
       // Always load character data from database when available
       setFormData({
         name: (character as any).name || "",
