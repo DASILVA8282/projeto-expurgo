@@ -1044,6 +1044,186 @@ export default function Guide() {
               </div>
             </div>
           </motion.section>
+
+          {/* Armas Mágicas Section */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="bg-gradient-to-br from-violet-900/30 to-fuchsia-800/20 border border-violet-700/50 rounded-xl p-6"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Zap className="w-8 h-8 text-violet-400" />
+              <h2 className="font-bebas text-3xl text-violet-400 tracking-wide">ARMAS MÁGICAS</h2>
+            </div>
+            
+            <p className="text-gray-300 mb-6 font-oswald text-lg">
+              <span className="text-violet-400 font-bold">Novas armas com poderes sobrenaturais e técnicas avançadas:</span><br/>
+              <span className="text-amber-400 font-bold">• Dribles Mágicos e Passivos para superação individual</span><br/>
+              <span className="text-amber-400 font-bold">• Força Física e Físico Escultural para domínio corporal</span><br/>
+              <span className="text-amber-400 font-bold">• Imperador do X1 para especialização em duelos</span><br/>
+              <span className="text-amber-400 font-bold">• Passes Mágicos e Travessos para criatividade</span><br/>
+              <span className="text-amber-400 font-bold">• Perfeição para maestria completa</span>
+            </p>
+
+            <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* DRIBLES MÁGICOS */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">✨</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">DRIBLES MÁGICOS</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Técnico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Drible, Finta, Criatividade
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Truque de Mágica:</span> Jogadas criativas com DT baseada na criatividade (12-30)</div>
+                  <div><span className="text-violet-400 font-bold">Cartoleiro Louco:</span> Movimento "Cartola" especial que se torna Ação Livre</div>
+                  <div><span className="text-violet-400 font-bold">Abracadabra:</span> D6 mágico com efeitos personalizados</div>
+                  <div><span className="text-violet-400 font-bold">Ilusionismo:</span> Criação de ilusões impossíveis e absurdas</div>
+                </div>
+              </div>
+
+              {/* DRIBLES PASSIVOS */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🔄</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">DRIBLES PASSIVOS</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Técnico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Drible, Análise, Contra-ataque
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Contra Drible:</span> Usar falhas do adversário contra ele mesmo</div>
+                  <div><span className="text-violet-400 font-bold">Quebra de Movimentação:</span> Passagem automática em testes ruins</div>
+                  <div><span className="text-violet-400 font-bold">Drible Fluido:</span> Um defensor superado = todos superados</div>
+                  <div><span className="text-violet-400 font-bold">Sucesso Sucessivo:</span> Guardar sucessos automáticos para uso posterior</div>
+                </div>
+              </div>
+
+              {/* FORÇA FÍSICA */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">💪</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">FORÇA FÍSICA</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Físico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Físico, Corpo a Corpo, Intimidação
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Brutamonte:</span> +1 Classe em 3 Perícias Físicas</div>
+                  <div><span className="text-violet-400 font-bold">Jogo de Ombros:</span> Movimento especial de corpo a corpo</div>
+                  <div><span className="text-violet-400 font-bold">Ego Protein:</span> Egoísmo fortalece o físico</div>
+                  <div><span className="text-violet-400 font-bold">Monstro Imparável:</span> Força inacreditável nos duelos</div>
+                </div>
+              </div>
+
+              {/* FÍSICO ESCULTURAL */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🏛️</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">FÍSICO ESCULTURAL</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Físico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Físico, Técnica Corporal, Versatilidade
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Construtor Corporal:</span> Usa poderes de outras armas temporariamente</div>
+                  <div><span className="text-violet-400 font-bold">Físico Versátil:</span> Especialidade extra e conversão de CA</div>
+                  <div><span className="text-violet-400 font-bold">Treinamento Pesado:</span> Todos treinamentos físicos melhorados</div>
+                  <div><span className="text-violet-400 font-bold">Colosso do Futebol:</span> Resultados pré-determinados para usar</div>
+                </div>
+              </div>
+
+              {/* IMPERADOR DO X1 */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">👑</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">IMPERADOR DO X1</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Mental<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> 1v1, Adrenalina, Domínio
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Solo de Adrenalina:</span> Bônus massivos em disputas 1v1</div>
+                  <div><span className="text-violet-400 font-bold">Explorador de Brechas:</span> Movimentação táctica avançada</div>
+                  <div><span className="text-violet-400 font-bold">Reflexos de Imperador:</span> Reações aprimoradas em duelos</div>
+                  <div><span className="text-violet-400 font-bold">Hardcore Mode:</span> Aumentar dificuldade para recompensas épicas</div>
+                </div>
+              </div>
+
+              {/* PASSES MÁGICOS */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🎭</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">PASSES MÁGICOS</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Técnico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Passe, Criatividade, Magia
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Num Passe de Mágica:</span> Show de luzes com benefícios múltiplos</div>
+                  <div><span className="text-violet-400 font-bold">Cruzamento Ilusório:</span> Múltiplas linhas de passe possíveis</div>
+                  <div><span className="text-violet-400 font-bold">Pérola Perfuradora:</span> Passe que anula reações defensivas</div>
+                  <div><span className="text-violet-400 font-bold">Wätcher des Schnees:</span> Sistema "Observador das Neves" mágico</div>
+                </div>
+              </div>
+
+              {/* PASSES TRAVESSOS */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🃏</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">PASSES TRAVESSOS</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Técnico<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Passe, Imprevisibilidade, Flexibilidade
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Passes Pervertidos:</span> Passes sem lógica que desafiam expectativas</div>
+                  <div><span className="text-violet-400 font-bold">Passes Perseguidores:</span> Bola acompanha movimentos do aliado</div>
+                  <div><span className="text-violet-400 font-bold">Passes Maestros:</span> Controle total das características do passe</div>
+                  <div><span className="text-violet-400 font-bold">Voilà Mon Football:</span> Sequências de passe geram Fluxo e Sinergia</div>
+                </div>
+              </div>
+
+              {/* PERFEIÇÃO */}
+              <div className="bg-violet-800/20 border border-violet-700/30 rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">🌟</span>
+                  <h3 className="font-bebas text-2xl text-violet-400">PERFEIÇÃO</h3>
+                </div>
+                <p className="text-gray-300 font-oswald text-lg mb-4">
+                  <span className="text-violet-400 font-bold">Categoria:</span> Mental<br/>
+                  <span className="text-violet-400 font-bold">Especialização:</span> Perfeição, Precisão, Excelência
+                </p>
+                <div className="space-y-2 text-gray-300 font-oswald text-sm">
+                  <div><span className="text-violet-400 font-bold">Parábola Perfeita:</span> Alcance e potência equivalentes</div>
+                  <div><span className="text-violet-400 font-bold">Perfeição Sinuosa:</span> Pontos acumulados para melhorar testes</div>
+                  <div><span className="text-violet-400 font-bold">Jogador Perfeito:</span> +1 Classe em tudo, +3 Atributos, superioridade</div>
+                  <div><span className="text-violet-400 font-bold">Das Cinzas Nasce:</span> Cada falha te torna mais forte</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 bg-violet-700/20 border border-violet-600/30 rounded-lg p-6">
+              <h3 className="font-bebas text-xl text-violet-400 mb-4">ACESSO ÀS ARMAS MÁGICAS</h3>
+              <div className="space-y-3 text-gray-300 font-oswald">
+                <div><span className="text-violet-400 font-bold">Disponibilidade:</span> Todas as 8 novas armas estão disponíveis na criação de personagem.</div>
+                <div><span className="text-violet-400 font-bold">Seleção:</span> Escolha a arma que melhor combina com seu estilo de jogo e classe.</div>
+                <div><span className="text-violet-400 font-bold">Progressão:</span> Cada arma possui 5 níveis de poder crescente.</div>
+                <div><span className="text-violet-400 font-bold">Manual Completo:</span> Use o botão "📖 Manual" na seleção de armas para ver descrições completas.</div>
+                <div><span className="text-amber-400 font-bold">Dica:</span> Armas mágicas oferecem poderes únicos que podem revolucionar seu estilo de jogo!</div>
+              </div>
+            </div>
+          </motion.section>
         </div>
       </div>
     </div>
