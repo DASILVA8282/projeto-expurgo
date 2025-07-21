@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   username: varchar("username", { length: 50 }).notNull().unique(),
   password: text("password").notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
+  cesarMonitorSeen: boolean("cesar_monitor_seen").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -16,11 +17,15 @@ export const characters = pgTable("characters", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
-  position: varchar("position", { length: 50 }).notNull(),
+  position: varchar("position", { length: 50 }).default("Atacante"),
+  motivacao: varchar("motivacao", { length: 50 }),
   age: integer("age"),
   height: varchar("height", { length: 20 }),
   bio: text("bio"),
   weapon: varchar("weapon", { length: 255 }),
+  origin: varchar("origin", { length: 50 }),
+  classe: varchar("classe", { length: 50 }),
+  subclasse: varchar("subclasse", { length: 50 }),
   avatar: text("avatar"),
   level: integer("level").default(1).notNull(),
   experience: integer("experience").default(0).notNull(),
@@ -28,13 +33,46 @@ export const characters = pgTable("characters", {
   goals: integer("goals").default(0).notNull(),
   ranking: integer("ranking").default(299).notNull(),
   isEliminated: boolean("is_eliminated").default(false).notNull(),
-  // Stats
-  speed: integer("speed").default(50).notNull(),
-  strength: integer("strength").default(50).notNull(),
-  stamina: integer("stamina").default(50).notNull(),
-  shooting: integer("shooting").default(50).notNull(),
-  passing: integer("passing").default(50).notNull(),
-  dribbling: integer("dribbling").default(50).notNull(),
+  // Novos Atributos
+  fisico: integer("fisico").default(3).notNull(),
+  velocidade: integer("velocidade").default(3).notNull(), 
+  intelecto: integer("intelecto").default(3).notNull(),
+  carisma: integer("carisma").default(3).notNull(),
+  egoismo: integer("egoismo").default(3).notNull(),
+  
+  // Perícias (skills) - pontos para distribuir
+  chute: integer("chute").default(1).notNull(),
+  precisao: integer("precisao").default(1).notNull(),
+  roubo: integer("roubo").default(1).notNull(),
+  analise: integer("analise").default(1).notNull(),
+  determinacao: integer("determinacao").default(1).notNull(),
+  estrategia: integer("estrategia").default(1).notNull(),
+  intuicao: integer("intuicao").default(1).notNull(),
+  interacao_social: integer("interacao_social").default(1).notNull(),
+  lingua_estrangeira: integer("lingua_estrangeira").default(1).notNull(),
+  
+  // Novas perícias do documento
+  corrida: integer("corrida").default(1).notNull(),
+  cruzamento: integer("cruzamento").default(1).notNull(),
+  defesa: integer("defesa").default(1).notNull(),
+  drible: integer("drible").default(1).notNull(),
+  passe: integer("passe").default(1).notNull(),
+  performance: integer("performance").default(1).notNull(),
+  comemoracao: integer("comemoracao").default(1).notNull(),
+  
+  // Perícias livres
+  fortitude: integer("fortitude").default(1).notNull(),
+  finta: integer("finta").default(1).notNull(),
+  furtividade: integer("furtividade").default(1).notNull(),
+  iniciativa: integer("iniciativa").default(1).notNull(),
+  percepcao: integer("percepcao").default(1).notNull(),
+  sorte: integer("sorte").default(1).notNull(),
+  
+  // Perícias de reação
+  dominio: integer("dominio").default(1).notNull(),
+  cabeceio: integer("cabeceio").default(1).notNull(),
+  interceptacao: integer("interceptacao").default(1).notNull(),
+  reacao: integer("reacao").default(1).notNull(),
   // Flow State personalization
   flowColor: varchar("flow_color", { length: 20 }).default("cyan").notNull(),
   flowPhrase: varchar("flow_phrase", { length: 255 }).default("É hora de dominar o campo!").notNull(),
