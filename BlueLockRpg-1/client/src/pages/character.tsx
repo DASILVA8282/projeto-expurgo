@@ -474,6 +474,7 @@ export default function Character() {
       return;
     }
 
+    // Garantir que todos os valores numéricos sejam preservados, incluindo 0
     const characterData = {
       name: formData.name,
       position: formData.position,
@@ -485,44 +486,47 @@ export default function Character() {
       origin: formData.origin,
       classe: formData.classe,
       subclasse: formData.subclasse,
-      fisico: formData.fisico,
-      velocidade: formData.velocidade,
-      intelecto: formData.intelecto,
-      carisma: formData.carisma,
-      egoismo: formData.egoismo,
-      // Perícias originais
-      chute: formData.chute,
-      precisao: formData.precisao,
-      roubo: formData.roubo,
-      analise: formData.analise,
-      determinacao: formData.determinacao,
-      estrategia: formData.estrategia,
-      intuicao: formData.intuicao,
-      interacao_social: formData.interacao_social,
-      lingua_estrangeira: formData.lingua_estrangeira,
-      // Novas perícias
-      corrida: formData.corrida,
-      cruzamento: formData.cruzamento,
-      defesa: formData.defesa,
-      drible: formData.drible,
-      passe: formData.passe,
-      performance: formData.performance,
-      comemoracao: formData.comemoracao,
-      // Perícias livres
-      fortitude: formData.fortitude,
-      finta: formData.finta,
-      furtividade: formData.furtividade,
-      iniciativa: formData.iniciativa,
-      percepcao: formData.percepcao,
-      sorte: formData.sorte,
-      // Perícias de reação
-      dominio: formData.dominio,
-      cabeceio: formData.cabeceio,
-      interceptacao: formData.interceptacao,
-      reacao: formData.reacao,
+      // Garantir que valores 0 sejam preservados explicitamente
+      fisico: Number(formData.fisico) || 0,
+      velocidade: Number(formData.velocidade) || 0,
+      intelecto: Number(formData.intelecto) || 0,
+      carisma: Number(formData.carisma) || 0,
+      egoismo: Number(formData.egoismo) || 0,
+      // Perícias originais - preservar valores 0
+      chute: Number(formData.chute) || 0,
+      precisao: Number(formData.precisao) || 0,
+      roubo: Number(formData.roubo) || 0,
+      analise: Number(formData.analise) || 0,
+      determinacao: Number(formData.determinacao) || 0,
+      estrategia: Number(formData.estrategia) || 0,
+      intuicao: Number(formData.intuicao) || 0,
+      interacao_social: Number(formData.interacao_social) || 0,
+      lingua_estrangeira: Number(formData.lingua_estrangeira) || 0,
+      // Novas perícias - preservar valores 0
+      corrida: Number(formData.corrida) || 0,
+      cruzamento: Number(formData.cruzamento) || 0,
+      defesa: Number(formData.defesa) || 0,
+      drible: Number(formData.drible) || 0,
+      passe: Number(formData.passe) || 0,
+      performance: Number(formData.performance) || 0,
+      comemoracao: Number(formData.comemoracao) || 0,
+      // Perícias livres - preservar valores 0
+      fortitude: Number(formData.fortitude) || 0,
+      finta: Number(formData.finta) || 0,
+      furtividade: Number(formData.furtividade) || 0,
+      iniciativa: Number(formData.iniciativa) || 0,
+      percepcao: Number(formData.percepcao) || 0,
+      sorte: Number(formData.sorte) || 0,
+      // Perícias de reação - preservar valores 0
+      dominio: Number(formData.dominio) || 0,
+      cabeceio: Number(formData.cabeceio) || 0,
+      interceptacao: Number(formData.interceptacao) || 0,
+      reacao: Number(formData.reacao) || 0,
       flowColor: formData.flowColor,
       flowPhrase: formData.flowPhrase,
     };
+
+    console.log("SAVING CHARACTER DATA WITH EXPLICIT ZEROS:", characterData);
 
     if (character) {
       updateCharacterMutation.mutate(characterData);
