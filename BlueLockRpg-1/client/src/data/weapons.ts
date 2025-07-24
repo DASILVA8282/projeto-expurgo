@@ -138,23 +138,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Drible Zumbi',
-        description: 'Impedindo que o adversário leia seu centro de gravidade, para cada 2 Classes que possuir em Drible, o alvo recebe -1 Classe no teste contra seu drible.'
+        description: 'Impedindo que o adversário leia o seu centro de gravidade, e movendo seus membros superiores e inferiores para direções opostas, você é capaz de confundir qualquer um que enfrente no 1 contra 1. Para cada 2 Classes que possuir em Drible, o alvo recebe -1 Classe no teste contra o seu drible. Se o alvo possuir Sucesso Automático, anula ele, porém perde 1 Classe da redução.'
       },
       {
         name: 'Morto-Vivo',
-        description: 'Sua condição corporal te faz parecer morto. Recebe modificações passivas: lógica contrária nos testes (5 FOL), jogar com 0 FOL, deslocamento total fora do turno (10 FOL), turnos não contam para rodadas.'
+        description: 'Sua condição corporal te faz parecer com alguém que está morto, seja por aparência, trejeitos ou estilo de jogo. Você recebe uma sequência de modificações passivas, escolhendo uma inicial e recebendo as outras a cada 3 NT (você escolhe as iniciais e a ordem que irá receber o resto. Primeiro, seus testes seguirão uma lógica contrária. "Falha Total" se torna "Sucesso Automático", "Falha" se torna "Muito Bom", "Muito Ruim" se torna "Bom", "Ruim" se torna "Medíocre", e "Medíocre" se mantém igual. A ordem contrária também é aplicada. O efeito deve ser ativado antes do teste, gastando 5 FOL. O segundo, permite que você, mesmo com 0 de FOL, ainda possa jogar normalmente, porém com um limite de gasto por turno igual à metade do seu NT (Arredonda para baixo). O terceiro, permite que você use seu deslocamento total fora do seu turno, e fora dele, ser inteiro (10 FOL pra ativar, duas rodadas de duração). Por fim, seus turnos passam a não contar para o andamento das rodadas.'
       },
       {
         name: 'Centro de Gravidade Zumbificada',
-        description: 'Movimentação completamente imprevisível. Teste Drible (DT 32 - 2 por Especialização) para anular efeitos de habilidades de Leitura, Controle, Contato Físico, Cópia, etc.'
+        description: 'A sua movimentação corporal te torna completamente imprevisível, através da impossibilitação de leitura dos seus centros de gravidade. Você pode escolher um dos tipos de habilidade listados abaixo para, quando sofrer seus efeitos, dar um teste de Drible (DT 32 - 2 por Especialização) para anular seu efeito. Você escolhe um tipo (que será permanente) e ao liberar o Nível 4 e 5, escolhe mais um . Os tipos de habilidade são: Habilidades de "Leitura" (Diagnóstico, Egocentrismo, Previsão Olfática, etc.); Habilidades de "Controle" (Futebol de Marionetes, Mexa-se em Prol do meu Gol, Sub-Classe General, etc.); Habilidades de "Contato Físico" (Centro de Gravidade: Explosão Total, Centro de Gravidade: Rotação no Ar, Jogo de Ombros, Dribles Dançantes, etc.); Habilidades de "Cópia" (Aura do Camaleão, Perícia Análise, Triunfo, etc.); Penalidades por Marcação; Efeitos de Devorar (Negativos); Condições Negativas; Condição Especial "Devorado" e "Lesões". Durante o Fluxo, recebe +1 Imunidade (desde que sustente com 4 FOL toda Rodada), e no Despertar, pode trocar 6 PD por uma nova.'
       },
       {
         name: 'Descoordenação Cadavérica',
-        description: 'Durante um turno: DT vira valor que NÃO pode atingir, pode trocar tipo de Movimento, trocar Finta/Corrida/Domínio/Roubo por Drible. Usos = Especializações (mínimo 1).'
+        description: 'Você recebe direito a, durante um turno, utilizar as seguintes inversões: A DT passa a se tornar um valor que você NÃO pode atingir. Ou seja, se a DT é 35, você não pode atingir 35 para passar; Você pode por fim, você pode trocar o tipo de um Movimento, mudando sua aplicação (por exemplo: Utilizar um Movimento de Passe como Chute, desde que seja louco o suficiente) Pode trocar Finta, Corrida, Domínio e Roubo por Drible. A quantidade de usos dessa habilidade é igual as Especializações que você possui (Mínimo 1).'
       },
       {
         name: 'Cemitério de Egoístas',
-        description: 'Ao vencer adversário com Morto Vivo, gaste 11 FOL para criar "lápide" (-2 penalidade). Com -12, remove Arma/Habilidades do adversário. Pode devorar jogadores.'
+        description: 'Enquanto o Zumbi se movimenta pelo campo, todos os jogadores correm o risco de serem devorados e enterrados, transformando o campo em um grande cemitério de egoístas. Quando vencer um adversário com o primeiro efeito de “Morto Vivo”, pode gastar 11 FOL para criar a “lápide” dele naquele lugar. Sempre que vencê-lo, aplica uma penalidade de -2. Ao atingir -12, você pode retirar sua Arma, Habilidades Gerais e Exóticas até o fim da partida. Se vencê-lo novamente, ele é devorado (quantidade de Rodadas = quantidade de Especializações). Se gastar +11 Fol, ele fica uma quantidade de Rodadas sem jogar igual à sua quantidade de Especializações. Cada Especialização reduz o valor necessário de penalidade em 2.'
       }
     ]
   },
@@ -162,7 +162,7 @@ export const weaponsData: Weapon[] = [
     id: 'torre-de-vigia',
     name: 'Torre de Vigia',
     category: 'Mental',
-    description: 'A Torre de Vigia é uma Arma estratégica e mental, que cumpre o papel de "Sentinela", observando todo o campo e coletando informações.',
+    description: 'A Torre de Vigia é uma Arma estratégica e mental, que cumpre o papel de “Sentinela”, observando todo o campo e coletando informações.',
     specialization: ['Análise', 'Percepção', 'Estratégia'],
     levels: [
       {
@@ -171,19 +171,19 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'Coleta de Informações',
-        description: 'No seu campo, gaste 3 FOL para registrar resultados em "Pontos de Informação" (≥17 = PI Positivo, ≤3 = PI Negativo). Use para dar bônus/penalidades.'
+        description: 'Dentro do seu campo, você pode gastar 3 FOL para registrar os resultados, que serão convertidos em “Pontos de Informação”. Resultados maiores ou iguais a 17 podem ser convertidos em PI Positivo, e resultados menores ou iguais a 3 podem ser convertidos em PI Negativo. Ainda dentro da sua área, os PI Positivos podem ser transformados em dados extras para seus aliados, e os Negativos podem se tornar reduções de dados para os adversários. A partir do NT 30, a habilidade tem seu alcance expandido para o campo inteiro, porém só pode conceder bônus e penalidades dentro da área do seu time.'
       },
       {
         name: 'Dados & Análises',
-        description: 'Quando alguém realiza Ação, gaste 6 Pontos INT para ter estudado ela. Realize turno extra antes para alterar o resultado, recebe +1 PI (aumenta a cada uso).'
+        description: 'Quando alguém realiza uma Ação, você pode gastar 6 Pontos de INT para já ter estudado ela. Assim, você pode realizar um turno extra antes dela, para alterar o que supostamente já teria acontecido. Nesse turno extra, você recebe +1 PI (Positivo ou Negativo, a sua escolha). Cada uso seguinte terá +1 PI (ou seja, na segunda vez que usar terá +2 PI, na terceira +3 PI).'
       },
       {
         name: 'Olhar do Vigia',
-        description: 'Detecta automaticamente qualquer um em 30m e pode pará-los. +1d para habilidades imparáveis, DT para PI vira 15/7, gaste 3 PI para anular Sucesso Automático.'
+        description: 'Qualquer um que entrar em uma área de 30m de você, será automaticamente detectado e poderá ser parado, independente de qualquer habilidade que possua. Você recebe +1d para qualquer Habilidade que não pode ser parada, a DT para obter PI se torna 15 e 7, e você pode gastar 3 para anular um Sucesso Automático.'
       },
       {
         name: 'Sentinela',
-        description: 'Sustentando com Ação Mental, aliados ganham "Olhar do Vigia" e "Coleta de Informações", e +6 em testes de Defesa, Interceptação e Roubo.'
+        description: 'Você pode conceder uma Proteção Defensiva para seus aliados. Enquanto sustentar com uma Ação Mental, todos eles ganham a capacidade de usar “Olhar do Vigia” e “Coleta de Informações” e também ganham +6 em testes de Defesa, Interceptação e Roubo.'
       }
     ]
   },
