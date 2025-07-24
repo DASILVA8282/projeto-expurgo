@@ -312,23 +312,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Friamente Certeiro',
-        description: 'Com 15+ puro em teste de Análise, ganha "Carga Analítica". Ao usar cargas, gira teste de Análise como secundário, podendo escolher qual resultado usar.'
+        description: 'Sempre que tirar 15 ou mais puro em um teste de "Análise", você ganha uma "Carga Analítica". Quando usar as cargas, você gira um teste de Análise como teste secundário, podendo escolher qual resultado vai usar, o do teste principal ou o de Análise.'
       },
       {
         name: 'Calculadora Mental',
-        description: 'Ao usar Carga Analítica, recebe "Alerta" personalizado. Quando evento acontecer, move automaticamente para 30m do local e +5 para reagir. Pode transferir para aliado.'
+        description: 'Sempre que usar uma "Carga Analítica", você recebe um "Alerta". Esse alerta pode ser o que você quiser. "Me avise quando a bola for parar perto do gol", "Me avise se um adversário for devorar meu aliado em breve" e por aí vai. Você será alertado pelo Mestre quando esse evento estiver próximo, e quando acontecer, você pode se mover automaticamente para 30m do local da Ação (NT 30 = 20, NT 40 = 15), e recebe +5 para reagir a essa Ação. Pode gastar 1 Ação Mental (caso seja seu turno) para passar o efeito para um aliado.'
       },
       {
         name: 'Frieza',
-        description: 'Ao tentarem interromper ações, gaste Carga Analítica para reduzir categoria do teste inimigo em um nível. Para ações em outros jogadores, gaste 2 Cargas para reduzir duas vezes.'
+        description: 'Quando forem tentar interromper ações suas, você pode gastar uma Carga Analítica para reduzir a categoria do teste dele em um (De Medíocre para Ruim por exemplo). O valor final se mantém o mesmo, porém se essa redução tiver impacto, ele será aplicado (Não funciona para testes de Defesa ou Chute/Precisão). Caso a ação seja direcionada a outro jogador (Como passes, por exemplo), pode gastar 2 Cargas e reduzir duas vezes.'
       },
       {
         name: 'Cabeça Fria',
-        description: 'Imune a condições mentais. Não pode usar Fúria, recebe +1 FOL no lugar de Pontos de Fúria. Quando fosse maximizar Fúria, entra em Fluxo.'
+        description: 'Você não pode ser afetado por condições mentais (sejam elas positivas ou negativas), e também não pode mais usar Fúria. No lugar dos Pontos de Fúria, você recebe +1 FOL, e quando fosse maximizar a Fúria, entra em Fluxo.'
       },
       {
         name: 'Calculismo Álgido',
-        description: 'Pode ser afetado por condições mentais positivas. Cargas Analíticas obtidas com 10 no dado. Alcances de "Calculadora Mental" reduzidos. "Frieza" mantém 1 Carga para outros jogadores.'
+        description: 'Você pode ser afetado por Condições mentais positivas, Cargas Analíticas podem ser obtidas com 10 no dado, o efeito de “Calculadora Mental” tem seus alcances reduzidos em um passo (NT 40 = 5m) e você continua gastando 1 Carga com “Frieza” para Ações com outros jogadores.'
       }
     ]
   },
