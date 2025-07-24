@@ -771,7 +771,7 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'Movimentos de Cabeça',
-        description: 'Você é capaz de replicar diversos movimentos que usam as pernas com seu cabeceio, como passes e até mesmo chutes.'
+        description: 'Você é capaz de replicar diversos movimentos que usam as pernas com seu cabeceio, como passes e até mesmo chutes. Para os seguintes Movimentos, você pode considerar o teste necessário para realizar ou obter como Cabeceio: Espada Parafuso (Chute), Tiro de Colisão (Chute), Passe de Primeira (Passe), Passe Genial (Passe), Passe “Arco do Céu” (Passe) e Passe Opressivo (Passe).'
       },
       {
         name: 'Oclusão Cabeceada',
@@ -779,11 +779,11 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'O Cabeça (Figuradamente)',
-        description: 'Sempre que estiver em uma disputa de bola aérea com alguém, para cada 1 FOL que você gastar, o adversário tem -1 no teste que usar para receber a bola.'
+        description: 'Sempre que estiver em uma disputa de bola aérea com alguém, para cada 1 FOL que você gastar, o adversário tem -1 no teste que usar para receber a bola. Para cada -20 de penalidade aplicada que você acumular, recebe +2 Classes em testes de Cabeceio (se já tinha Classe X, ganha +2d). Não pode ser usado para gols.'
       },
       {
         name: 'O Cabeça (Literalmente)',
-        description: 'Uma vez na partida, você pode gastar 12 FOL e dar um teste de Cabeceio. Nas rodadas seguintes, você pode gastar 3 FOL para tornar o resultado daquele teste a DT que os adversários precisam bater.'
+        description: 'Uma vez na partida, você pode gastar 12 FOL e dar um teste de Cabeceio. Nas rodadas seguintes, você pode gastar 3 FOL para tornar o resultado daquele teste a DT que os adversários precisam bater em testes que normalmente seriam contra seus testes de Cabeceio.'
       }
     ]
   },
@@ -796,23 +796,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Tiro Direto',
-        description: 'O Tiro Direto é um poderoso voleio ao gol. Para cada 2 NT de diferença entre você e um Defensor que tentar impedir um chute, ele recebe -1 ou você recebe +1.'
+        description: 'O Tiro Direto é um poderoso voleio ao gol. Para cada 2 NT de diferença entre você e um Defensor que tentar impedir um chute, ele recebe -1 (caso seja de NT inferior ao seu) ou você recebe +1 (caso tenha NT inferior ao dele). Além disso, você pode aumentar o alcance em troca de reduzir seu bônus (para cada 2m que aumentar, tem -1), e pode fazer o contrário também (para cada 2m que reduzir, ganha +1). Essa expansão de alcance é limitada a seu NT + 5 metros.'
       },
       {
         name: 'Chute de Calcanhar',
-        description: 'O Chute de Calcanhar é uma versão de costas do Chute Direto, onde você se aproveita das brechas na defesa para disparar um chute, surpreendendo a todos.'
+        description: 'O Chute de Calcanhar é uma versão de costas do Chute Direto, onde você se aproveita das brechas na defesa para disparar um chute, surpreendendo a todos. Para usá-lo, você deve estar a até 20m do gol, e receber o passe. Se o passador tirar 25+, você ganha +2 em Chute. Depois, gastando 5 FOL, você pode deixar até 1d4 jogadores “Surpresos”, e para cada jogador, ganha +1 em Chute. Por último, se estiver em 15m do gol, ganha +2.'
       },
       {
         name: 'Chute Direto de Duas Etapas',
-        description: 'Quando for chutar e falhar, você pode gastar 14 FOL para refazer os testes, podendo mudar as habilidades que usou, descrição, tudo.'
+        description: 'Quando for chutar com e falhar, você pode gastar 14 FOL para refazer os testes, podendo mudar as habilidades que usou, descrição, tudo. Você realiza um leve toque para seu outro pé, e faz um disparo rápido. Você pode anular uma habilidade que o goleiro usou na defesa. Se ele não usou nenhuma, anula o teste. Se ele não usou teste, anula a DP.'
       },
       {
         name: 'Voleio de Duas Armas',
-        description: 'Um poderoso voleio falso, onde você finge que vai chutar com uma perna, e passa ela por cima, enganando a todos e disparando um tiro com a outra perna.'
+        description: 'Um poderoso voleio falso, onde você finge que vai chutar com uma perna, e passa ela por cima, enganando a todos e disparando um tiro com a outra perna. Essa habilidade faz o goleiro errar a cronometragem do seu chute, anulando o teste dele ou habilidades, sendo dependente de sua DP. Se chutar com a sua perna boa, você recebe +2 Classes no teste, e os adversários -2 Classes para reagir. Se chutar com a sua perna ruim, você aplica as penalidades de Perna Ruim, mas se marcar o gol, anula elas até o fim da partida. Se no teste de Chute você tirar um 20 puro, recebe o Nível 1 da Ambidestria até o fim da partida, e também anula permanentemente uma das penalidades da Perna Ruim.'
       },
       {
         name: 'Voleio do Rei Demônio',
-        description: 'O ultimato do Chute Direto. Um imponente disparo direto para o gol, marcando mostrando a força de um "Rei Demônio", destruindo os sonhos dos 21 jogadores em campo.'
+        description: 'O ultimato do Chute Direto. Um imponente disparo direto para o gol, marcando mostrando a força de um “Rei Demônio”, destruindo os sonhos dos 21 jogadores em campo. O Voleio do Rei Demônio é uma bola veloz que persegue o gol em uma velocidade quase impossível de ser detectada, além de ser imprevisível pela sua Ambidestria adaptada. Você pode gastar 10 FOL para receber o primeiro nível do “Chute Todo Poderoso” do Chute Direto. Se marcar um gol, seu próximo Voleio do Rei Demônio pode aplicar o segundo, e no terceiro gol, pode usar o Terceiro Nível. Se já tinha, você pode trocar pelos níveis 1, 2 e 3 de uma das seguintes armas: Kaiser Impact, Chute Explosivo ou Perfeição.'
       }
     ]
   },
@@ -820,28 +820,28 @@ export const weaponsData: Weapon[] = [
     id: 'chute-explosivo',
     name: 'Chute Explosivo',
     category: 'Ofensivo',
-    description: 'O Chute Explosivo é uma técnica de chute que foca totalmente na potência e na "empolgação" do disparo. Quanto mais animado e energizado o usuário estiver, mais poderoso seu chute será.',
+    description: 'O Chute Explosivo é uma técnica de chute que foca totalmente na potência e na "empolgação" do disparo. Quanto mais animado e energizado o usuário estiver, mais poderoso seu chute será. Além disso, ele se aproveita dos instintos mais exóticos que você pode ter, permitindo que sua conexão com o gol seja tão grande, que nem mesmo olhar será necessário.',
     specialization: ['Chute', 'Instinto', 'Vibração Celular'],
     levels: [
       {
         name: 'Ímpeto Explosivo',
-        description: 'Você possui um instinto de explosão que guia seu jeito de jogar. Dentro da grande área adversária, você não precisa olhar para a bola ou para o gol, pois você sente eles.'
+        description: 'Você possui um instinto de explosão que guia seu jeito de jogar. Dentro da grande área adversária, você não precisa olhar para a bola ou para o gol, pois você sente eles. Seus chutes são realizados de forma automática. Você não precisa dominar, escapar de marcadores ou se posicionar, podendo chutar instantaneamente de qualquer ângulo, direção ou posição. Porém, o teste ainda deve ser feito, e o goleiro deve pular direto para o teste de Defesa. Para cada “complicação” que seu chute for submetido (1 marcador, passe complicado, posição desfavorável, condições negativas, etc.), suas células vibram mais intensamente, pedindo por uma descarga de dopamina. Essas complicações aumentam sua “Vibração Celular” em 1, e o valor final dessa estatística pode ser distribuído entre bônus para o seu teste, e penalidade para o teste do goleiro. No NT 20, você passa a aumentar em 2 a Vibração Celular por complicação, e durante o Fluxo, você aumenta em 1 todo turno para usar na hora do chute.'
       },
       {
         name: 'Chute Giratório Reverso',
-        description: 'Seguindo o efeito do Ímpeto Explosivo, você é capaz de realizar um incrível chute de costas com a palma do pé, usando de toda sua explosão para criar um impacto tão grande que deixa todos de boca aberta.'
+        description: 'Seguindo o efeito do Ímpeto Explosivo, você é capaz de realizar um incrível chute de costas com a palma do pé, usando de toda sua explosão para criar um impacto tão grande que deixa todos de boca aberta. Primeiro, o alcance do teste de Chute é reduzido pela metade, mas você anula penalidades por marcação, o Goleiro tem -1d8 na DP e caso acerte, você fica sob a Condição "Empolgado" (Nas vezes seguintes, ganha +1 CA). 10 FOL.'
       },
       {
         name: 'Dragon Drive',
-        description: 'Enquanto a bola paira sob o campo, surpreendendo a todos, um dragão aparece, devorando qualquer esperança que um dia seus adversários já tiveram.'
+        description: 'Enquanto a bola paira sob o campo, surpreendendo a todos, um dragão aparece, devorando qualquer esperança que um dia seus adversários já tiveram. Você recebe o "Drive Shot", e, em até 60m do gol, se conseguir interceptar um passe, você pode realizar um chute logo de cara, com a perícia "Chute" independente da distância, sem penalidades. Você pode gastar 1 CA para que todos tenham -1d em testes para reagir, 2 CA para aumentar para -2d, 3 CA para anular habilidades de reação automática, 4 CA para ativar "Ka-ka-kabooommm" e 5 CA para ativar "Cacete Acho que eu vou..." caso marque o gol. Se estiver dentro da grande área, pode utilizar todos os efeitos sem gastar CA.'
       },
       {
         name: 'Dragon Drive: Heading',
-        description: 'Com esse Nível, você faz a mesma coisa que o anterior, porém com o cabeceio. No lugar do teste de Interceptação, você gira Cabeceio.'
+        description: 'Com esse Nível, você faz a mesma coisa que o anterior, porém com o cabeceio. No lugar do teste de Interceptação, você gira Cabeceio, e o resultado pode ser mantido para o disparo. Além disso, a ativação dos efeitos extras é baseada no seu modificador de Físico (Se era 4 CA, agora é necessário 4 no Mod. FÍS), porém o gasto se torna 30 FOL e "Ímpeto Explosivo" não pode ser aplicado.'
       },
       {
         name: 'Big Bang Drive',
-        description: 'O seu chute mais poderoso. Uma perfeição em níveis explosivos que ninguém jamais poderá alcançar. O Big Bang Drive é um chute que pode ser feito até, no máximo, o meio de campo.'
+        description: 'O seu chute mais poderoso. Uma perfeição em níveis explosivos que ninguém jamais poderá alcançar. Com a trajetória da bola, sem reação, todos somente pensarão como um ser humano consegue realizar algo desse nível. O Big Bang Drive é um chute que pode ser feito até, no máximo, o meio de campo. Com 25 FOL, Você aplica o Ímpeto Explosivo, e para cada alvo que seu chute ultrapassar, o goleiro recebe -2 na DP e no bônus de Defesa. Gastando 10 de Vibração Celular, você pode aplicar os efeitos de “Dragon Drive”, e gastando +5 de Vibração Celular, anula qualquer Sucesso Automático direcionado a impedir seu chute ou sua Ação. Se marcar o gol, você entra em Fluxo. Se já estava em Fluxo, tem um Despertar. Caso marque, também passa a poder somar Vibração Celular em qualquer teste que realizar.'
       }
     ]
   },
@@ -883,23 +883,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Flexibilidade',
-        description: 'Seus membros são flexíveis e capazes de realizar qualquer movimento, independente da dificuldade. Você pode anular até -1 de qualquer penalidade que afete sua DP ou teste de Defesa.'
+        description: 'Seus membros são flexíveis e capazes de realizar qualquer movimento, independente da dificuldade. Você pode anular até -1 de qualquer penalidade que afete sua DP ou teste de Defesa. A cada 5 NT, essa redução aumenta em -2, e para cada 1 defesa bem sucedida, aumenta em -1 até o fim da partida.'
       },
       {
         name: 'Reação Explosiva',
-        description: 'Seu tempo de reação é quase incomparável, sendo capaz de reagir a movimentos de extrema velocidade. Seus testes de Defesa não podem ser anulados por nenhuma habilidade.'
+        description: 'Seu tempo de reação é quase incomparável, sendo capaz de reagir a movimentos de extrema velocidade. Seus testes de Defesa não podem ser anulados por nenhuma habilidade. Recebe a Habilidade Exótica “Reflexos”.'
       },
       {
         name: 'Super Reflexo',
-        description: 'Recebe a Perícia Especial "Reflexos". Você consegue acompanhar o movimento da bola e pular exatamente no local onde ela deve cair.'
+        description: 'Recebe a Perícia Especial "Reflexos". Você consegue acompanhar o movimento da bola e pular exatamente no local onde ela deve cair. Você é imune a efeitos de enganação (Passe "Arco do Céu", Fintas, etc.), e para uma dessas enganações realizadas, recebe +1 no teste de Defesa. Além disso, gastando 5 FOL, você pode dar um teste de Reflexos (DT 30) para impedir um pênalti, limite de duas vezes por partida.'
       },
       {
-        name: 'Deflexão Garantida',
-        description: 'Você consegue defender qualquer chute que conseguir ver vindo. Você pode gastar 12 FOL para obter um teste de Defesa garantido que sobrepõe os outros.'
+        name: 'Ultra Reflexo',
+        description: 'Sua velocidade de Reação se torna ainda mais impressionante, com um reflexo impressionante. Quando falhar em uma Defesa, pode gastar 20 FOL para girar um teste de Reflexos, que irá substituir o teste de Defesa. Se passar, a metade da soma do resultado dos testes se tornará bônus na sua DP para o próximo ataque.'
       },
       {
-        name: 'Mola Impecável',
-        description: 'Sua flexibilidade chegou ao ápice, permitindo defesas impossíveis. Você pode usar qualquer parte do seu corpo para defender, incluindo partes que normalmente não conseguiria usar.'
+        name: 'Garra Defletora',
+        description: 'Você utiliza de todo seu Reflexo e poder de salto para impedir um chute, independentemente de sua força ou potência, defendendo com acerto garantido que sobrepõe os outros. A bola será defletida uma quantidade de metros igual ao resultado do teste de Chute ou Precisão adversário (Limite: 30m), caindo nos pés de alguém a sua escolha. Se o alvo tinha Sucesso Automático, você não pode escolher o alvo. Você tem 1 uso, e ganha +1 no NT 50.'
       }
     ]
   },
@@ -912,23 +912,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Dominação Suprema',
-        description: 'Você tem uma movimentação rápida e afiada, capaz de confundir os adversários. Utilizando de suas curvas pelo campo, você pode dar testes da Perícia "Drible" mesmo que não esteja com a bola.'
+        description: 'Você tem uma movimentação rápida e afiada,capaz de confundir os adversários. Utilizando de suas curvas pelo campo, você pode dar testes da Perícia “Drible” mesmo que não esteja com a bola. Se realizar um Drible bem sucedido, o seu aliado que está com a bola tem +1d para passar para você.'
       },
       {
         name: 'Hotline',
-        description: 'Você é especialista em "tabelas" (movimento onde você passa para um aliado e ele passa para você de volta), sendo capaz de realizar com maestria esse movimento em conjunto com qualquer outro aliado.'
+        description: 'Você é especialista em "tabelas" (movimento onde você passa para um aliado e ele passa para você de volta), sendo capaz de realizar com maestria esse movimento em conjunto com qualquer outro aliado. Ao gastar 8 FOL, você ativa esse feito durante uma, e o primeiro a realizar um passe tem +2 no teste, que passa adiante para o outro. Em sequência, caso o outro jogador (agora com a bola) adicione bônus no seu teste de Passe, esse bônus permanecerá para o próximo (ou seja, ele tinha +2, se somar 4 de VEL, terá +6, bônus que se manterá), Esse aumento e bate volta de bônus se mantém até o fim da tabela. Além disso, o bônus em Interceptação para impedí-los (veja Capítulo 6: Partidas) é anulado. Caso estejam em Sinergia, o bônus base se torna +4, e os que quiserem interceptar tem uma penalidade igual a sua quantidade de Classes em Passe.'
       },
       {
         name: 'Rotação Espacial',
-        description: 'Você recebe +1 Classe em Drible quando for executá-lo sem a bola, e, durante uma tabela de "Hotline", você recebe um dos "Bônus Padrão" de Sinergia.'
+        description: 'Você recebe +1 Classe em Drible quando for executá-lo sem a bola (seguindo o efeito de “Dominação Suprema), e, durante uma tabela de “Hotline”, você recebe um dos “Bônus Padrão” de Sinergia (se já estavam, recebem um Módulo extra). Além disso, o gasto de “Hotline” é reduzido para 4 FOL, a penalidade de Interceptação é dobrada, e metade do bônus que acumularam ao fim da tabela fica permanentemente para testes utilizados em conjunto (Como Passe e Domínio) entre vocês.'
       },
       {
         name: 'Sinergia Orbitária',
-        description: 'Agora, o seu aliado que está na "Hotline" com você recebe todos os Bônus Padrão de Sinergia, e seus passes durante a Hotline não podem ser mais interceptados.'
+        description: 'Agora, o seu aliado que está na “Hotline” com você recebe todos os Bônus Padrão de Sinergia, e se já estavam, recebem acesso a +1 Módulo, se tornando equilibrados entre Defesa, Controle e Ataque. Além disso, seus passes durante a Hotline não podem ser mais interceptados. Por fim, aliados em Sinergia com você também podem utilizar a “Dominação Suprema”.'
       },
       {
         name: 'Órbita Planetária',
-        description: 'Você é capaz de orbitar ao redor de um aliado, sincronizando a movimentação de vocês pelo campo todo, como um planeta e seu satélite pelo vasto espaço.'
+        description: 'Você é capaz de orbitar ao redor de um aliado, sincronizando a movimentação de vocês pelo campo todo, como um planeta e seu satélite pelo vasto espaço. Gastando 10 FOL inicial e 1 FOL para sustentar, você pode se manter em qualquer ponto de até 30m de algum aliado que já utilizou a “Hotline” com você naquela partida. Com isso, você não precisa mais gastar Ações para se deslocar, se movendo a mesma quantidade de metros que ele, porém sempre em uma distância de até 30m em qualquer direção. Para cada 10m acima de 30m de Deslocamento que ele possuir, o gasto de sustentação aumenta em 1, Se ambos gastarem 1 CA, vocês podem inverter a Órbita, e agora, ele que irá orbitar você, gastando o FOL e seguindo as limitações. Caso não estejam em Sinergia, entram automaticamente, pulando a etapa inicial dos sucessos.'
       }
     ]
   },
