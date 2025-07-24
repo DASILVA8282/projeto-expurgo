@@ -704,28 +704,28 @@ export const weaponsData: Weapon[] = [
     id: 'perfeicao',
     name: 'Perfeição',
     category: 'Mental',
-    description: 'Essa arma aprimora todas as suas características: chute, passe, corrida, corpo a corpo. Aquele que a usar terá direito ao título de "Jogador Perfeito".',
+    description: 'Essa arma aprimora todas as suas características, chute, passe, corrida, corpo a corpo, não é atoa que é chamada de “Perfeição”. Aquele que a usar terá direito ao título de “Jogador Perfeito”, com um nível de habilidade que não possui margem para erros.',
     specialization: ['Perfeição', 'Precisão', 'Excelência'],
     levels: [
       {
         name: 'Parábola Perfeita',
-        description: 'Curvatura perfeita: alcance e potência equivalentes. Se resultado > alcance = novo alcance. Se alcance > resultado: +1 puro/10m. Alcance base chute = 35m.'
+        description: 'A curvatura dos seus movimentos, o formato da parábola deixada por magnífica e perfeita. Até mesmo aqueles que você destruir ficarão hipnotizados com tamanha beleza. A curvatura dos seus chutes e passes são simétricos e precisos, tornando alcance e potência equivalentes. Se o resultado do seu teste de Chute, Passe ou Precisão for maior que o alcance, ele se torna o novo alcance do movimento. Agora, se o alcance for maior, para cada 10m de alcance, você ganha +1 no valor puro do teste. Você pode trocar testes de Chute/Passe por Precisão, e o alcance base do seu chute torna-se 35m. No NT 15, caso o resultado seja maior que o alcance, você também soma suas Classes de Precisão nesse alcance, e se o alcance for maior, você ganha +1 Ação Física nesse ou no seu próximo turno caso atinja o valor puro de 20. No NT 25, durante a execução da ação, uma quantidade de metros igual a 10 + Classes em Precisão tem sua execução totalmente garantida. Por exemplo, supondo que esse valor seja 17 (10 + 7 Classes) e você vai realizar um passe de 30m, os primeiros 17m desse passe são totalmente bem sucedidos, não podem ser interceptados ou acompanhados. Pode gastar 1 CA para aumentar em +10m.'
       },
       {
         name: 'Perfeição Sinuosa',
-        description: 'Valor puro = 20 - Classes Precisão: receba 1 Ponto para somar no puro durante partida. Efeito 20 puro aplica, mas sem CA. Pontos resetam.'
+        description: 'Cada movimento feito por você deixa um rastro de habilidade capaz de surpreender a todo tipo de jogador, seja ele inferior ou superior a você. Se a beleza da parábola que seu chute traçava já era encantadora, o desenho no ar de seus movimentos é mais ainda. Sempre que tirar um valor puro igual a 20 - Classes em Precisão em um teste (para cada Especialização na Arma, valor puro necessário é reduzido em 1), você recebe 1 Ponto para somar no valor puro de seus testes ao decorrer da partida. O efeito de 20 puro é aplicado com essa soma, porém você não recebe CA por isso (não aplica em testes de Chute, Precisão e Defesa, mas pode ser somado na DP). Os Pontos resetam a cada partida.'
       },
       {
         name: 'Execução Exímia',
-        description: 'Pontos eternos entre partidas. Gaste 3 Pontos: +2 bônus, DT-2, gasto anulado, alcance+4m. Recebe CA por 20 puro. Troque 15 FOL por 1 Ponto.'
+        description: 'Os Pontos obtidos em "Perfeição Sinuosa" se tornam "eternos", então caso termine uma partida com certo valor, ele se manterá para a próxima. Além disso, você pode gastar 3 Pontos para receber os seguintes efeitos quando for usar um Movimento: +2 no bônus, DT reduzida em 2, gasto anulado e alcance aumentado em 4m. Você também passa a receber CA por efeitos de 20 puro obtidos com a Perfeição Sinuosa, e pode trocar 15 FOL por 1 Ponto.'
       },
       {
         name: 'Jogador Perfeito',
-        description: '+1 Classe todas Perícias, +3 todos Atributos, +1 Habilidade Geral, 1°+2° Nível Estilo. Sucessos automáticos superiores. 1v1: bônus adversário ≤ seu.'
+        description: 'Você recebe +1 Classe em todas as Perícias, +3 em todos os Atributos, +1 Habilidade Geral e o 1° e 2° Nível de um Estilo a sua escolha. Além disso, seus sucessos automáticos são sempre superiores a todos os outros, não podendo ser anulados ou sobrepostos. Por fim, durante uma disputa de 1 contra 1 (Se tiver 3 Especializações, pode ser até de 1 contra 2), o bônus adversário nunca poderá ser maior que o seu, desde que o NT dele seja no máximo 3 maior que o seu.'
       },
       {
         name: 'Das Cinzas Nasce a Perfeição',
-        description: 'Fluxo: sacrifique Foco para ativar. Cada falha: +1 Classe temporária (até X). Perícia X: +1 PA temporário. 5 Perícias X: nova Aura. 10: nova Arma.'
+        description: 'Escolhido pelos céus, você é um jogador perfeito. Uma divindade sem defeitos dentro das quadras, e cada partícula que compõe sua existência superior, é alheia a falhas e defeitos. Entretanto, uma existência perfeita não seria capaz de ser atingida sem suor. Ao ativar o Fluxo, você pode sacrificar seu Foco para receber esse efeito. Sempre que falhar em um teste, você recebe +1 Classe temporária nele, acumulando até Classe X (Perícias que já eram Classe X recebem +1). A cada falha, você renascerá das cinzas, até se tornar perfeito. Sempre que uma Perícia atingir a Classe X, você recebe +1 PA temporário. Se conseguir 5 Perícias Classe X, ganha uma nova Aura. Se conseguir 10, recebe uma nova Arma. Ao ativar, se gastar todos os seus PA, você também desperta, e pode sacrificar sua Melhoria para aumentar o ganho de Classes Temporárias para 2. A cada 3 Classes obtidas em uma Perícia, ganha uma Classe permanente. Os ganhos de Aura, Arma, etc. só são aplicados na primeira vez que utilizar desse Nível.'
       }
     ]
   },
@@ -738,23 +738,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Bélico',
-        description: 'Você recebe a perícia especial Penetração I. Pode substituir Penetração pode substituir as perícias Chute e Drible. Quando estiver a 25 + Classe de Penetração metros do gol, você passa a receber +1d para chutar no gol.'
+        description: 'Você recebe a perícia especial Penetração I. Pode substituir Penetração pode substituir as perícias Chute e Drible. Quando estiver a 25 + Classe de Penetração metros do gol, você passa a receber +1d para chutar no gol. Qualquer malefício em Penetração se aplica às perícias substituídas.'
       },
       {
         name: 'Invasão',
-        description: 'Você recebe o movimento Arrastar Tesoura e pode utilizar Penetração em vez de Finta ao cumprir os requisitos, obtendo também o acesso à Tesoura Hiperveloz.'
+        description: 'Você recebe o movimento Arrastar Tesoura e pode utilizar Penetração em vez de Finta ao cumprir os requisitos, obtendo também o acesso à Tesoura Hiperveloz. Pode usar Penetração contra a reação de um defensor e, se tiver sucesso, o defensor perde uma classe ao reagir contra você, enquanto você ganha uma classe contra ele. Essa ação só pode ser usada quando estiver com a bola no campo inimigo; se vencer, você saqueia os bônus do defensor, o bônus de CLASSE que ele tem no teste de reação pode ser usado para acrescentar em uma jogada sua, no fim do turno os bônus são perdidos. Cada defensor envolvido exige o gasto de 4 de Fôlego. Além disso, você pode usar Penetração para sair da Defesa Sincrética; nesse caso, ambos os defensores são forçados a segui-lo até o fim da sua próxima ação, consumindo uma ação física.'
       },
       {
         name: 'Ataque',
-        description: 'Escolha entre anular os malefícios de Olhos do Predador ou dobrar os seus benefícios. Se ainda não possuir Olhos do Predador, você o desperta.'
+        description: 'Escolha entre anular os malefícios de Olhos do Predador ou dobrar os seus benefícios. Se ainda não possuir Olhos do Predador, você o desperta. Quando estiver no alcance de chute da Penetração, pode chutar sem precisar enxergar o gol, confiando nos instintos. Por 10 de Fôlego, você realiza um teste de Intuição contra o teste de Análise de todos que tentarem reagir ao seu chute (o goleiro pode usar Defesa em vez de Análise). Quem falhar no teste não pode reagir ao seu chute.'
       },
       {
         name: 'Emboscada',
-        description: 'Penetração pode substituir as perícias Roubo e Corrida. Sempre que vencer uma disputa usando Penetração no lugar dessas perícias, você recebe +1d em Penetração.'
+        description: 'Penetração pode substituir as perícias Roubo e Corrida. Sempre que vencer uma disputa usando Penetração no lugar dessas perícias, você recebe +1d em Penetração, acumulando esse bônus até o máximo igual à sua Classe de Penetração (por exemplo, se for Classe V, o limite é +5d). Esse acúmulo é perdido ao perder uma disputa utilizando uma perícia substituída por Penetração. Aliados podem aplicar esse bônus acumulado em testes feitos para beneficiar você. Além disso, ao vencer uma disputa com qualquer perícia substituída por Penetração em um ataque, você pode gastar 4 FOL para considerar o oponente “Emboscado”; essa condição termina no fim do ataque. Enquanto estiver emboscado, você e seus aliados recebem +4 e +1d contra o alvo, e qualquer aliado que o marcar aplica esse bônus como malefício, considerando o alvo sob o Movimento Defesa Sincrética.'
       },
       {
         name: 'Guerra',
-        description: 'Penetração passa a cobrir também as perícias Domínio e Fortitude. Ao falhar em um teste de Penetração, você pode optar por intensificá-lo ao custo de 8 de Fôlego (FOL).'
+        description: 'Penetração passa a cobrir também as perícias Domínio e Fortitude. Ao falhar em um teste de Penetração, você pode optar por intensificá-lo ao custo de 8 de Fôlego (FOL), permitindo que você faça um novo teste, sem recuperar nenhum recurso que já gastou no último teste. Você também adquire automaticamente o outro benefício de Olhos do Predador que não havia escolhido no Nível 3 da Arma - Ataque, acumulando ambos os efeitos. Quando emboscar um alvo, até três aliados podem se deslocar a mesma distância que você, seguindo exatamente a sua trilha. Além disso, sempre que realizarem ações para te beneficiar, como trocas de passe que terminem em você, você acumula +2 por teste bem-sucedido. Esse acúmulo pode ser usado em um teste de penetração à sua escolha, ou é perdido ao final do ataque. Por exemplo: se Lorenzo passa para Aiku, Aiku devolve para Lorenzo, e isso ocorre três vezes antes de você receber a bola e chutar, você acumula +12, podendo usá-lo no chute final.'
       }
     ]
   },
