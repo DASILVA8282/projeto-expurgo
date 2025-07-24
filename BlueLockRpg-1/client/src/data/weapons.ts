@@ -1161,7 +1161,9 @@ export const weaponsData: Weapon[] = [
       {
         name: ' Sua Luz É Minha Presa',
         description: 'Você persegue sua presa, seguindo seus passos esperando o momento perfeito para a caça ser finalizada, ao gastar 15 de FOL você fica Furtivo automaticamente e se estiver numa distância igual ao dobro do seu deslocamento da sua presa você consegue Interromper alguma ação de “triunfo” dela, sendo Teste X Teste com a desvantagem da Furtividade, habilidades que anulam condições desfavoráveis não são aplicadas para sua presa, além de que bônus exteriores sem ser o bônus da perícia (classe) não são aplicados. Caso a sua presa esteja na sua área de chute você pode após atrapalhar a jogada, pegar a bola e chutá-la para o gol reduzindo a DP e bônus de defesa do goleiro em um valor igual ao seu modificador de EGO, caso esteja em fúria a redução aumenta em 2. Assim que você conseguir vencer a sua presa e roubar o brilho dela, você entra em Fluxo automaticamente, caso já estivesse em fluxo você tem um Despertar.'
-      },
+      }
+    ]
+  },
   {
     id: 'impulso-cabeceio',
     name: 'Impulso Cabeceio',
@@ -1191,7 +1193,7 @@ export const weaponsData: Weapon[] = [
       }
     ]
   }
-}
+];
 
 export const getWeaponsByCategory = (category: string) => {
   return weaponsData.filter(weapon => weapon.category === category);
