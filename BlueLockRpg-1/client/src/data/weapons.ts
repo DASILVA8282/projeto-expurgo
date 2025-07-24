@@ -1191,7 +1191,7 @@ export const weaponsData: Weapon[] = [
       }
     ]
   }
-];
+}
 
 export const getWeaponsByCategory = (category: string) => {
   return weaponsData.filter(weapon => weapon.category === category);
