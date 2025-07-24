@@ -383,15 +383,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Linha de Contato',
-        description: 'Mantendo contato visual com aliado: +3 em todos testes, +6 em testes conjuntos. NT 13+ inclui terceiro personagem. Condições: não furtivo, dentro alcance reação, sem inimigos entre. Se ambos têm arma: +4/+8.'
+        description: 'Enquanto manter contato visual com um aliado, os dois recebem +3 em todos os testes, e +6 em testes conjuntos (como troca de passes). A partir do NT 13, o Contato Visual pode incluir um terceiro personagem. Para que o contato visual seja feito, existem algumas condições. Primeiro, nenhum dos envolvidos pode estar furtivo. Segundo, os dois devem estar dentro do alcance de reação um do outro. Por fim, não pode haver inimigos entre os dois. Se ambos possuírem a Arma, os bônus se tornam +4 e +8.'
       },
       {
         name: 'Olhar Sinérgico',
-        description: 'Enquanto se olharem, sempre em Sinergia com Módulo variável. Durante Sinergia, bônus vira +4/+8. Se ambos têm arma: +5/+10.'
+        description: 'Enquanto se olharem, vocês sempre estarão em Sinergia, com Módulo variável. Durante essa Sinergia, os bônus de "Linha de Contato" se tornam +4 e +8. Se ambos possuírem a arma, o bônus se torna +5 e +10.'
       },
       {
         name: 'Olho por Olho',
-        description: 'Habilidades visuais (Olho do Predador, Meta Visão) compartilhadas mesmo sem possuir. Quem não tem acessa quantidade -1. Bônus +5/+10, ou +6/+12 se ambos têm arma.'
+        description: 'A conexão entre vocês já se tornou muito poderosa, e são capazes de enxergar pelos mesmos olhos. Enquanto conseguirem se olhar, as habilidades visuais (Olho do Predador e Meta Visão) podem ser compartilhadas entre si, mesmo que um dos envolvidos não tenha. Aquele que não possuir terá acesso a uma quantidade de habilidades do alvo -1 (se for Meta Visão, a redução será aplicada em todas as 3 ramificações, enquanto o Olho do Predador, o alvo não poderá ter nenhuma das últimas habilidades das Variantes de Caçada). O bônus se torna +5 e +10, e se ambos tiverem a Arma, torna-se +6 e +12.'
       }
     ]
   },
@@ -399,20 +399,20 @@ export const weaponsData: Weapon[] = [
     id: 'chute-todo-poderoso',
     name: 'Chute Todo Poderoso',
     category: 'Ofensivo',
-    description: 'O Chute Todo Poderoso é uma arma que aprimora os poderes das armas "Chute Direto", "Kaiser Impact" ou "Chute Explosivo", tornando-as ainda mais poderosas.',
+    description: 'O Chute Todo Poderoso é uma arma que aprimora os poderes das armas “Chute Direto”, “Kaiser Impact” ou “Chute Explosivo”, tornando-as ainda mais poderosas.',
     specialization: ['Chute', 'Aprimoramento', 'Poder'],
     levels: [
       {
         name: 'Impacto Divino',
-        description: 'CHUTE DIRETO: Troca Precisão por Chute, +1 em Chute para cada 2 Classes Precisão. KAISER IMPACT: Voleio Imperial com até 5 pessoas, Lightning Strike só parado com Meta Visão. CHUTE EXPLOSIVO: +1 Vibração Celular por rodada (+1 no Fluxo, +1 com habilidades especiais).'
+        description: 'CHUTE DIRETO: Sua precisão, força e velocidade de chute são igualados perfeitamente. Você pode trocar testes de Precisão por Chute (quando utilizada para chutes fora do alcance), e para cada 2 Classes em Precisão, recebe +1 em Chute (Especialidade = +1). KAISER IMPACT: Pode usar o Voleio Imperial mesmo com alguém na reta (máximo de 5 pessoas, de 6 para cima não pode usar), e agora o Lightning Strike só pode ser parado por defensores se eles tiverem Meta Visão ativa (se não, somente o goleiro pode parar). CHUTE EXPLOSIVO: Ao fim de toda rodada, você recebe 1 de Vibração Celular. Durante o Fluxo, esse valor aumenta em 1, e se possuir uma das Habilidades Gerais "Ka-ka-kabooom" ou "Explosão de Dopamina", aumenta em +1.'
       },
       {
         name: 'Força Total',
-        description: 'CHUTE DIRETO: Recebe "Faro de Gol" (+12 se já tinha), usa múltiplas vezes (-2 por uso). KAISER IMPACT: Usa em Tiro Meta/Pênaltis/Livre/Passes 15m (Magnus: +Escanteios/Passes/Cruzamentos). CHUTE EXPLOSIVO: "Ímpeto Explosivo" em Escanteios/Faltas, +3 Vibração por cartão amarelo.'
+        description: 'CHUTE DIRETO: Você recebe a habilidade "Faro de Gol" da Inteligência Espacial (se já tinha, ou se receber no futuro, o bônus se torna +12). Porém, você pode usar a habilidade mais de uma vez, com o bônus sendo reduzido em 2 a cada uso. KAISER IMPACT: Você consegue utilizar o Kaiser Impact em: Tiro de Meta, Pênaltis, Tiro Livre e Passes (de até 15m). Caso possua o Kaiser Impact: Magnus, também consegue usar em Escanteios, Passes acima de 15m e Cruzamentos. CHUTE EXPLOSIVO: O efeito de "Ímpeto Explosivo" é aplicado em Escanteios e Faltas, e a cada cartão amarelo que sofrer, ganha 3 de Vibração Celular.'
       },
       {
         name: 'Impacto Divino',
-        description: 'CHUTE DIRETO: "Voleio Três Armas" (+3 Classes perna boa/-3 adversários, perna ruim dobra penalidades mas +1 Nível Ambidestria). KAISER IMPACT: +1 uso Kaiser Magnus por 30 FOL. CHUTE EXPLOSIVO: 15 Vibração = próximo nível (Nível 5 = Despertar, Despertado = +10 PD).'
+        description: 'CHUTE DIRETO: Você transforma o "Voleio de Duas Armas" em "Voleio de Três Armas", adicionando mais uma finta ao chute, dificultando ainda mais a defesa. Se o seu chute final for com a perna boa, você recebe +3 Classes enquanto os adversários recebem -3. Agora, se for com a perna ruim, as penalidades são dobradas, mas você recebe 1 Nível da Ambidestria até o fim da partida, além de anular 2 penalidades de Perna Ruim permanentemente (com 20 puro, recebem 2 Níveis da Ambidestria). KAISER IMPACT: Gastando 30 FOL, você tem direito a 1 uso do Kaiser Impact: Magnus. Se você já possui essa habilidade, recebe mais um uso. CHUTE EXPLOSIVO: Você pode trocar 15 de Vibração Celular pelo nível seguinte do Chute Explosivo. Se já tem o Nível 5, troca o Fluxo por um Despertar. E se já estava despertado, recebe +10 PD.'
       }
     ]
   },
@@ -425,15 +425,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Consultar',
-        description: 'Classifica jogadores (Velocistas, Defensores, Suportes, Craques, Atacantes, Oportunistas) por 5 FOL. Recebe bônus específicos contra cada tipo. Máximo = Classe Análise.'
+        description: 'Você pode classificar jogadores entre Velocistas, Defensores, Suportes, Craques, Atacantes e Oportunistas. Através de uma ação mental, pode classificá-los em uma posição condizente com seu estilo, ao custo de 5 de FOL. Você só pode classificar um jogador uma vez, mas pode reclassificá-lo pagando novamente 5 FOL, sem gastar ação. Ao enfrentar um jogador classificado, você recebe bônus conforme a posição: contra Velocistas, pode substituir Análise, Reação e Corrida entre si em disputas; contra Defensores, ele tem -1 Classe em Reação, Defesa, Interceptação, Cabeceio e Roubo contra você, enquanto você tem +1 Classe nessas disputas; contra Suportes, ao marcá-los, você pode escolher até dois jogadores para bloquear passes, o Suporte não pode passar para eles, e se tentar se livrar da marcação, você pode usar Análise no teste; contra Craques, após ser ultrapassado, pode tentar uma segunda reação com +1 Classe; contra Atacantes, pode substituir Análise por Reação ou Interceptação e recebe +1 Classe em Defesa e Roubo; contra Oportunistas, se receberem a posse e estiverem em um raio de 30 + Dobro da sua Classe de Análise, você pode se deslocar imediatamente até ele e receber uma reação extra. Você poe consultar no maximo jogadores igual a sua classe de análise.'
       },
       {
         name: 'Examinar',
-        description: 'Após consultar, ranqueia em C/B/A/S por 5 FOL. Rank C: sucesso automático se 2+ Classes maior. Rank B-: gasta 4 FOL ou refaz teste. Rank A-: +1/-1 Classes. Rank S-: +2 acumulativo após falhar.'
+        description: 'Após consultar um alvo, você pode examiná-lo a qualquer momento usando uma ação mental, avaliando seu nível físico e técnico. Isso permite que você o ranqueie entre quatro categorias: C, B, A e S. Jogadores Rank C são claramente mais fracos que você, Rank B são coadjuvantes no seu nível, Rank A são equivalentes ou ligeiramente superiores, e Rank S são claramente mais fortes. Ranquear um jogador custa 5 de FOL e deve ser condizente com sua posição em campo, embora essa classificação possa mudar com o tempo: se um Rank C vence uma disputa contra você, ele se torna Rank B; se um Rank B se destacar, passa a Rank A; se um Rank A evitar ser vencido por você em três disputas seguidas ou vencer duas disputas seguidas um Rank S, torna-se Rank S. Ranks podem ser pulados — um Rank C pode ir direto para A ou S, dependendo da situação. Caso um jogador ranqueado como C tenha duas classes a menos que você na perícia usada na disputa (ex: você com Drible III e ele com Roubo I), você tem sucesso automático. Se tiver apenas uma classe a menos ou for equivalente/maior, ele deverá gastar 4 FOL para disputar com você. Contra jogadores Rank B ou menor, se você falhar em um teste, pode gastar 4 FOL para refazê-lo ou forçar o oponente a refazer. Contra jogadores Rank A ou menor, você recebe +1 Classe e o adversário -1 Classe em disputas diretas. Contra jogadores Rank S ou menor, sempre que falhar em uma disputa, você ganha +2 acumulativo em testes contra ele, até vencer esse mesmo jogador. Você pode examinar no máximo jogadores igual a sua classe de análise.'
       },
       {
         name: 'Inspecionar',
-        description: 'Revela consultas em intervalos. Classifica aliados: Ofensivos (+1 Classe em disputas iniciadas), Balanceados (-7 FOL total/turno), Defensivos (reação extra se ultrapassado). 5 FOL por inspeção.'
+        description: 'Você pode revelar seu Consultar para outros jogadores em campo apenas durante intervalos, como pausas por falta, entre o primeiro e segundo tempo, ou gastando uma ação livre para repassar diretamente a um jogador. Além disso, pode inspecionar aliados, classificando-os como Ofensivos, Balanceados ou Defensivos. Aliados Ofensivos recebem +1 Classe em disputas que tenham iniciado (como chutes ao gol ou dribles forçados); Balanceados reduzem o custo total de FOL em 7 no turno; e Defensivos podem reagir novamente se forem ultrapassados, uma única vez, até que um contra-ataque seja iniciado. Você pode reavaliar seus aliados apenas durante intervalos, ou forçar a reclassificação com uma ação livre. Cada inspeção custa 5 de FOL. Você pode inspecionar no máximo jogadores igual a sua classe de análise.'
       }
     ]
   },
@@ -441,20 +441,20 @@ export const weaponsData: Weapon[] = [
     id: 'drible-de-maquina',
     name: 'Drible de Máquina',
     category: 'Técnico',
-    description: 'Esses dribles seguem um estilo mecânico e fechado, com movimentos padronizados e certeiros, sem margem para erros ou falhas, e mesmo sendo "previsíveis" até certo ponto, são difíceis de serem impedidos.',
+    description: 'Esses dribles seguem um estilo mecânico e fechado, com movimentos padronizados e certeiros, sem margem para erros ou falhas, e mesmo sendo “previsíveis” até certo ponto, são difíceis de serem impedidos.',
     specialization: ['Drible', 'Precisão', 'Programação'],
     levels: [
       {
         name: 'Movimentos Programados',
-        description: 'Dribles com total precisão que se adaptam à reação do adversário. Após falhar um drible, pode gastar 10 FOL para refazer o teste, descrevendo como o drible se adapta exatamente à forma que o defensor venceu.'
+        description: 'Os Dribles de Máquina consistem em realizar movimentos "programados", com total precisão e sabendo como reagir, sem margem nenhuma para erros. Com isso, seu Drible pode se adaptar essencialmente à reação do adversário. Primeiro, a Ação e Reação será feita normalmente. Após isso, caso falhe, pode ativar esse Nível (gastando 10 FOL) para refazer o teste. Porém, o essencial é que você descreva seu drible se adaptando exatamente a forma que o defensor te venceu, pois esse será o principal fator da decisão.'
       },
       {
         name: 'Previsão Robótica',
-        description: 'Gastando 4 FOL e 5 INT, programa 3 dribles. Se a descrição do defensor for inferior tecnicamente ao seu drible programado, passa automaticamente. Cada drible programado só pode ser usado uma vez.'
+        description: 'Gastando 4 FOL e 5 de INT, você programa 3 dribles. Quando for driblar alguém, caso a descrição dele seja inferior (em termos técnicos, ou seja, se ele avança pra você porém na sua descrição você fazia um elástico pela esquerda, a descrição dele foi inferior), você passará automaticamente. Você pode escolher qual dos 3 programados vai usar, porém eles só podem ser usados uma vez.'
       },
       {
         name: 'Sistema Mecânico Tecnológico',
-        description: 'Pode programar quantos dribles quiser, gastando apenas 2 FOL com eles. Para cada Drible Programado bem-sucedido, ganha direito a programar uma Ação também.'
+        description: 'Você pode programar quantos dribles quiser, e gasta somente 2 de Fôlego com eles. Além disso, para cada Drible Programado bem sucedido, você ganha direito a programar uma Ação também.'
       }
     ]
   },
@@ -462,20 +462,20 @@ export const weaponsData: Weapon[] = [
     id: 'fingir-falta',
     name: 'Fingir Falta',
     category: 'Mental',
-    description: 'Uma técnica maliciosa que se aproveita da enganação e da "ocultação" de movimentos do árbitro para tirar vantagem. É uma arma perigosa, e se bem usada, pode causar muitos problemas aos adversários.',
+    description: 'Uma técnica maliciosa que se aproveita da enganação e da “ocultação” de movimentos do árbitro para tirar vantagem. É uma arma perigosa, e se bem usada, pode causar muitos problemas aos adversários.',
     specialization: ['Enganação', 'Interação Social', 'Malícia'],
     levels: [
       {
         name: 'Definitivamente Foi Falta',
-        description: 'Em interações físicas, o adversário tem -4 no valor puro para critérios de faltas, quedas e lesões. Gastando 10 FOL, aumenta para -8.'
+        description: 'Quando alguém realizar um jogo de corpo, corrida com corrida ou qualquer outra interação física com você, o valor puro relativo será -4. Ou seja, os resultados irão se manter iguais, mas para critérios de aplicação de faltas, quedas e lesões, ele terá -4 no puro. Se gastar 10 FOL, aumenta para -8.'
       },
       {
         name: 'Olha o Cartãozinho!',
-        description: 'Ao usar "Definitivamente Foi Falta", teste Interação Social (DT 24) para fingir algo mais sério. 10 FOL = Cartão Amarelo (uma vez). Se já tinha amarelo: -2 na perícia usada (20 FOL = -6).'
+        description: 'Quando usar o "Definitivamente Foi Falta", pode dar um teste de Interação Social (DT 24) para fingir que ocorreu algo mais sério. Gastando 10 FOL, o jogador adversário recebe um Cartão Amarelo. Só pode ser usado uma vez. Se ele já tinha um Cartão Amarelo, recebe uma penalização mecânica, de -2 na Perícia que usou para te penalizar. Se gastar 20 FOL, aumenta a penalidade para -6.'
       },
       {
         name: 'Tua Mãe Aquela #@!$&*',
-        description: 'No mano a mano, teste Interação Social vs Determinação do adversário. Se vencer, ele te ofende e recebe penalizações que variam de aviso até Cartão Vermelho. 3 FOL e Ação Mental.'
+        description: 'Quando estiver no mano a mano com outro personagem, pode dar um teste de Interação Social X Determinação dele. Se vencer, você consegue fazer com que ele te ofenda, o que ocasionará em penalizações ao jogador, que variam de acordo com: Temperamento do provocado, Valor no teste de Interação Social, Capacidade provocativa do provocador e também a situação em que ocorreu. Com tudo isso, além de conseguir marcar uma falta, você ainda pode fazer com que ele receba desde um aviso, até um Cartão Vermelho. 3 FOL e Ação Mental.'
       }
     ]
   },
@@ -525,20 +525,20 @@ export const weaponsData: Weapon[] = [
     id: 'monstruosidade-egoica',
     name: 'Monstruosidade Egóica',
     category: 'Mental',
-    description: 'A "Monstruosidade Egóica" é uma Arma Menor que complementa seu estilo de jogo, aprimorando cada característica sua, o que te permite um jogo "solo", somente avançando e devorando tudo pela frente.',
+    description: 'A “Monstruosidade Egóica” é uma Arma Menor que complementa seu estilo de jogo, aprimorando cada característica sua, o que te permite um jogo "solo", somente avançando e devorando tudo pela frente.',
     specialization: ['Egoísmo', 'Individualismo', 'Devoração'],
     levels: [
       {
         name: 'Uma Fera Dentro de Campo',
-        description: 'Ao ultrapassar adversário, bônus baseado no valor puro: 12-15 (+15m, +2 testes), 16-19 (move até próximo, +3 testes), 20 (move até próximo, +1 Ação Física, +4 testes). 1 CA aumenta patamar em 1.'
+        description: 'Seu estilo egoísta de jogar faz com que você consiga ultrapassar diversos adversários ao mesmo tempo, em um ritmo natural e constante, sem dificuldade. Sempre que ultrapassar um adversário, você recebe um bônus com base em quanto tirou no valor puro. Se tirou 12-15, você se move +15m e ganha +2 nos testes até o fim da sequência. Se tirou 16-19, você se move até o adversário mais próximo sem gastar nenhuma ação e +3 nos testes até o fim da sequência. Por fim, com 20 puro, você se move até o adversário mais próximo sem gastar nenhuma ação, recebe +1 Ação Física e +4 em todos os testes até o fim da sequência. Pode gastar 1 CA para aumentar o "patamar" de bônus em 1.'
       },
       {
         name: 'Gingado Monstruoso',
-        description: 'Bola grudada no pé confunde adversário. Só adversário testa, você gasta Deslocamento para reduzir resultado dele (limite = dobro Mod. VEL, mín. 2). Se vencer, move metros = Velocidade.'
+        description: 'Seus movimentos pequenos dão a impressão de que a bola está grudada em seu pé, e com vários pequenos toques, você confunde o adversário enquanto espera ele dar o primeiro passo, atraindo-o até seu território. Após isso, você avança, deixando-o para trás. Somente o adversário irá dar o teste, e você pode gastar seu Deslocamento para reduzir o resultado dele (Limite = dobro do Mod. VEL (Mínimo 2)). Após isso, você dá o teste, e se vencer, se move uma quantidade de metros igual à sua Velocidade.'
       },
       {
         name: 'Consumação Egoísta',
-        description: 'Sustentando 4 FOL, recebe turno extra junto do original. Ao final, escolhe qual usar. +1 acumulativo em perícias usadas no turno não utilizado.'
+        description: 'Sua movimentação pelo campo consome qualquer esperança de vitória com seu Ego, sempre trazendo novas técnicas e improvisação. Enquanto sustentar com 4 FOL, você receberá um "turno" extra, que será junto do seu original. Ao final dos seus turnos, você escolhe qual irá usar, julgando a melhor opção. Você recebe +1 acumulativo em todas as perícias que usou no turno que não foi utilizado.'
       }
     ]
   },
@@ -551,15 +551,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Pressão Física',
-        description: 'Aplica mais força na marcação. Barra de "Pressão" inicia em 5, gasta pontos para aumentar penalidade por marcação. Ao vencer disputa marcando alvo, ganha 1d3 de pressão.'
+        description: 'Você é capaz de aplicar mais força e pressão em sua marcação, desestabilizando (quase) todos os adversários. Você recebe uma barra de "Pressão" que se inicia em 5. Você pode gastar esses pontos para aumentar a penalidade por marcação. Sempre que vencer uma disputa em que está marcando um alvo, ganha 1d3 de pressão.'
       },
       {
         name: 'Aceleração Explosiva',
-        description: 'Quando time defende com sucesso, ganha +5m deslocamento (só no seu campo). Com Mod. VEL 5: 45m = Nível 1 Velocidade Aceleração, 90m = Nível 1 Velocidade Explosão.'
+        description: 'Você consegue mediar bem suas corridas de aceleração e explosão. Sempre que seu time tiver uma defesa bem sucedida (Não precisa ser você defendendo), ganha +5m de deslocamento. Entretanto, esse deslocamento extra só é aplicado dentro do campo do seu time. Se tiver Modificador 5 em Velocidade, pode trocar 45m de deslocamento pelo Nível 1 da Velocidade: Aceleração, assim como pode trocar 90m pelo Nível 1 da Velocidade: Explosão.'
       },
       {
         name: 'Previsão Olfática',
-        description: 'Detecta 5 cheiros (2 FOL cada): Suor (anula gastos FOL ≤15), Emoção (rouba 1d3 CA), Raiva (reduz Fúria), Perigo (+1d defesa, +2d se NT 40+), Fluxo (usa 1 Foco contra adversário, 11 FOL).'
+        description: 'Você é capaz de perceber os cheiros dos seus adversários. E através deles, consegue prever jogadas, perceber fraquezas e descobrir oportunidades. Existem 5 tipos de cheiros, cada um aplicado quando o adversário está sob o efeito de alguma situação específica. Quando detectá-los, pode gastar 2 FOL por cheiro para receber sua vantagem: Cheiro de Suor: Quando o adversário está com menos de 50% do seu Fôlego máximo, ele fica com esse cheiro. Contra ele, todos os seus gastos de fôlego de até 15 são anulados. Cheiro de Emoção: Quando o jogador parece eufórico, você reconhece o cheiro da dopamina e adrenalina. Caso ele tenha pelo menos 1 CA, você pode ativar esse cheiro para roubar 1d3 Cargas dele. Cheiro de Raiva: Quando o jogador se encontra furioso, ele transpira mais intensamente e você pode sentir a respiração pesada. A diferença dos testes volta como o valor que você diminui da Fúria dele (Por exemplo, se a diferença foi 4 e ele tinha 6 de Fúria, ela vai para 2). Essa habilidade é capaz de anular a Fúria, desde que gaste toda sua Fúria acumulada. Cheiro de Perigo: Ao enfrentar um oponente que pode ser considerado uma ameaça severa para sua equipe, pode aplicar esse cheiro e alertá-los, concedendo +1d para os defensores (Se a ameaça for NT 40+, aumenta para +2d). Cheiro de Fluxo: Quando um adversário chegar perto de você sob o Fluxo, você pode gastar 11 FOL e escolher uma das suas 8 opções de Focos ou Melhorias para usar contra ele. Se já estava em Fluxo, recebe 1 Foco extra.'
       }
     ]
   },
@@ -572,15 +572,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Retorno Giratório',
-        description: 'Passe terrestre 15m com rota inconstante, pode fazer trajetórias curvas e alterar destinatário. Use Ações Físicas para mover bola. 3 FOL = -1 interceptação adversários.'
+        description: 'O Passe "Backspin" é um passe terrestre com rotação inferior, que possui uma rota inconstante pelo chão, o tornando imprevisível. Ele percorre somente 15m, entretanto, pode fazer trajetórias curvas (Como um personagem se locomovendo) e também alterar o destinatário. Você pode usar suas Ações Físicas para mover a bola. Para cada 3 FOL que gastar, adversários tem -1 para interceptar o passe.'
       },
       {
         name: 'Rotação Perfeita',
-        description: 'Por movimentação, teste Precisão (DT 25) para +5m movimento. Repete 1 + primeiro dígito NT vezes (+2 DT por uso). Penalidade inicia -4, reduz -1 por movimento até -1.'
+        description: 'Sempre que o passe realizar uma movimentação, você pode dar um teste de Precisão (DT 25) para que ele se mova +5m. Você pode repetir esse teste por movimentação uma quantidade de vezes igual a 1 + primeiro dígito do seu NT, porém com +2 na DT a cada uso (se falhar em um teste e ele não for o último, não pode rolar os testes restantes naquele movimento). Além disso, a penalidade se inicia em -4, e é reduzida em 1 em cada movimentação, até voltar para -1.'
       },
       {
         name: 'Chute Backspin',
-        description: 'Chute/passe com controle total de rotação até o gol. Goleiro -2 DP por defensor que falhou. Se errar, 10 FOL altera rota para passe automático com Goleiro Surpreso.'
+        description: 'Você tem total controle da rotação e movimentação da bola, podendo criar um chute/passe de incrível aerodinâmica e rotação terrestre. O chute irá seguir a mesma mecânica do passe, podendo ir até o gol. O Goleiro terá -2 na DP para cada Defensor que falhou em capturar a bola. Caso erre o chute, pode gastar 10 FOL para alterar a rota mais uma vez, se tornando um passe de fato, que vai até um aliado, que pode chutar automaticamente com o Goleiro Surpreso.'
       }
     ]
   },
@@ -617,28 +617,28 @@ export const weaponsData: Weapon[] = [
     id: 'imperador-x1',
     name: 'Imperador do X1',
     category: 'Mental',
-    description: 'A Arma "Imperador do X1" te tornará um verdadeiro mestre das disputas corpo a corpo, com técnicas especializadas para essa área, alcançando o nível de Imperador.',
+    description: 'A Arma “Imperador do X1” te tornará um verdadeiro mestre das disputas corpo a corpo, com técnicas especializadas para essa área, para que você alcance o nível de um Imperador (do X1).',
     specialization: ['1v1', 'Adrenalina', 'Domínio'],
     levels: [
       {
         name: 'Solo de Adrenalina',
-        description: 'Em 1v1: +1 Classe todas Perícias, +1 Ação Livre, FOL-3. Vencer 1v1: +1 todas Perícias até fim (acumula até 5+NT). Empolgado: +1 Ação Livre no X1.'
+        description: 'Enquanto estiver em uma disputa de 1v1, você recebe +1 Classe em todas as Perícias, +1 Ação Livre e gasto de Fôlego reduzido em 3 (redutível a 0). Sempre que vencer um 1 contra 1, recebe +1 em todas as Perícias até o fim da partida (acumula até 5 + seu NT). Enquanto sustentar com 1 CA todo turno seu, o limite de acúmulo é removido, e recebe +1 Classe. Além disso, durante a Condição “Empolgado”, recebe +1 Ação Livre para usar durante um X1.'
       },
       {
         name: 'Explorador de Brechas',
-        description: 'Reta 10+NT metros. Passar por aliado/adversário: teste Corrida vs Reação. +1 por 3 FOL. Aliado = proteção. Final: ação +2 por adversário, +1d por aliado.'
+        description: 'Você aproveita os espaços entre seus adversários e aliados. Primeiro, você irá traçar uma reta de 10 + NT metros, onde a habilidade funcionará. Ao passar por um aliado, você pode dar um teste de Corrida contra a Reação de quem for ultrapassar, e para cada 3 FOL que gastar, ganha +1 (ou o adversário perde 1). Se perder, pode repetir, porém com um teste de Drible. Caso ultrapasse (no primeiro ou no segundo teste) o adversário vai automaticamente para o segundo. Se for um aliado, você utiliza ele como proteção para pular o próximo adversário. Ao final da reta, você define uma ação, que pode ser um chute, passe ou +1 drible. Para cada adversário, recebe +2 nesse teste, e para cada aliado, +1d (o bônus de dados pode ser trocado por -1 no gasto de FOL caso use uma Arma ou Habilidade).'
       },
       {
         name: 'Quebra de Postura',
-        description: 'Recebe "Hold Up" (gasto anulado). Se alvo falhar, diferença resultado-DT vira bônus para ultrapassar + volta dobrado como deslocamento.'
+        description: 'Ao invés de partir para cima do alvo, você espera que ele venha para cima de você, errando o “timing” e te dando vantagem no X1. Você recebe o Movimento “Hold Up” (se já tinha, gasto anulado para essa habilidade). Se o alvo falhar no teste, a diferença do resultado para a DT se torna bônus no seu teste para ultrapassá-lo, e volta em dobro como deslocamento para você até o fim do turno.'
       },
       {
         name: 'Reflexos de Imperador',
-        description: 'Recebe "Reflexos" limitado a: Carrinho, adversário partir pra cima, posicionar para impedir, marcar. Se já tinha, bônus/penalidades dobrados no X1.'
+        description: 'Durante o X1, seus reflexos se aprimoraram a um ponto que você é capaz de acompanhar todos os movimentos de adversários. Você recebe a Habilidade Exótica “Reflexos”, mas tem opções limitadas de gatilhos, que são: Carrinho; Adversário partir para cima de você; Adversário se posicionar para te impedir, e adversário indo te marcar. Quando acontecer, a Reação pode ser o que você quiser. Caso já possuísse essa Habilidade Exótica, os bônus e penalidades aplicados são dobrados desde que sua Reação seja aplicável a um X1.'
       },
       {
         name: 'Hardcore Mode',
-        description: 'Adicione +1 a +10 teste adversário, -1 a -10 seu. Vencendo: 5=+1d acumula +3d, 10=Fluxo, 15=1 NT temporário, 20=Sub Despertar 5 PD.'
+        description: 'Através do seu domínio total nas disputas de 1 contra 1, você pode dificultar propositalmente as situações. Você pode adicionar um bônus de +1 a +10 no teste do adversário, e -1 a -10 de penalidade no seu teste. Se vencer, você soma o valor do bônus e da penalidade, e ganha um bônus baseado no resultado da soma. Se conseguir 5, você recebe +1d em todos os seus testes dali para frente (acumula até +3d). Com 10, você entra em Fluxo (se já estava, receberá 2 Recompensas ao final dele). Com 15, você recebe 1 NT temporário (para cada 4 NT, ganha 1 Treinamento). Por fim, com 20, você entra em um "Sub Despertar", com 5 PD, e limite de Rodadas igual a metade da quantidade de vezes que já utilizou esse efeito (Mínimo: 1). Se conseguir o 20, você pode aumentar ainda mais a dificuldade, tornando o máximo dos valores +/- 20, e necessitando de 40 no total (aumenta em +5 o valor necessário de cada recompensa).'
       }
     ]
   },
