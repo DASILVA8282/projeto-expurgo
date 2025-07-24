@@ -1231,7 +1231,7 @@ export const weaponsData: Weapon[] = [
     id: 'breakdown',
     name: 'BreakDown (NOVO)',
     category: 'Técnico',
-    description: 'Você não defende gols, é apenas a muralha que reforça a moral do time, sendo o ultimato defensivo, aumentando a moral de todos com sua presença silenciosa.',
+    description: 'O BreakDown é uma arma construída de forma natural através do foco e esforço do BreakDance com o futebol, criando uma arma única.',
     specialization: ['Drible', 'Imprevisibilidade', 'Controle Corporal'],
     levels: [
       {
