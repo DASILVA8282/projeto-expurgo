@@ -109,23 +109,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Arsenal de Fintas',
-        description: 'Você tem capacidades extremamente versáteis e adaptáveis de Finta. Recebe +2 Classes em Finta, e ganha habilidades especiais para Drible, Chute e Roubo usando 3 FOL.'
+        description: 'Você tem capacidades extremamente versáteis e adaptáveis de Finta. Você recebe +2 Classes em Finta, e também ganha um tipo especial que pode ser usado para as respectivas perícias, com 3 FOL: Drible: Ao realizar uma Finta (DT 23) junto de um Drible, você pode aplicar um movimento, mesmo que não tenha ele, desde que cumpra os requisitos. Chute: Você pode realizar diversas movimentações para enganar quem quiser reagir a seu chute. Você pode repetir testes de Finta X Reação do Goleiro. Para cada vitória, ele recebe -1 na DP. A partir de 5 vitórias (e a cada 3 consecutivos), defensores ultrapassados podem reagir. Com 10 vitórias, Defensores recebem +3 em qualquer teste que fizerem contra você. O goleiro recebe +1 no teste a cada Finta bem sucedida. Você gasta 1 Ação Livre para cada 3 testes. Roubo: Se passar no teste de Roubo, pode usar Finta (DT 24). Se passar no teste de Finta, você anula a reação do alvo, fazendo ele perder o "timing" de sua ação. Você não toma a bola, mas pode dar um teste de outra perícia que possa ser usada para tirar a bola de sua posse (Chute para jogá-la longe, Corrida para disparar com ela, etc.). O limite é sua criatividade.'
       },
       {
         name: 'Aplicação de Fintas',
-        description: 'Recebe +1 Classe em Finta, e pode aplicá-la em Escanteio, Lateral e Tiro Livre por 3 FOL cada, criando vantagens táticas para sua equipe.'
+        description: 'Você recebe +1 Classe em Finta, e pode aplicá-la nas três situações abaixo, por 3 FOL: Escanteio: Se fintar um escanteio (Finta X Reação) fingindo que irá chutar e passar, o receptor da bola pode realizar um chute usando Precisão com +1d (se ambos gastarem 1 CA, aumenta para +2d). Lateral: Com um teste de Finta (DT 29), quando for arremessar uma bola lateral, pode fintar o movimento da bola, fingindo jogar a bola para um alvo, e enviando ela para alguém que esteja a até 12m atrás dele. Tiro Livre: Se fingir que irá bater o Tiro Livre, o jogador que verdadeiramente irá batê-lo receberá +6 em qualquer teste que fizer.'
       },
       {
         name: 'Finta Visionária',
-        description: 'Desenvolve habilidade especial baseada nas visões que possua: Meta Visão (modifica teste após resultado) ou Olho do Predador (ativa habilidades após 11 Fintas).'
+        description: 'Conforme desenvolve suas visões, a forma como você enxerga as fintas vai se alterando e se aprimorando. Você recebe uma habilidade especial de Finta baseando-se nas visões que possua. Meta Visão: Utilizando do Meta Gaming, você pode modificar as propriedades do seu teste mesmo após ambos girarem, adicionando mais habilidades, bônus etc. Olho do Predador: Ao realizar 11 Fintas para chutar, você pode ativar alguma habilidade do Olho do Predador, independentemente de possuí-la ou não. Se já tinha e utilizar, o gasto de FOL é anulado, e você não gasta nenhum uso.'
       },
       {
         name: 'Fintas Exímias',
-        description: 'Para cada finta realizada em um turno, recebe +1 em todos os testes no próximo teste de outra perícia sem ser Finta, gastando 7 FOL (ou 14 se ultrapassar +10).'
+        description: 'Sua capacidade de realizar fintas perfeitas tornou-se uma simples brincadeira. Cada movimento de blefe é feito de forma precisa e sem erros, desestabilizando até adversários poderosos. Para cada finta realizada em um turno, você recebe +1 em todos os testes no próximo teste de outra perícia sem ser Finta, desde que gaste 7 FOL (Se o valor ultrapassar +10, o gasto aumenta para 14 FOL).'
       },
       {
         name: 'Fintas de Mestre',
-        description: 'Após qualquer ação física, gaste 3 FOL para realizar Finta (DT 25 + 1 por uso). Se passar, recebe +1 Ação Física e pode escolher dois alvos para não reagirem.'
+        description: 'Suas fintas maestras são capazes de enganar a todos. Nunca é possível saber quando uma finta será feita ou não. Após qualquer ação física, seja ela bem sucedida ou não, você pode gastar 3 FOL para realizar uma Finta (DT 25 + 1 por uso). Se passar, você recebe +1 Ação Física para realizar a nova ação, e pode escolher dois alvos para não conseguirem reagir (se estiver em uma disputa de 1 contra 1, você pode considerar o seu adversário como ultrapassado, e escolher +1 para perder a Reação).'
       }
     ]
   },
