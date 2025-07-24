@@ -1177,7 +1177,7 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'Estilhaçar a Lógica',
-        description: 'Toda vez que você realizar uma jogada claramente estúpida, ousada ou autodestrutiva — como recuar da linha do gol só para tentar driblar 4 zagueiros — você ativa o Estilhaçar. Se a jogada for julgada por todos como absurda, você pode ativar esse efeito ao gastar 12 FOL e 1 Ação Mental. Você rola 3d12, e cada resultado é considerado um "fragmento de caos". Par = + número como bônus em um teste qualquer. Ímpar = - número aplicado como penalidade em um teste adversário. 12 natural = Ganha uma Ação Livre extra 1 natural = Reduz a DT da jogada em -10.'
+        description: 'Toda vez que você realizar uma jogada claramente estúpida, ousada ou autodestrutiva, como recuar da linha do gol só para tentar driblar 4 zagueiros, você ativa o Estilhaçar. Se a jogada for julgada por todos como absurda, você pode ativar esse efeito ao gastar 12 FOL e 1 Ação Mental. Você rola 3d12, e cada resultado é considerado um "fragmento de caos". Par = + número como bônus em um teste qualquer. Ímpar = - número aplicado como penalidade em um teste adversário. 12 natural = Ganha uma Ação Livre extra 1 natural = Reduz a DT da jogada em -10.'
       },
       {
         name: 'Caminho da Ruína',
