@@ -1136,6 +1136,33 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'movimentos-predatórios',
+    name: 'Movimentos Predatórios (NOVO)',
+    category: 'Ofensivo',
+    description: 'Seus movimentos são imprevisíveis para todos em campo, você tem uma presa que está perseguindo e a luz dela será seu banquete.',
+    specialization: ['Pressão', 'Instinto', 'Imprevisibilidade'],
+    levels: [
+      {
+        name: 'Por Aqui Eu Sou o Leão',
+        description: 'Escolha um jogador de qualquer time para se tornar a sua presa. Você pode gastar 5 de fôlego para quando a sua presa estiver com a bola você poder se mover o seu deslocamento completo até ela e caso esteja no alcance roubar a bola com +4 (Caso esteja furtivo o bônus aumenta em 2). Pode gastar 5 de fôlego a mais para trocar o teste pelo de outra perícia física ou devorar. Se estiver usando a regra de egoísmo exagerado recebe +2 níveis de egoísmo.'
+      },
+      {
+        name: 'Caminho Distorcido',
+        description: 'Você recebe o movimento Zigue-zague, podendo usar Devorar ou Penetração como perícia base caso tenha. Após um momento de destaque da sua presa na partida (uma falta decisiva, um gol marcante, etc) você pode dar um teste de Furtividade com a DT reduzida em 5, e ganha +4 de bônus em testes físicos contra esse alvo. Caso você supere sua presa durante a partida (sendo mais destaque do que ela) você fica sobre os efeitos de Holofote.'
+      },
+      {
+        name: 'Ele É Só Outro Você',
+        description: 'Todos que estiverem em sinergia com sua presa também se tornaram presas. Você sempre está sobre a condição de coringa e caso triunfe como coringa contra uma presa, o bônus é dobrado. Além disso sua Intuição recebe +2 classes e quando for usá-la para seguir seus instintos em relação a uma presa, o gasto de ego cai para 1.'
+      },
+      {
+        name: 'Uma Fera Que Só Luta Pra Caçar',
+        description: 'Você recebe as duas habilidades de uma evolução da visão do Predador. Caso não tenha os olhos do Predador você o adquire. O custo de fôlego de todas as habilidades dos olhos do Predador são cortados pela metade para você. Sua presa se torna a sua maior caçada, após repuba a bola dele você recebe as condições vitorioso e superioridade, enquanto sua presa fica frustrada e derrotada. As condições duram uma quantidade de turnos iguais ao primeiro dígito do seu NT + Modificador de EGO.'
+      },
+      {
+        name: ' Sua Luz É Minha Presa',
+        description: 'Você persegue sua presa, seguindo seus passos esperando o momento perfeito para a caça ser finalizada, ao gastar 15 de FOL você fica Furtivo automaticamente e se estiver numa distância igual ao dobro do seu deslocamento da sua presa você consegue Interromper alguma ação de “triunfo” dela, sendo Teste X Teste com a desvantagem da Furtividade, habilidades que anulam condições desfavoráveis não são aplicadas para sua presa, além de que bônus exteriores sem ser o bônus da perícia (classe) não são aplicados. Caso a sua presa esteja na sua área de chute você pode após atrapalhar a jogada, pegar a bola e chutá-la para o gol reduzindo a DP e bônus de defesa do goleiro em um valor igual ao seu modificador de EGO, caso esteja em fúria a redução aumenta em 2. Assim que você conseguir vencer a sua presa e roubar o brilho dela, você entra em Fluxo automaticamente, caso já estivesse em fluxo você tem um Despertar.'
+      },
+  {
     id: 'impulso-cabeceio',
     name: 'Impulso Cabeceio',
     category: 'Físico',
