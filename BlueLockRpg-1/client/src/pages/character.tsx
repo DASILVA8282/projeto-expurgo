@@ -110,7 +110,7 @@ export default function Character() {
 
   // Calculated values for attributes
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = Math.max(0, 18 - totalAttributes);
+  const remainingAttributePoints = Math.max(0, 15 - totalAttributes);
 
   useEffect(() => {
     console.log("useEffect triggered - character:", character, "type:", typeof character, "hasInitializedForm:", hasInitializedForm);
