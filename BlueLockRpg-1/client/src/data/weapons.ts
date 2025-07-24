@@ -854,23 +854,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Controle Espacial',
-        description: 'Você consegue medir a distância exata entre você e um adversário usando de seu corpo, neutralizando os movimentos e permitindo roubar ou dominar a bola mais facilmente.'
+        description: 'Você consegue medir a distância exata entre você e um adversário usando de seu corpo, neutralizando os movimentos e permitindo roubar ou dominar a bola mais facilmente. Com 5 de Fôlego, você aplica +4 no seu teste de Domínio/Roubo e -4 no teste de Domínio/Roubo adversário. Com 10 FOL, você restringe o alcance do teste de Roubo de um adversário em -15m e o do seu roubo para +15m naquele turno. Por fim, com 15 FOL, você anula qualquer Sucesso Automático do oponente na hora do roubo ou domínio, o forçando a girar testes, contanto que gaste duas Ações Físicas/Todas as suas de Reação para isso (Sem contar com a que gastaria normalmente para realizar o roubo/domínio).'
       },
       {
         name: 'Ave Caçadora',
-        description: 'Você pode gastar 8 FOL para se mover instantaneamente até bolas que passem por 20m de você. Gastando +5 FOL, aumenta para 30m.'
+        description: 'Você pode gastar 8 FOL para se mover instantaneamente até bolas que passem por 20m de você. Gastando +5 FOL, aumenta para 30m. Além disso, os gastos de "Controle Espacial" são reduzidos em 1 caso você se mova até elas utilizando esse Nível.'
       },
       {
         name: 'Rede de Controle',
-        description: 'Você determina uma faixa horizontal no campo que tem 4 metros de largura, dentro dessa área você recebe +2 Classes em Roubo e Domínio.'
+        description: 'Você determina uma faixa horizontal no campo que tem 4 metros de largura, dentro dessa área você recebe +2 Classes em Roubo e Domínio e os gastos das últimas habilidades são reduzidas em 1. Caso a bola entre nessa faixa, você se torna capaz de ver tudo que passa por ela, mesmo que esteja furtivo.'
       },
       {
         name: 'Olhos da Caça',
-        description: 'A largura da "Rede de Controle" aumenta para 8 metros e você pode gastar um turno inteiro para marcar uma pessoa que esteja dentro de sua faixa horizontal.'
+        description: 'A largura da "Rede de Controle" aumenta para 8 metros e você pode gastar um turno inteiro para marcar uma pessoa que esteja dentro de sua faixa horizontal. Quando marcada, a área que era somente 6 metros se expande a partir da faixa até o seu gol somente para a pessoa que você marcou. Então da sua faixa para trás você ganha todos os bônus dela. Gastando 20 de FOL, você pode marcar até 2 pessoas.'
       },
       {
         name: 'Controlador Supremo',
-        description: 'A largura da "Rede de Controle" aumenta para 12 metros, o bônus se torna +3 Classes. Agora o Nível 2 não tem limite de alcance.'
+        description: 'A largura da "Rede de Controle" aumenta para 12 metros, o bônus se torna +3 Classes, caso já tenha Classe VIII/IX/X você ganha 1/2/3 dados bônus no teste. Agora o Nível 2 não tem limite de alcance e você pode aparecer em qualquer lugar da do campo exceto pela grande área inimiga.'
       }
     ]
   },
