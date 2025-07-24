@@ -1159,8 +1159,37 @@ export const weaponsData: Weapon[] = [
         description: 'Você recebe as duas habilidades de uma evolução da visão do Predador. Caso não tenha os olhos do Predador você o adquire. O custo de fôlego de todas as habilidades dos olhos do Predador são cortados pela metade para você. Sua presa se torna a sua maior caçada, após repuba a bola dele você recebe as condições vitorioso e superioridade, enquanto sua presa fica frustrada e derrotada. As condições duram uma quantidade de turnos iguais ao primeiro dígito do seu NT + Modificador de EGO.'
       },
       {
-        name: ' Sua Luz É Minha Presa',
+        name: 'Sua Luz É Minha Presa',
         description: 'Você persegue sua presa, seguindo seus passos esperando o momento perfeito para a caça ser finalizada, ao gastar 15 de FOL você fica Furtivo automaticamente e se estiver numa distância igual ao dobro do seu deslocamento da sua presa você consegue Interromper alguma ação de “triunfo” dela, sendo Teste X Teste com a desvantagem da Furtividade, habilidades que anulam condições desfavoráveis não são aplicadas para sua presa, além de que bônus exteriores sem ser o bônus da perícia (classe) não são aplicados. Caso a sua presa esteja na sua área de chute você pode após atrapalhar a jogada, pegar a bola e chutá-la para o gol reduzindo a DP e bônus de defesa do goleiro em um valor igual ao seu modificador de EGO, caso esteja em fúria a redução aumenta em 2. Assim que você conseguir vencer a sua presa e roubar o brilho dela, você entra em Fluxo automaticamente, caso já estivesse em fluxo você tem um Despertar.'
+      }
+    ]
+  },
+ {
+    id: 'destruição',
+    name: 'Destruição (NOVO)',
+    category: 'Ofensivo',
+    description: 'A Destruição é uma arma que rompe com todos os princípios da Perfeição, abandonando o estilo eficiente de jogo para adotar o futebol mais destrutivo possível, mesmo que isso leve à autodestruição. Geralmente vem acompanhada de tendências agressivas e impiedosas. É uma arma centrada em fazer tudo o que a Perfeição faz, mas de forma ainda mais intensa e devastadora.',
+    specialization: ['Pressão', 'Instinto', 'Imprevisibilidade'],
+    levels: [
+      {
+        name: 'Colapso Intencional',
+        description: 'A partir desse nível, você recebe o direito de "despedaçar" qualquer jogada em andamento, inclusive a sua, para recomeçá-la sob um novo formato. Quando uma jogada estiver prestes a terminar (como um chute, drible ou passe decisivo), você pode gastar 2 PA e 5 FOL para cancelar ela por completo. Ao fazer isso, você reinicia a jogada com um teste totalmente novo, mas com um adicional insano: você soma todos os malefícios que teria naquela jogada (penalidades, redutores, dados perdidos etc) e os transforma em bônus equivalentes. Se a penalidade era -6, você agora tem +6. Se ia jogar 2 dados a menos, joga 2 a mais, ela nunca pode ser usada defensivamente.'
+      },
+      {
+        name: 'Estilhaçar a Lógica',
+        description: 'Toda vez que você realizar uma jogada claramente estúpida, ousada ou autodestrutiva — como recuar da linha do gol só para tentar driblar 4 zagueiros — você ativa o Estilhaçar. Se a jogada for julgada por todos como absurda, você pode ativar esse efeito ao gastar 12 FOL e 1 Ação Mental. Você rola 3d12, e cada resultado é considerado um "fragmento de caos". Par = + número como bônus em um teste qualquer. Ímpar = - número aplicado como penalidade em um teste adversário. 12 natural = Ganha uma Ação Livre extra 1 natural = Reduz a DT da jogada em -10.'
+      },
+      {
+        name: 'Caminho da Ruína',
+        description: 'Você desbloqueia o Caminho da Ruína, um sistema  destrutivo que premia erros, decisões duvidosas e tentativas impensáveis. Ao início da rodada, declare que está ativando o Caminho da Ruína. Ele dura um número de turnos igual ao seu modificador de EGO. Durante esse tempo: Toda jogada que falhar te dá +1 em uma Perícia aleatória (determinado por rolagem d12). Se acertar uma jogada com penalidade maior que -6, você ganha 1 PA. Ao realizar 3 jogadas ousadas consecutivas, você pode destruir a rodada e iniciar uma nova rodada com você como o primeiro jogador, ignorando a ordem atual.Se, ao final do Caminho da Ruína, você tiver acumulado 3 ou mais falhas críticas (1 natural), você entra automaticamente em Fluxo.'
+      },
+      {
+        name: 'Abismo Proposital',
+        description: '. Você pode declarar uma “Jogada Descendente”, que simula uma queda em abismo, uma jogada cada vez mais caótica e poderosa. Essa jogada pode ser ativada uma vez por rodada, ao gastar 10 FOL e 1 Ação Física. Quando ativa: Escolha um valor entre 1 e 5. Esse é o seu “nível de descida”. Para cada ponto acima de 1, você sofre +1d de penalidade no próximo teste. Ao realizar a jogada, se ainda assim tiver sucesso, você aplica o dobro do nível de descida como bônus em TODAS as suas jogadas até o fim da rodada. Se falhar na jogada com a penalidade, você entra em Estado de Colapso, sofrendo -3 em todas as Perícias, mas ganha +2d no próximo teste em uma tentativa de se manter.'
+      },
+      {
+        name: 'Apocalipse do Futebol',
+        description: 'Você atingiu o ápice da anarquia em campo. A perfeição virou cinzas. Agora, você define a própria lógica do jogo.  A partir de agora, você possui a habilidade "Apocalipse do Futebol", que só pode ser ativada após realizar uma jogada julgada impossível, absurda e ainda assim bem-sucedida (decidido pelo mestre e jogadores). Ao ativar: Escolha uma Jogada de Outro Jogador, NPC ou até mesmo um resultado anterior seu que foi perfeito (ex: um gol limpo de bicicleta do rival). Declare que você irá destruir e superar essa jogada. Você tem 3 turnos para recriar essa jogada, mas de forma mais caótica, difícil ou absurda. Se conseguir superá-la de forma evidente, o mestre pode declarar que: Todos os seus atributos se igualam ao maior. Você pode anular qualquer benefícios da arma Genialidade quando um jogador com essa arma entrar em confronto direto contra você. Você pode realizar até duas Ações Físicas extras por turno enquanto estiver em Fluxo. Esse estado dura até você falhar em uma jogada. Após o fim, você não pode ativar novamente esse efeito até o fim da partida.'
       }
     ]
   },
