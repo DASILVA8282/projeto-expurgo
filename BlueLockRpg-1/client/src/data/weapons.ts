@@ -646,28 +646,28 @@ export const weaponsData: Weapon[] = [
     id: 'passes-magicos',
     name: 'Passes Mágicos',
     category: 'Técnico',
-    description: 'Os passes mágicos são uma técnica de passe de bola voltada para sua criatividade e talento sobrenatural. Use de toda sua "magia" para tocá-la, criando um show visual.',
+    description: 'Os passes mágicos são uma técnica de passe de bola voltada para sua criatividade e talento sobrenatural. Use de toda sua "magia" para tocá-la, criando um show visual e de sensações.',
     specialization: ['Passe', 'Criatividade', 'Magia'],
     levels: [
       {
         name: 'Num Passe de Mágica!',
-        description: 'Passe mágico com show de luzes. Descreva trajetória/sensações. Alvo ganha: +2 Dominar OU +1d testes OU +10m alcance OU +1 Ação Física OU FOL-5. Gasta 3 FOL.'
+        description: 'Um passe totalmente mágico, causando um show de magia e luzes. Um passe magnífico como esse, somente pessoas honradas poderiam receber. Você deve descrever perfeitamente a trajetória do passe, as sensações, os efeitos. Quando a bola cair nos pés do alvo, baseada na sua descrição, o alvo pode ganhar um dos 5 benefícios a seguir: +2 em Dominar; +1 dado nos testes; Aumenta em +10m o alcance de suas habilidades; +1 Ação Física e Gasto de FOL reduzido em 5. Gasta 3 FOL.'
       },
       {
         name: 'Cruzamento Ilusório',
-        description: 'Cruzamento com múltiplas linhas possíveis. Alvo usa 2 Ações Físicas. Se ineficaz, refaça passe (8 FOL). Quem reagiu não pode reagir ao novo.'
+        description: 'Um Cruzamento que aparenta não possuir muita lógica, já que existem várias linhas de passe possível, mas isso permite que o passador consiga visualizar a melhor opção possível. Quando um alvo receber esse passe, ele pode utilizar 2 Ações Físicas, e se o passador julgar como ineficaz, pode refazer o passe, cancelando esse turno, e tocando para outro jogador. Aqueles que reagiram a essa ação não podem reagir ao novo turno. Esse efeito pode ser repetido inúmeras vezes, cada uma gastando 8 FOL. Caso o cruzamento seja interceptado, o efeito é cancelado.'
       },
       {
         name: 'Pérola Perfuradora Celeste',
-        description: 'Passe anula reação de 2 defensores. Receptor pode chutar direto com "Voleio". Se já tinha, FOL anulado. Com arma chute: anula reações (goleiro -6 DP).'
+        description: 'Um passe limpo que pode anular a reação de até 2 defensores, com a velocidade e precisão perfeita, sem precisar afetar a velocidade do receptor. O ponto de queda deve ser combinado entre os dois, e se o receptor alcançá-lo, pode chutar diretamente, utilizando do Movimento "Voleio". Se já tinha, o gasto de FOL é anulado, e caso possua alguma arma de chute, qualquer reação é anulada (somente o goleiro mantém a DP, com -6).'
       },
       {
         name: 'Wätcher des Schnees',
-        description: 'Passes geram "Elixir Mágico". 5 EM = "Observador das Neves" com 3 Feitiços. Cada feitiço tem 3 efeitos compráveis com EM para combinações mágicas.'
+        description: 'Sua capacidade de fazer mágica dentro de campo evoca o espírito mais ardente da magia para o campo, trazendo uma explosão de sensações únicas. Ao realizar um passe, você recebe um tipo de "Elixir Mágico". Essa pontuação, quando atingir 5, pode ser trocada pela invocação de uma “Aura" secundária, o "Observador das Neves". Ele possui um total de 3 Feitiços, iniciando no 1, e quando conseguir certas quantidades de EM, pode "comprar" um efeito. Cada Feitiço possui 3 efeitos, que devem ser escolhidos individualmente para serem usados, montando combinações mágicas. Essas habilidades servem para aprimorar e alterar seus passes, ou aplicar efeitos ao receptor do passe: FEITIÇO 1: Hexenbeschwörung Efeito 1 (3 EM): Gastando 1 PA, o Observador das Neves pode se posicionar em algum ponto de você dentro do seu deslocamento. Você pode enviar passes automáticos para ele, esse que poderá realizar outro passe, usando de seus valores. Efeito 2 (2 EM): Para cada PA que gastar, o Observador das Neves aplicará -1 em testes para quem quiser interferir em seus passes. Efeito 3 (1 EM): Você pode gastar 1 PA para que o receptor do passe, sempre que receber um, troque uma perícia com você, mudando classe e propriedades. FEITIÇO 2: Magischer Golem Efeito 1 (4 EM): Sempre que interceptarem um passe seu, você recebe +1d para acumular e usar em outro passe (acumula em até +3d). Efeito 2 (3 EM): Se receber um cruzamento, o receptor do passe recebe metade do alcance do cruzamento como DESL na sua próxima movimentação. Efeito 3 (2 EM): Aquele que receber seu passe, poderá utilizar os poderes do Observador nos próximos 3 turnos dele. FEITIÇO 3: Schnee Ige Essenz Efeito 1 (5 EM): Ao realizar um passe, você pode aplicar a "Aura da Conjuração" nele. Se já tinha, pode girar cada d4 novamente, escolhendo qual resultado manter. Efeito 2 (5 EM): Você recebe +1 Ação Física, somente para passar. Pode gastar 3 PA para receber +1 Ação Livre também. Efeito 3 (4 EM): Sempre que falhar em um teste de Passe, pode gastar 1 PA para girar novamente, com +3 no valor puro.'
       },
       {
         name: 'Ápice de Feitiçaria',
-        description: 'Crie 3 movimentos exclusivos "Magias" com palavras-chave: Ilusório, Mímico, Sobrenatural, Sensacional, Inspirador. Gastos: 1, 2 ou 3 EM.'
+        description: 'Você dominou as técnicas de passe, criando algo que pode ser, com razão, chamado de Magia. Você cria 3 movimentos exclusivos seus, sendo suas "Magias". Eles não seguem a lógica normal, podendo utilizar até duas das palavras chave abaixo para montar seu efeito: Ilusório: O passe realiza algo inesperado. Mímico: Ele replica propriedades de outra ação. Sobrenatural: Ele faz algo nunca visto antes. Sensacional: Ele causa sentimentos especiais em quem vê. Inspirador: O passe, além de eficiente para si, também pode aprimorar aliados, seja os que vislumbram ou o receptor dele. Os gastos serão 1, 2 ou 3 de EM, respectivamente para cada Magia. O limite é a criatividade do usuário com o que lhe foi dado de material, com a aprovação do Mestre.'
       }
     ]
   },
@@ -675,28 +675,28 @@ export const weaponsData: Weapon[] = [
     id: 'passes-travessos',
     name: 'Passes Travessos',
     category: 'Técnico',
-    description: 'Uma arma de passes sem muitas limitações, onde a verdadeira magia é sua imprevisibilidade e mutabilidade, correspondendo às vontades do usuário.',
+    description: 'Uma arma de passes sem muitas limitações, onde a verdadeira magia é sua imprevisibilidade e mutabilidade, correspondendo às vontades do usuário de fazer o que bem entender quando quiser.',
     specialization: ['Passe', 'Imprevisibilidade', 'Flexibilidade'],
     levels: [
       {
         name: 'Passes Pervertidos',
-        description: 'Passes anormais sem lógica. Passe sem alvo definido, estipule DT. Próximos da bola fazem teste Domínio. Maior resultado pega bola + bônus = DT.'
+        description: 'Você tem passes anormais, não se importando com a lógica. Os passes são tão maliciosos, que você é capaz de dar falsas esperanças para alguém achando que irá receber a bola, e no último momento, alterar a curva. Você pode enviar um passe sem um alvo definido, e estipular uma DT. Aqueles próximos da queda da bola que forem dignos (Ou seja, que passarem na sua DT estipulada do teste de Domínio) podem pegar a bola (somente o que tirar o maior resultado). Ele receberá um bônus naquele turno equivalente a DT que você estipulou (O primeiro número será a quantidade de dados extras, e o segundo o bônus nos testes).'
       },
       {
         name: 'Passes Perseguidores',
-        description: 'Reação ao turno aliado: gaste 8 FOL. Bola acompanha movimentos dele durante turno, cai nos pés ao terminar (Passe DT 27).'
+        description: 'Em reação ao turno de um aliado seu, você pode gastar 8 FOL para ativar essa habilidade. A bola acompanhará os movimentos dele durante o turno, e quando ele terminar seu turno, a bola cairá em seus pés (Passe DT 27).'
       },
       {
         name: 'Passes Maestros',
-        description: 'Passe 17+ puro: gaste 6 FOL para "Ações Maestras". Decida características: curvatura, trajetória, toques NPC. Não interrompível. 3 Ações Maestras.'
+        description: 'Quando executar um passe com pelo menos 17 no puro, você pode gastar 6 FOL para ativar suas “Ações Maestras”. Você pode decidir características do passe, como curvatura, trajetória, se ela passa no pé de alguém e ele toca de volta (Se for NPC e que faça sentido). As Ações Maestras não podem ser interrompidas, e você pode trocá-las por -1 nos gastos das outras habilidades. Você tem 3 Ações Maestras.'
       },
       {
         name: 'Bola Perfeita',
-        description: 'Teste puro 16: gaste 10 FOL, receptor +1 Ação Física. Cada +2 no valor puro = +1 Ação adicional.'
+        description: 'A bola cai perfeitamente nos pés de seu aliado. Tão perfeitamente, que inúmeras possibilidades de movimentações, chutes e dribles se abrem. Ao passar e tirar 16 no teste puro, pode gastar 10 FOL para que o receptor tenha +1 Ação Física. Para cada 2 no valor puro a mais, +1 Ação.'
       },
       {
         name: 'Voilà Mon Football!',
-        description: '3 passes seguidos bem-sucedidos = Fluxo até errar ou parar de passar. Se 3 passes para mesma pessoa = Sinergia (manter 2 passes a cada 5).'
+        description: 'Quando atingir uma sequência de três passes seguidos bem sucedidos, entra em Fluxo, e se mantém até que erre um passe ou deixe de realizar um em algum turno. Se os três primeiros passes forem para a mesma pessoa, você entre em Sinergia com ela enquanto realizar pelo menos 2 passes a cada 5.'
       }
     ]
   },
@@ -1057,23 +1057,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Elasticidade',
-        description: 'Seu controle da bola com os pés, velocidade e criatividade são 3 fatores que tornam sua técnica de drible extremamente eficaz e precisa.'
+        description: 'Seu controle da bola com os pés, velocidade e criatividade são 3 fatores que tornam sua técnica de drible extremamente eficaz e precisa. Você pode trocar qualquer teste de Domínio por Drible, e adversários que tentarem roubar a bola de você tem -1d no teste caso você use Drible contra eles. Além disso, quando fosse perder a bola, pode gastar 5 VEL para “forçar o teste”, podendo girar Drible novamente com +1d, ou Domínio com +2. Você recebe o Movimento “Elástico”.'
       },
       {
         name: 'Dribles Dominantes',
-        description: 'Você recebe todas as versões alternativas do movimento "Elástico" (No Ar e Invertido), independentemente de cumprir os requisitos ou não.'
+        description: 'Você recebe todas as versões alternativas do movimento “Elástico” (No Ar e Invertido), independentemente de cumprir os requisitos ou não. Além disso, quando realizar um drible, ganha +1 em Domínio, e quando realizar um domínio, ganha +1 em Drible (o limite do bônus em Domínio são as Classes em Drible, e o limite em Drible são as Classes de Domínio). Além disso, você pode utilizar o Domínio para auxiliar seus dribles de duas formas. A primeira, utilizando o teste de Domínio com Ação Livre, para cada 10 que tirar, recebe +1d no teste para driblar. Já o segundo efeito, você pode utilizar Domínio como uma Finta, aplicando as mesmas propriedades, só trocando o teste necessário. Por fim, a última capacidade que essa habilidade te concede, você pode, ao receber um passe, utilizar o resultado do teste de Domínio para driblar um adversário em até 6m.'
       },
       {
         name: 'Fusão de Dribles',
-        description: 'Você tem controle sobre os movimentos que realiza, seja nos aspectos de coordenação, criatividade ou elasticidade.'
+        description: 'Você tem controle sobre os movimentos que realiza, seja nos aspectos de coordenação, criatividade ou velocidade, você já dominou todos. Gastando 15 FOL, você pode “fundir” dois dribles, para executá-los com uma única ação (por exemplo, utilizar um Elástico com uma caneta). Essa combinação deve ser possível e criativa. Se a Fusão possuir algum Elástico junto, o valor necessário para Sucesso Automático se torna 18, e você pode gastar +5 FOL para usar 1 CA e reduzir para 17. Pode dividir o gasto entre Fôlego e Velocidade desde que tenha pelo menos 3 no Modificador.'
       },
       {
-        name: 'Controle Elástico',
-        description: 'Sua elasticidade se aprimorou a tal ponto que você consegue controlar a bola de formas impossíveis.'
+        name: 'Movimentos Flexíveis',
+        description: 'Sua elasticidade te permite realizar combinações extremamente criativas de dribles, criando algo quase que do zero, sem nunca perder a posse de bola. Agora, você pode realizar “Fusões” com até 3 Dribles, e cada Elástico aplicado na Fusão reduz em 1 o valor puro necessário (anulando o efeito anterior, em troca do aumento), e quando for realizar um teste de Domínio, pode gastar 7 FOL para poder girar o teste uma vez para cada 2 Fusões que realizou até aquele momento. O gasto se torna 25 FOL com 3 Movimentos.'
       },
       {
-        name: 'Maestria Elástica',
-        description: 'Você dominou completamente a arte dos Dribles Elásticos, sendo capaz de realizar movimentos que desafiam a física.'
+        name: 'Gênio dos Dribles',
+        description: 'Você controla perfeitamente todos os seus movimentos corporais, e sua flexibilidade te permite ter um domínio sobrenatural sobre a bola driblando constantemente. Você recebe +2 Movimentos de Drible, qualquer Sucesso Automático contra seu Drible ou Domínio é anulado, sendo um fator determinante o maior resultado entre os testes ou um Sucesso Automático seu, e todo bônus que ganhar em uma dessas perícias, você também recebe na outra. Para cada turno que terminar sem perder a posse de bola, você recebe +1 em Drible, e para cada rodada sem perder a bola, você recebe +2. Pode trocar +20 por 1d3 Níveis de uma outra Arma de Drible a sua escolha até o fim da partida. Se conseguir +20 novamente, gira +1d3 para pegar os Níveis restantes. Se Despertar, você recebe metade dos Níveis que conseguiu acumular permanentemente (arredonda para cima). Além de Armas de Drible, você também pode trocar pelo efeito inverso. Para cada turno que realizou pelo menos 2 Dribles, ganha +1, cada rodada que realizou pelo menos 4, +2. +20 você pode trocar por 1d3 Níveis de Domínio de Bola ou Jujutsu.'
       }
     ]
   },
@@ -1086,23 +1086,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Perfeitamente Calculado',
-        description: 'Você é capaz de calcular perfeitamente os eixos e movimentos do adversário com precisão, lendo ele em todos os seus aspectos para derrotá-los.'
+        description: 'Você é capaz de calcular perfeitamente os eixos e movimentos do adversário com precisão, lendo ele em todos os seus aspectos para derrotá-los. Você é capaz de transformar o resultado dos adversários ou penalidades aplicadas a você e a DP do goleiro em uma raíz quadrada, seja ela exata ou não. Pode ser usada com: Valores puros de testes, penalidades, DT de testes ou a DP. Quando você visualizar uma “Raíz Quadrada” no resultado de algum dos valores citados acima, pode gastar 3 FOL para aplicar a habilidade se souber o valor da Raíz Quadrada, aplicando o valor que achou como uma penalidade ou um bônus. Por exemplo, se o seu adversário tirou 16 no valor final, você pode gastar 3 FOL caso saiba que a Raíz Quadrada de 16 é 4. Esse 4 pode voltar como penalidade para o resultado dele, que torna-se 12. Também pode ser usado como bônus, para você ou seus aliados (nesse caso, o resultado tornaria-se 20). O efeito é o mesmo para penalidades e DP’s, gastando uma Ação Livre ou de Reação. Essa habilidade pode ser aplicada em valores fixos de certas habilidades (como a "DT da Zaga" do Arquétipo Muralha). A Raíz não precisa ser exata, podendo ser quebrada. Por exemplo, 8 = 2√2. Nesse caso, você multiplica os valores de dentro e fora da raíz (utilizando do exemplo de 8, 2 X 2 seria igual a 4, ou seja, o valor usado para a habilidade é 4). Não funciona com raízes como 2, que não pode ser dividida dessa forma, mas ainda é “não exata”.'
       },
       {
         name: 'Balanceamento Majestoso',
-        description: 'Cada passo seu, por mais simples que pareça, tem um enorme cálculo por trás. Uma precisão digna de palmas por tamanha majestosidade.'
+        description: 'Cada passo seu, por mais simples que pareça, tem um enorme cálculo por trás. Uma precisão digna de palmas por tamanha majestosidade. Ao ativar o efeito com 11 FOL, você receberá uma equação que se iniciará em "0 = 0", e conforme o tempo passa, irá adicionar valores para manter o "x" em zero. No turno de ativação, você irá girar 1d20 para decidir o primeiro número. Você pode escolher um número igual ao que caiu, ou um maior no limite de 20. Por exemplo, se tirou 2, pode escolher de 2 para cima. Supondo que escolha 8, de início, a equação será 8x = 0. Dali para frente, no início de todo turno, você irá girar uma quantidade de d20 igual à metade do seu modificador de INT, e os valores podem ser adicionados em qualquer um dos lados, sempre positivos. Você pode movimentar os números para ajustar seus sinais, dividir ou multiplicar. Você só pode multiplicar um número por um x já existente caso ele esteja sozinho, sem nenhum outro número acompanhando (como 8x, 4x, 2x, necessário que seja somente "x"). Quando o valor de x for igual a 0, você receberá +10 em três perícias físicas à sua escolha (exceto Defesa, Chute e Precisão, que podem receber +1d), +8m de Deslocamento, +4 FOL, +2 PA e +1 CA máximo, além de +1 Ação Livre ou Mental. Os únicos requisitos são: O zero deve ser exato, e só pode haver um “x” por vez. A habilidade dura uma quantidade de rodadas igual à metade do seu Modificador de INT, e depois, precisa recomeçar para manter o efeito (durante o uso, os bônus ficam desativados).'
       },
       {
         name: 'Paradigma do Primoroso',
-        description: 'Você possui controle sobre o ritmo do jogo, ditando a forma como ele anda através de sua visão genial e técnicas refinadas de futebol.'
+        description: 'Você possui controle sobre o ritmo do jogo, ditando a forma como ele anda através de sua visão genial e técnicas refinadas de futebol. No seu turno, você pode gastar 5 FOL, 4 INT e uma Ação Física para iniciar o efeito. Rodadas em andamento são encerradas, dando início a uma nova Rodada. Você deve escolher um número de 1 a 5 para você, e depois, no próximo turno, um número de 1 a 5 para o próximo jogador, e assim se seguirá, para todos os próximos jogadores que ainda não tiveram número definido, mas que irão jogar. Essa habilidade fica ativa por 3 Rodadas, sendo a primeira, a Rodada “a”, a segunda a Rodada “b” e a última, a Rodada “c”. Ao fim de cada Rodada, você irá somar o número de cada jogador, chegando ao resultado final. Após conseguir todos os 3 resultados, você irá aplicar a seguinte fórmula: -b ± √(b² - 4ac) / 2a (Fórmula de Bhaskara). Você irá subtrair os dois resultados, e o valor (positivo ou negativo), será a quantidade de vezes que você pode: Pular um turno; aumentar um turno de uma Rodada; reduzir um turno de uma Rodada; Pular uma Rodada e adicionar 1 turno ao fim de uma Rodada. Se o valor da Raíz der um número decimal (raiz de 2), arredonda para baixo. 1 + vezes que despertou usos.'
       },
       {
         name: 'Eixo de Simetria',
-        description: 'Sua visão do campo se torna absoluta. Você enxerga os jogadores, os eventos, suas decisões e até os seus próximos passos.'
+        description: 'Sua visão do campo se torna absoluta. Você enxerga os jogadores, os eventos, suas decisões e até os seus próximos passos. O campo se tornou um gráfico, e você é capaz de medir os pontos, retas, coeficientes, tudo, controlando seus eixos. Ao ativar (sem gasto inicial), o campo todo, para você, irá girar em torno do "Eixo X" e do "Eixo Y". Assim como em uma função de segundo grau, o Eixo X representa a "continuidade horizontal", enquanto o Eixo Y representa a "altura vertical". Jogadores correndo, bolas terrestres, personagens posicionados, tudo isso passa pelo Eixo X. Já bolas altas como passes, arremessos, jogadores saltando, tudo isso passa pelo Eixo Y. Todos os jogadores iniciam em "0", que é um ponto neutro, e a cada 10 metros que se moverem, avançam 1 no Eixo X. Então, por exemplo, caso se movam 30 metros, irão de 0 para 3 no Eixo X. Uma bola alta segue a mesma lógica, porém usando como parâmetro a quantidade de metros que foi deslocada. Jogadores podem saltar um valor no Eixo Y igual à metade do valor que se encontram no Eixo X (se é 4, podem ir até 2). Caso use a Regra Opcional de Altura, para cada categoria acima de 1,71, aumenta em 1 esse valor. Agora que já entendeu o posicionamento, deve saber como usar a habilidade. Gastando 3 FOL, você pode marcar algo dentro do campo como um ponto. Esse "algo" pode ser um jogador, o árbitro ou a bola. Quando marcar um ponto no Eixo X e outro no Eixo Y, você pode conectá-los para criar uma "Reta". Quando algum alvo passar no ponto da Reta do Eixo X, você pode gastar 5 FOL e se mover até lá instantaneamente. Além disso, no Ponto do Eixo Y, você recebe +2d para interação com qualquer coisa. Além disso, você também pode "premeditar" um evento possível, prevendo em qual ponto de qual Eixo ele irá acontecer. Se acertar, você pode se mover até lá e anular esse evento (1 uso, caso esteja em Fluxo, ganha +1, e se despertar, ganha +1). Por último, a sua própria movimentação se torna baseado nos Pontos do Eixo X, e suas interações aéreas baseadas no Eixo Y. Ao invés de se mover 20m, você se move 2 no Eixo X, podendo ir até o local onde esteja outro jogador nesse mesmo ponto, ou em um local aproximado de alguém com um valor similar (esse efeito não se aplica com a posse da bola). O valor máximo dos Eixos inicialmente é 5, não se acumulando mais que isso. Para aumentar, você deve gastar uma quantidade de FOL igual o valor desejado. Por exemplo, se quer aumentar para 6, deve gastar 6 FOL. Para 12, 12 FOL, e por aí vai.'
       },
       {
-        name: 'Genialidade Absoluta',
-        description: 'Você transcendeu os limites da genialidade humana, sendo capaz de prever e controlar todos os aspectos do jogo com precisão matemática perfeita.'
+        name: 'Perfeição Áurea',
+        description: 'Você atingiu um nível de genialidade totalmente absurdo. Um fenômeno humano da natureza, capaz de se conectar perfeitamente com o "Número de Deus", graças a seu dom digno de ser chamado de divino. Sua visualização do jogo é tão perfeita, que você é capaz de enxergar a "Proporção Áurea" em tudo dentro do campo, tornando seu estilo de jogo majestoso ainda mais perfeito. Quando despertar e tirar um resultado 1, você pode gastar 1 PA para registrá-lo. A partir de seu próximo turno, você pode girar 3 dados de 10, para definir três valores depois da vírgula desse 1. Supondo que tire 2, 4 e 3, o valor ficará 1,243. Nos turnos seguintes, você pode gastar 1 PA para girar 3d10, e decidir quais números irá somar ou subtrair dos números já existentes, com intuito de atingir 1,618 (Caso tire 10, pode escolher o número que quiser). Quando conseguir esse valor, você pode gastar 3 PA para "enxergar" a Proporção Áurea nas coisas, como nas regiões da quadra, nos jogadores, na bola, em tudo. Ao interagir com aquilo, você consegue atingir a perfeição humana nas ações que um ser vivo conseguiria enxergar. Você replicará o valor mais alto que conseguiu atingir naquela partida, e isso definirá seus resultados. Na primeira vitória com a Proporção Áurea, todos os seus atributos se igualam com o maior deles. Na terceira, o mesmo, porém com as Perícias e suas Classes. Por fim, na última, com 5 vitórias, todas as suas Armas ou Habilidades Gerais igualam seu nível com a que tem o Nível mais alto. Quando atingir o último efeito, você perde o efeito do maior resultado, mas mantém todo o resto até o fim da partida. Além disso, nesses 5 usos bem sucedidos da Proporção Áurea, você ganha +1 NT para cada um (Se for NT 50, ganha +1 em todas as perícias permanentemente).'
       }
     ]
   },
@@ -1144,15 +1144,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Ataque Investida',
-        description: 'O principal movimento dessa Arma, onde você avança para frente em um cabeceio, pulando. Você consegue se jogar uma distância igual a sua Classe em Cabeceio +12.'
+        description: 'O principal movimento dessa Arma, onde você avança para frente em um cabeceio, pulando. Você consegue se jogar uma distância igual a sua Classe em Cabeceio +12, e a bola se move metade desse valor +15m. Você recebe +2d em disputas por bola aérea, e pode trocar qualquer teste de uma Perícia Física. Porém, ao cabeceá-la, você cai no chão, se machucando. Você sofre uma lesão leve, e cai 1d20 metros para frente. Se tirar 1, anula a lesão, e se tirar 20, a lesão se torna “Mediana”.'
       },
       {
         name: 'Impulso Aprimorado',
-        description: 'O Valor base do impulso se torna 15m, e ao receber a bola, você pode gastar 4 FOL para emendar um impulso cabeceio, enviando ela 20m para frente.'
+        description: 'O Valor base do impulso se torna 15m, e ao receber a bola, você pode gastar 4 FOL para emendar um impulso cabeceio, enviando ela 20m para frente, sem precisar de teste de Domínio, deixando todos que tentarem reagir sob a condição “Surpreso”. Além disso, você recebe +2 Classes em Cabeceio quando usado com essa Arma.'
       },
       {
         name: 'Linha Reta Destrutiva',
-        description: 'Você pode utilizar do Impulso Cabeceio para roubar a bola, dando um teste de Cabeceio X Domínio.'
+        description: 'Você pode utilizar do Impulso Cabeceio para roubar a bola, dando um teste de Cabeceio X Domínio. Se vencer, a bola vai 4m para frente, e você deve dar um teste de Reação (DT 24) para se levantar e pegá-la.'
       },
       {
         name: 'Investida Impulsionada Cabeceada',
@@ -1160,7 +1160,7 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'Maestria Impulsiva',
-        description: 'Você dominou completamente o Impulso Cabeceio, tornando sua cabeçada impulsionada ainda mais potente que seu chute.'
+        description: 'Você dominou completamente o Impulso Cabeceio, tornando sua cabeçada impulsionada ainda mais potente que seu chute. Você recebe +8 no seu primeiro Impulso, e +6 nos testes subsequentes utilizados para o Impulso Cabeceio.'
       }
     ]
   }
