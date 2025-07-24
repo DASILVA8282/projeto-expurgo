@@ -336,20 +336,20 @@ export const weaponsData: Weapon[] = [
     id: 'ambidestria',
     name: 'Ambidestria',
     category: 'Técnico',
-    description: 'A Ambidestria é uma Arma Menor que oscila entre mental e corporal, usando capacidade cognitiva para controlar perfeitamente o setor esquerdo e direito de seu corpo.',
+    description: 'A Ambidestria é uma Arma Menor que oscila entre mental e corporal, afinal, mesmo que foque em suas pernas, ela também usa de uma capacidade cognitiva que poucos tem, para controlar perfeitamente o setor esquerdo e direito de seu corpo. Além da Etapa de Obtenção, essa arma só pode ser utilizada por jogadores escolhidos a dedo pelo mestre.',
     specialization: ['Ambidestria', 'Controle Corporal', 'Imprevisibilidade'],
     levels: [
       {
         name: 'Maestria Ambidestra',
-        description: 'Imune a penalidades por marcação na perna boa (se duas pessoas te marcarem). +2 no primeiro teste de Chute, Passe, Cruzamento e Precisão por partida. Todo turno gira 1d6: 1-3 = Esquerda, 4-6 = Direita. +2 em ações do lado da "Perna Superior".'
+        description: 'Por ser Ambidestro, você recebe inúmeras vantagens. Se torna imune a penalidades por marcação na perna boa (somente aplicada se duas pessoas estiverem te marcando, uma em cada perna). Além disso, por ser levemente imprevisível, recebe +2 no primeiro teste de Chute, Passe, Cruzamento e Precisão que der numa partida. Por fim, todo turno seu gira 1d6. De 1 a 3, sua "Perna Superior" naquele turno será a Esquerda. De 4 a 6, será a Direita. Para qualquer ação sua realizada em seu lado Esquerdo/Direito, terá +2 no teste.'
       },
       {
         name: 'Habilidoso (Destro)',
-        description: 'Durante "Perna Superior" Direita, todas suas perícias são uma Classe superior (se Classe X, ganha Sucesso Automático).'
+        description: 'Durante os efeitos de "Perna Superior", você recebe uma capacidade especial quando o efeito estiver sob a Perna Direita. Todas suas perícias quando usar serão uma Classe superior (caso ela seja Classe X, ganha Sucesso Automático).'
       },
       {
         name: 'Sinistro (Canhoto)',
-        description: 'Durante "Perna Superior" Esquerda, pode usar habilidades de Nível 1 das Armas: Dribles Mágicos, Controle de Bola, Domínio de Bola, Kaiser Impact, Genialidade.'
+        description: 'Durante os efeitos de "Perna Superior", você recebe uma capacidade especial quando o efeito estiver sob a Perna Esquerda. Você consegue usar as habilidades de Nível 1 das Armas: Dribles Mágicos, Controle de Bola, Domínio de Bola, Kaiser Impact, Genialidade.'
       }
     ]
   },
@@ -488,15 +488,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Vontade Ardente',
-        description: 'Para cada 1 FOL gasto, anula 1 de penalidade (dados). Limite = NT +1 para cada 2 Classes em Determinação. Primeira Condição Negativa pode ser anulada. Pode anular lesões.'
+        description: 'Para cada 1 FOL que gastar, você pode anular 1 de penalidade (aplicável para dados). O limite que pode fazer isso é igual ao seu NT +1 para cada 2 Classes em Determinação que possuir. Além disso, a primeira Condição Negativa que te afetar, você pode anular. Também pode anular lesões.'
       },
       {
         name: 'Determinação Inalcançável',
-        description: 'Ao ser interrompido, gaste 5 FOL para teste extra de Determinação e penalidade no adversário = dobro das Classes Determinação. Com diferença de NT, pode gastar 2 CA para passar automaticamente.'
+        description: 'Quando forem interromper ou atrapalhar uma jogada sua, você pode gastar 5 FOL para girar um teste extra de Determinação e aplicar uma penalidade no adversário igual o dobro das suas Classes em Determinação. Se o alvo tiver 5/4/3/2/1 NT a menos que você, pode gastar 2 CA para passar por ele automaticamente (a diferença é reduzida para cada 5 FOL que você gastar. O limite de usos que você tem dessa habilidade é igual a metade da quantidade de dados que você gira em Determinação, considerando somente Classe e bônus passivos ativos desde o começo da partida.'
       },
       {
         name: 'Me Devore, Que Eu Voltarei Mais Forte!',
-        description: 'Na primeira vez Devorado por partida, gaste todo FOL para converter penalidades em bônus. Sob Condição "Devorado", pode ativar Despertar, anulando a Condição enquanto durar.'
+        description: 'Na primeira vez que for Devorado em uma partida, você pode gastar todo seu Fôlego para converter as penalidades em bônus. Se ficar sob a Condição “Devorado”, pode ativar um Despertar, anulando a Condição enquanto seu Despertar durar.'
       }
     ]
   },
@@ -509,15 +509,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Pé no Saco',
-        description: 'Sustentando 3 FOL, acompanha alvo a qualquer ponto do campo. +2 Interceptação para impedir passes, +4 contra dribles. Alvo pode sustentar até 6 FOL para anular bônus (1 FOL anula 1 bônus).'
+        description: 'Você consegue manter a pressão a distância no jogador, perseguindo ele onde quer que vá. Enquanto sustentar 3 de FOL, você o acompanhará a qualquer ponto do campo, independente de deslocamento e habilidades. Você recebe +2 em Interceptação para impedir passes vindos de outros jogadores ou dele ao invés de aplicar uma penalidade. Além disso, recebe +4 no teste oposto caso o alvo tente te driblar. O alvo também pode sustentar até 6 de Fôlego para anular seus bônus, cada 1 de FOL anula 1 de bônus, começando a contagem a partir de Interceptação (por exemplo, se ele sustentar 3, anulará os 2 de Interceptação e 1 para evitar o drible).'
       },
       {
         name: 'Transferidor Sexy',
-        description: 'Semicírculo de 2m priva opções do adversário. +4 Interceptação, +6 contra dribles. Pode impedir até 2 alvos de receber/passar bola. Alvo pode sustentar até 10 FOL.'
+        description: 'O verdadeiro brilho dessa Arma, onde você utiliza do semicírculo de 2 metros para privar as opções do adversário. Os bônus se tornam +4 em Interceptação e +6 no teste oposto ao drible, e você pode escolher até dois alvos para impedir que recebam a bola ou passem para o alvo que está marcando (agora o alvo pode sustentar até 10 FOL).'
       },
       {
         name: 'Diâmetro de Pressão',
-        description: 'Domínio total em 2m. Intercepta automaticamente passes ao alvo, bloqueia até 3 opções de passe dele. 5 FOL para "frear" movimento (limita deslocamento ao seu se ele tiver mais).'
+        description: 'Você agora tem domínio total dentro dos 2 metros. Você intercepta automaticamente qualquer passe direcionado ao alvo, pode bloquear até 3 opções de passe dele (caso o alvo esteja com a bola), e durante a movimentação dele, pode gastar 5 FOL para "frear", impedindo que ele se mova mais naquele turno. Se o alvo tiver menos DESL que você, ele não poderá se mover após você frear. Se ele tiver mais, o limite de deslocamento será igual ao seu Deslocamento.'
       }
     ]
   },
