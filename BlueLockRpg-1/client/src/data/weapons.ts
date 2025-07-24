@@ -1228,6 +1228,27 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'breakdown',
+    name: 'BreakDown (NOVO)',
+    category: 'Técnico',
+    description: 'Você não defende gols, é apenas a muralha que reforça a moral do time, sendo o ultimato defensivo, aumentando a moral de todos com sua presença silenciosa.',
+    specialization: ['Drible', 'Imprevisibilidade', 'Controle Corporal'],
+    levels: [
+      {
+        name: 'Toprock: Indian Step',
+        description: 'Utilizando os passes em pé do BreakDance, você é capaz de usar a movimentação rápida de pés para impedir a leitura de jogo do seu oponente. Quando estiver com a bola, sempre que for alvo de um adversário, seja ele o roubo, marcação e etc. Você Gastando 5 FOL, você e o adversário podem escolher 1 entre 8 direções diferente no “Indian Step”, como um Asterisco (✳️). Após a escolha, ambos irão andar 10m na direção escolhida. Caso ainda seja incapacitado de avancar, ambos fazem os testes normalmente. Caso vão por caminhos diferente, o Adversário perde uma ação física e você pode prosseguir.'
+      },
+      {
+        name: 'Footwork: Coffee Grinder',
+        description: 'Caso fosse ter a bola roubada, gastando 9 FOL, você pode dar um último suspiro, onde será um teste de Passe x Reflexo, onde caso passe, lança a Bola 25m na diagonal, dando a seus aliados uma chance de Recuperar a Bola, entregando +5 para eles nos testes de corrida.'
+      },
+      {
+        name: 'Powermove: Flare',
+        description: 'Você recebe o movimento de chute exclusivo “Voleio Flare". Onde quando adentrar na área do gol, quando um Defensor tentar te impedir, você gira 2 Testes de chute ou precisão contra ele, sendo que um desses dois testes será definido como “Finta” e o Defensor deve adivinhar qual dos dois é. Caso ele erre, o chute passa e se transforma em um teste direto de Defesa X Chute/Precisão contra o Goleiro, dando a ele uma classe a menos no teste.'
+      }
+    ]
+  },
+  {
     id: 'impulso-cabeceio',
     name: 'Impulso Cabeceio',
     category: 'Físico',
