@@ -34,7 +34,7 @@ export const weaponsData: Weapon[] = [
       },
       {
         name: 'Truque de Encerramento',
-        description: 'Durante os Acréscimos, seu show começa a se encerrar. Então, é digno um último truque para a plateia. O gasto da "Cartola" é anulado, já o do "Truque de Mágica" se torna 1, além de as DT's serem sempre 15.'
+        description: 'Durante os Acréscimos, seu show começa a se encerrar. Então, é digno um último truque para a plateia. O gasto da "Cartola" é anulado, já o do "Truque de Mágica" se torna 1, além de as DTs serem sempre 15.'
       },
       {
         name: 'Ilusionismo',
@@ -999,23 +999,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Agressividade',
-        description: 'Através de sua força bruta e movimentos erráticos, você desenvolveu uma poderosa técnica de drible. Para cada 2 Pontos de Físico que gastar para realizar o drible, você ganha +1d4 de bônus.'
+        description: 'Através de sua força bruta e movimentos erráticos, você desenvolveu uma poderosa técnica de drible. Para cada 2 Pontos de Físico que gastar para realizar o drible (essa arma permite que Físico seja usado nessa perícia), você ganha +1d4 de bônus..'
       },
       {
         name: 'Movimentação Errática',
-        description: 'Quando driblar alguém com "Agressividade", você pode gastar 10 FOL para ganhar +2 Ações Físicas, porém com algumas restrições.'
+        description: 'Quando driblar alguém com "Agressividade", você pode gastar 10 FOL para ganhar +2 Ações Físicas, porém com algumas restrições. Uma delas tem que ser usada para se movimentar, e a outra para driblar. Se conseguir executar esse drible, o ciclo se repete, até que você erre um drible ou fique sem FOL.'
       },
       {
         name: 'Confusão',
-        description: 'Seus movimentos são completamente imprevisíveis. Para cada drible feito, o próximo adversário a ser driblado tem -1 (acumula até -4).'
+        description: 'Seus movimentos são completamente imprevisíveis. Para cada drible feito, o próximo adversário a ser driblado tem -1 (acumula até -4, quando chegar nesse valor, o próximo reseta).'
       },
       {
         name: 'Explosão de Marselha',
-        description: 'Você recebe o Movimento "Virada de Marselha", porém com um extra. O deslocamento aumenta para 20m, e a cada 3 usos, você recebe uma Carga de Adrenalina.'
+        description: 'Você recebe o Movimento "Virada de Marselha" (se já tinha, o gasto é reduzido em 2), porém com um extra. O deslocamento aumenta para 20m, e a cada 3 usos, você recebe uma Carga de Adrenalina.'
       },
       {
         name: 'Dribles Esmagadores',
-        description: 'Sempre que devorar alguém, você terá três sucessos automáticos para driblar essa pessoa. Um jogador só pode ser afetado uma vez por isso.'
+        description: 'Sempre que devorar alguém, você terá três sucessos automáticos para driblar essa pessoa. Um jogador só pode ser afetado uma vez por isso, e o seu sucesso irá sobrepor qualquer outro que ele possa ter.'
       }
     ]
   },
@@ -1028,23 +1028,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Dança dos Perdedores',
-        description: 'A base do funcionamento dos Dribles Dançantes são os movimentos "envolventes", que dão a impressão que todos os afetados estão dançando.'
+        description: 'A base do funcionamento dos Dribles Dançantes são os movimentos "envolventes", que dão a impressão que todos os afetados estão dançando. Essa forma de se movimentar desestabiliza os oponentes, fazendo com que eles caiam derrotados no chão. Ao vencer um adversário com um Drible, você pode gastar 4 FOL para derrubá-lo, ultrapassando ele e anulando sua reação contra o próximo turno de um aliado seu (além do seu). Os derrubados também devem gastar uma Ação Física para levantar. Adversários de NT superior não são afetados, e adversários de NT igual podem dar um teste de Fortitude (DT 19) para somente perderem o equilíbrio e terem -4 nas reações. A habilidade não pode ser usada com o goleiro.'
       },
       {
         name: 'Gingado',
-        description: 'Sempre que realizar um Drible bem sucedido, você recebe 1 de "Ritmo". Ritmo funciona como uma sequência, aumentando em 1 a cada Drible bem sucedido consecutivo.'
+        description: 'Sempre que realizar um Drible bem sucedido, você recebe 1 de "Ritmo". Ritmo funciona como uma sequência, aumentando em 1 a cada Drible bem sucedido consecutivo. Se deixar de fazer um Drible no seu turno ou falhar em um, perde o Ritmo (pode gastar 1 CA para mantê-lo). Ritmo serve como um Atributo especial que pode ser somado em testes de Drible, cujo Modificador é 1 + Primeiro número do seu NT (NT 20 = 1 + 2 = 3). Sempre que realizar um Drible, se move 4m automaticamente para cada 4 de Ritmo que possuir. A DT do teste de Fortitude se torna 24, e o goleiro pode ser alvo da "Dança dos Perdedores".'
       },
       {
         name: 'Baile em Sintonia',
-        description: 'Até mesmo aqueles que não foram driblados por você são capazes de sentir a presença do baile que você conduz com seus movimentos.'
+        description: 'Até mesmo aqueles que não foram driblados por você são capazes de sentir a presença do baile que você conduz com seus movimentos. Quando realizar um Drible onde a "Dança dos Perdedores" é aplicada, adversários em até 10m são "envolvidos" na dança, ficando desnorteados. Habilidades são anuladas caso queiram reagir e perdem 1 Ação Física. Caso você os drible e tire um 20 puro, aumenta para 2. Esse efeito se mantém enquanto você estiver com a posse da bola, mas pode ser anulado com um teste de Determinação (DT 20 + 1 para cada 5 que tirou no seu teste de Drible principal. A DT do teste de Fortitude da "Dança dos Perdedores" torna-se 26, a penalidade -6 e o deslocamento base de "Gingado" 5m.'
       },
       {
         name: 'Dança Ascendente',
-        description: 'Sua mistura de ritmo com drible tornou-se um triunfo inigualável. Um molejo que ninguém jamais alcançará, tornando-o único.'
+        description: 'Sua mistura de ritmo com drible tornou-se um triunfo inigualável. Um molejo que ninguém jamais alcançará, tornando-o único. A DT de Fortitude da "Dança dos Perdedores" torna-se 30 com penalidade de -8, o Deslocamento base do "Gingado" 6m. Além disso, o Ritmo pode ser usado para substituir o valor puro, somando-o ao seu bônus e alcançando o resultado (essa ação não reduz o seu Ritmo). Não aplica o efeito do 20 puro, e para cada 1 que conseguir acima de 20, recebe +1 Classe em Drible no seu próximo teste dessa perícia. Além disso, quando falhar em um Drible contra um alvo, pode gastar 1 CA para mudar a rota, cancelando o duelo e partindo para cima de outro alvo em até 8m.'
       },
       {
         name: 'Borboleta da Morte',
-        description: 'Cada drible é um passo de dança lado a lado com a morte, ceifando as esperanças dos adversários com seus dribles cruéis, porém envolventes.'
+        description: 'Cada drible é um passo de dança lado a lado com a morte, ceifando as esperanças dos adversários com seus dribles cruéis, porém envolventes. A “Dança dos Perdedores” agora pode ser usada contra adversários de NT maior, porém com a penalidade reduzida pela metade. Gastando +6 FOL, outro efeito é aplicado, além da queda. Contra NPCs de NT inferior, enquanto não passarem em um teste de Determinação (DT 30), não poderão jogar (a cada 3 testes, a DT reduz em 1). Contra NPCs de NT igual, a DT torna-se 27 e de NT superior, 24. Contra jogadores de NT inferior, você pode escolher 2 perícias para derrotá-lo automaticamente sempre que se encontrarem. Caso o NT seja igual, somente uma perícia, e se for maior, não funciona. Esse efeito não pode ser usado contra o goleiro, e é anulado caso o adversário impeça um drible seu, escolhendo uma perícia que você escolheu para remover o efeito. Aumenta o alcance da "troca de duelo" da "Dança Ascendente" para 12m.'
       }
     ]
   },
@@ -1110,28 +1110,28 @@ export const weaponsData: Weapon[] = [
     id: 'kaiser-impact',
     name: 'Kaiser Impact',
     category: 'Ofensivo',
-    description: 'O Kaiser Impact, "Impacto do Imperador" é um voleio com uma potência e precisão incrível, que pode, a depender do seu nível de talento, ser considerado o chute mais veloz do mundo, quase impossível de ser parado.',
+    description: 'O Kaiser Impact, “Impacto do Imperador” é um voleio com uma potência e precisão incrível, que pode, a depender do seu nível de talento, ser considerado o chute mais veloz do mundo, quase impossível de ser parado.',
     specialization: ['Precisão', 'Voleio', 'Velocidade', 'Imperial'],
     levels: [
       {
         name: 'Kaiser Impact: Voleio Imperial',
-        description: 'A versão de voleio do Impacto Imperial, executada com a ajuda da inércia da bola durante sua permanência em movimento no ar, passando por cima de todos os defensores.'
+        description: 'A versão de voleio do Impacto Imperial, executada com a ajuda da inércia da bola durante sua permanência em movimento no ar, passando por cima de todos os defensores. Você recebe o Movimento "Voleio" (que tem seu teste e bônus mudados para "Precisão") , ao qual evolui juntamente de sua arma (a cada nível que desbloquear do Kaiser Impact, desbloqueia um nível do Voleio, ao qual se inicia no nível equivalente ao primeiro treinamento do movimento após a obtenção). Sempre que usar o "Voleio", pode gastar uma Ação Física extra para aplicar o Impacto Imperial. Ninguém (exceto o goleiro) pode reagir ao movimento (a não ser que tenha Meta Visão (e esteja ativa) ou uma habilidade específica para tal feito), e você anula o teste de Defesa do Goleiro, fazendo-o depender apenas da DP, que tem redução igual à metade do resultado do seu teste. O gasto de FOL desse nível é o gasto do "Voleio".'
       },
       {
         name: 'Kaiser Impact: Lightning Strike',
-        description: 'Você conseguiu aprimorar o seu Impacto para executá-lo em terra firme, se aproveitando da bola em movimento para pegar a velocidade e pressão necessárias.'
+        description: 'Você conseguiu aprimorar o seu Impacto para executá-lo em terra firme, se aproveitando da bola em movimento para pegar a velocidade e pressão necessárias para um chute digno de um imperador. Para compensar a velocidade inferior à versão de voleio, você afia ao máximo a sua precisão e mira, apontando o seu tiro para aquele canto mais impossível do gol. Ao obter esse nível do Kaiser Impact, você passa a conseguir usar Precisão dentro do seu alcance padrão de chute. Para utilizar esse nível da arma, é necessário gastar uma Ação Mental ou Livre na hora de chutar, te permitindo mirar num canto exato do gol e disparar. Você anula a DP do Goleiro e estipula uma DT para o seu teste de Precisão, teste esse que pode ser interceptado por defensores de NT maior ou igual ao seu que possuam Int. Espacial (Não aplica para o Goleiro). Se você bater a DT, marca o gol; se o goleiro bater a DT, agarra a bola; se um dos defensores bater a DT, intercepta o chute (Vence quem tirar mais no dado caso mais de uma pessoa bata a DT). Para cada 10 que colocar na DT, um defensor a menos (por ordem de proximidade) pode reagir (exceto pelo goleiro), e metade do seu bônus em Precisão volta como penalidade para os testes dos defensores e do Goleiro. Não pode usar o Lightning Strike se estiver sendo marcado.'
       },
       {
         name: 'Kaiser Impact: Beinschuss',
-        description: 'Nessa versão do Kaiser Impact, feita de bicicleta, é necessário equilibrar mira e velocidade de chute para conseguir causar o Impacto.'
+        description: 'Nessa versão do Kaiser Impact, feita de bicicleta, é necessário equilibrar mira e velocidade de chute para conseguir causar o Impacto. Você recebe o movimento "Bicicleta" caso ainda não tivesse, e sempre que fosse usá-lo, pode escolher triplicar seu gasto (irredutível) e sacrificar momentaneamente sua capacidade de trocar "Precisão" por "Chute" para aplicar o Kaiser Impact: Beinschuss. Você deve dar um teste de Precisão (DT 22 +2 a cada 5 NT) na hora do chute, e pode tentar re-rolar esse teste um máximo de vezes igual a metade das suas classes em Precisão. Quando alcançar o resultado, desfere um poderoso chute contra o chão, que bate e vai para o gol, anulando a DP e as Ações do goleiro, que nada pode fazer, a não ser que tire um resultado extremamente sortudo (DT 20 puro no teste para defender), porém, para cada teste depois do primeiro que girou, reduz em -1 a DT que o goleiro deve atingir, e um defensor com Int. Espacial e de NT igual ou maior que o seu pode reagir (Tirando um resultado maior no teste do que o seu teste de Precisão). Porém, se precisou de apenas um teste, não há nada que possa ser feito: todos foram executados.'
       },
       {
         name: 'Kaiser Impact: Blitzkrieg',
-        description: 'Você aprendeu uma técnica para combinar cortes com o seu Kaiser Impact afim de executá-lo com mais facilidade, sem defensores no seu caminho.'
+        description: 'Você aprendeu uma técnica para combinar cortes com o seu Kaiser Impact afim de executá-lo com mais facilidade, sem defensores no seu caminho. Você recebe o movimento "Corte", e gastando seus FOL padrão + 5 FOL, pode definir uma "meta de cortes", definindo em quantos defensores à sua frente (Máximo 3. Não pode usar no goleiro) quer usar um corte, executando um Kaiser Impact: Lightning Strike automaticamente se estiver no seu alcance no chute no final da rota. Essa habilidade por inteiro custa apenas uma Ação de Reação e uma Ação Física para usar o Kaiser Impact. O primeiro defensor deve estar dentro do seu alcance de Reação, e se conseguir cortá-lo, avança em até 8m em direção ao próximo escolhido, se estiver em seu alcance de Reação após os 8m, pode executar outro Corte (se não estiver, apenas perde o resto da habilidade, assim como também perde se falhar em algum dos cortes e falha se não estiver no alcance de chute no final da rota). Ao final dos Cortes, os defensores ultrapassados por essa habilidade não podem reagir ao seu Kaiser Impact: LS, e para cada Corte que usou nessa rota, a DT do KI para quem desejar interceptar/defender (conta o goleiro) aumenta em 5 (se passar de 10, não aplica o efeito de anular um defensor, isso deve ser feito aumentando 10 na DT manualmente).'
       },
       {
         name: 'Kaiser Impact: Magnus',
-        description: 'O estágio perfeito do Kaiser Impact. Através da aplicação do efeito Magnus, manipulando a pressão do ar com um chute preciso em um ponto da bola.'
+        description: 'O estágio perfeito do Kaiser Impact. Através da aplicação do efeito Magnus, manipulando a pressão do ar com um chute preciso em um ponto da bola, permitindo que o Kaiser Impact seja um chute “Magnum Opus”, com uma curvatura perfeita. Agora, todas as limitações que essa arma tinha somem. Você só precisa de 30m e o talento necessário. Entretanto, a bola precisa estar perfeitamente posicionada, com duas soluções. A bola (que deve estar no solo) precisa ser chutada com uma precisão muito difícil de se alcançar no meio de uma partida. Você deve dar um teste de Precisão, e somente com 19 puro o chute pode ser realizado (cada tentativa extra gasta +10 FOL). A segunda solução, é que um passe muito preciso seja feito. Mas não basta o passe ser preciso. O posicionamento e o momento devem ser exatos e coesos com a sua posição. E tamanha especificação só poderia ser alcançada com o fator “Sorte”. Aquele que realizar o passe para você deve dar um teste de Sorte (DT 18) para que a bola caia perfeitamente em seus pés. Se o passe for bem feito, as propriedades da distância do Kaiser Kick são aplicadas para decidir a forma que o teste deve ser realizado. Se cumprir os requisitos, basta estar no alcance. Todas as outras barreiras são anuladas, só precisando de alcance e o talento necessário. Só é possível usar Magnus uma vez por partida. 15 FOL. Após utilizar o Magnus pela primeira vez em um Despertar (antes de liberar com o Nível 5), no NT 40 você pode utilizá-lo mesmo sem o Nível, porém com o gasto dobrado (ainda com uso único).'
       }
     ]
   },
