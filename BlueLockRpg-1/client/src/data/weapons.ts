@@ -1186,7 +1186,6 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
-  {
     id: 'reconstrução',
     name: 'Reconstrução (NOVO)',
     category: 'Mental',
@@ -1204,6 +1203,27 @@ export const weaponsData: Weapon[] = [
       {
         name: 'Super Teoria da Vitória',
         description: 'Atingindo o máximo de sua adaptabilidade, sua visão de jogo vai além daqueles no pódio, uma dádiva dos céus digna do topo. Seus gastos em Adaptabilidade diminuem em 2 FOL e passam a ser uma Ação Livre ou Mental, também recebendo duas novas funções para seus Pontos. Pagando 10 Pontos você começa a Sustentar testes de Análise, com a DT sendo 25, somando +5 a cada Sucesso, durante esse momento, sua Adaptabilidade se torna incomparável. Seus gastos para se Adaptar são Zerados e são feitos sem a necessidade de testes, necessitando apenas da Ação, e os custos de Pontos de Adaptabilidade são diminuídos em 2, caso falhe no teste, seus FOL são Zerados, não podendo desativar após ativar a habilidade. Por fim, pagando 16 Pontos de Adaptabilidade, você altera sua mentalidade totalmente para a situação, sendo assim, o mestre define se a partida se encontra em Último Gol, onde o próximo gol irá decidir o final da partida, Massacre Unilateral, onde seu time está perdendo de forma miserável ou Dominação Total, onde seu time está vencendo por uma grande margem, assim, baseado nesses cenários, você: Último Gol: Seu corpo se move em prol desse gol, seus bônus contra o Às do time inimigo provindos dessa arma são Dobrados, você recebe a condição Às e entra no Fluxo, caso já esteja, recebe 1 Melhoria ou Foco Extra. Massacre Unilateral: Focado na defensiva e em contra ataques, você dá de tudo para salvar essa batalha perdida, todas as suas Reações passam a ser “Antes da Ação”, bônus provindos dessa Arma contra Egoístas e Suportes são Dobrados, e seu Alcance de Reação é dobrado. Dominação Total: Para destruir esses vermes mais ainda, você recebe +1 Ação Física, bônus provindos dessa Arma contra Muralhas são Dobrados, Goleiros tem -1d e -4 contra você e por fim, recebe +4 em Finalizações.'
+      }
+    ]
+  },
+  {
+    id: 'defesa-da-gazela',
+    name: 'Defesa da Gazela (NOVO)',
+    category: 'Defensivo',
+    description: 'Você não defende gols, é apenas a muralha que reforça a moral do time, sendo o ultimato defensivo, aumentando a moral de todos com sua presença silenciosa.',
+    specialization: ['Defesa', 'Motivação', 'Pressão'],
+    levels: [
+      {
+        name: 'Parede Final',
+        description: 'Sendo a muralha final de seu time, todos confiam em você e se sentem motivados enquanto você estiver no gol, sendo o às da defesa. Todavia, você é um goleiro terrível, sua presença é meramente um apoio emocional, caso um chute a gol ocorra, você pode forçar um defensor que foi ultrapassado a rodar Defesa, somando metade de seu resultado em sua DP. Custa 5 FOL.'
+      },
+      {
+        name: 'Acreditem no Impossível',
+        description: 'Mesmo que não há esperanças, você dá tudo de si, seu time eleva seu jogo sabendo que tem você no gol. Caso defenda um gol usando Parede Final, durante seus próximos 3 turnos, todos os aliados recebem +1 Classe em 3 Perícias a escolha dos mesmos. Aumenta em 5 FOL o gasto de Parede Final.'
+      },
+      {
+        name: 'Habilidade do Nome Proibido',
+        description: 'Você é a peça final do quebra-cabeça, sendo o que complementa a defesa de seu time, não um servo, uma marionete ou um bobo da corte, mas sim, uma força da natureza. Ao usar Parede Final, 2 defensores têm direito ao teste em vez de 1, e o bônus de perícia se torna +2 Classes e sempre que defender um chute, todos os participantes na defesa do mesmo recebem +3 FOL. (com exceção de você).'
       }
     ]
   },
