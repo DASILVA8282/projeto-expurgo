@@ -941,23 +941,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Bloqueio Máximo',
-        description: 'Você recebe as seguintes perícias: Interceptação, Roubo, Defesa, Reação e Cabeceio. Para cada uma delas que você já possui, recebe Especialidade.'
+        description: 'Você recebe as seguintes perícias: Interceptação, Roubo, Defesa, Reação e Cabeceio. Para cada uma delas que você já possui, recebe Especialidade (pode trocar todas as Especialidades por +1 Classe em uma delas). Quando a defesa for invadida (ou seja, um adversário chegar na grande área), pode gastar 1 CA para receber +1d em alguma delas.'
       },
       {
         name: 'Proteção Absoluta',
-        description: 'Para cada sucesso que você conseguir com as perícias citadas no Nível 1, você recebe +2 FOL (ou +1 PA ou +1 CA) em uma estatística a sua escolha.'
+        description: 'Para cada sucesso que você conseguir com as perícias citadas no Nível 1, você recebe +2 FOL (ou +1 PA ou +1 CA) em uma estatística a sua escolha. Quando reunir 4 de FOL ou 2 de PA/CA de uma mesma estatística, você pode converter em +1d temporário em uma das perícias que não estão em Bloqueio Máximo. Quando completar, reseta.'
       },
       {
         name: 'Vanguarda Completa',
-        description: 'Gastando 5 de FOL, você pode escolher uma área entre: Gol, Zaga e Meio de Campo (do seu campo). Após essa escolha, durante a partida você pode dar um teste de Reação.'
+        description: 'Gastando 5 de FOL, você pode escolher uma área entre: Gol, Zaga e Meio de Campo (do seu campo). Após essa escolha (que é irreversível), durante a partida você pode dar um teste de Reação X Teste da Ação adversária para se mover até a área que escolheu e ter a chance de impedir (Isso varia da Ação do personagem e das suas opções de Reação). Se você estiver no campo adversário, gasta 5 FOL, se estiver na área inimiga 10, e se for no gol adversário, 15. Caso tenha a Perícia Especial ou a Habilidade Exótica “Reflexos”, você reduz o gasto em 4. 5 turnos seus após o uso, escolhe uma segunda área'
       },
       {
         name: 'Fechamento Sincrético',
-        description: 'Caso esteja com outro defensor, podem fazer uma Defesa Coletiva, gastando 10 FOL mutuamente. A soma dos NT\'s dos dois é subtraída pelo NT do adversário.'
+        description: 'Caso esteja com outro defensor, podem fazer uma Defesa Coletiva, gastando 10 FOL mutuamente. A soma dos NTs dos dois é subtraída pelo NT do adversário (Mínimo 1), e volta como bônus no teste dos dois. Porém, o extra dessa habilidade, é que a Defesa pode ocasionar uma reação especial causada por um dos dois. Por exemplo, vamos usar dois personagens do Quarteto Muralha de Ferro. Um atacante foi avançar, e Oliver Aiku junto de Teppei Neru foram defender. Oliver usa sua arma, e ambos gastam 10 FOL, impedindo o atacante. Oliver defende, e Teppei define a reação, que será tomar a bola e passar para um atacante.'
       },
       {
         name: 'Égide Supremo',
-        description: 'Ao gastar 5 de FOL, você pode ativar essa habilidade por 3 Rodadas. Nessas 3 Rodadas, para cada 20 puro que você conseguir, recebe 1 uso dessa habilidade pelas próximas 3 rodadas.'
+        description: 'Ao gastar 5 de FOL, você pode ativar essa habilidade por 3 Rodadas (de ativação). Nessas 3 Rodadas, para cada 20 puro que você conseguir, recebe 1 uso dessa habilidade pelas próximas 3 rodadas (após o fim das 3 iniciais). Quando gastar 1 uso, o efeito ficará ativo por 3 Rodadas (de uso), e durante elas, seus valores puros terão o dobro do Primeiro Número do seu NT somado neles (se é 5, soma +10 no valor puro). Se durante as 3 Rodadas de ativação, você conseguir um 20 em um teste Defensivo, na próxima vez que usar durante a partida, a DT necessária deixa de ser 20, e é reduzida em 1 para cada 20 que conseguiu em um teste defensivo. O limite de usos dessa habilidade é 1 para cada 3 Classes que possuir em Defesa.'
       }
     ]
   },
@@ -970,19 +970,19 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Domínio Perfeito',
-        description: 'Você recebe +2 em Domínio, e também o movimento de Chute "Voleio Giratório". Além disso, você pode gastar 3 FOL para, quando dominar a bola, emendar um passe, cruzamento ou chute.'
+        description: 'Você recebe +2 em Domínio, e também o movimento de Chute “Voleio Giratório”. Além disso, você pode gastar 3 FOL para, quando dominar a bola, emendar um passe, cruzamento ou chute, sem gastar mais ações.'
       },
       {
         name: 'Armadilha',
-        description: 'Usando de seu domínio irreal, você consegue criar Armadilhas de corpo que permitem domínios sobrenaturais, tanto para controlar a bola quanto para passar de adversários.'
+        description: 'Usando de seu domínio irreal, você consegue criar Armadilhas de corpo que permitem domínios sobrenaturais, tanto para controlar a bola quanto para passar de adversários. Quando um adversário avançar (até três) para cima de você, pode dar um teste de Domínio para usar uma Armadilha contra ele. Se vencer, não gasta nenhuma Ação por isso (5 FOL). Essa habilidade pode ser usada com a Regra Opcional “Solução Criativa”, gastando +5 FOL.'
       },
       {
         name: 'Giro de Reinicialização Zero',
-        description: 'Essa armadilha permite que você encerre uma jogada, reiniciando o ritmo do jogo criando uma nova jogada a partir do seu domínio.'
+        description: 'Essa armadilha permite que você encerre uma jogada, reiniciando o ritmo do jogo criando uma nova jogada a partir do seu domínio. Ao falhar em uma disputa que ocasionaria na perda da bola (encerrando uma jogada), você pode gastar 14 FOL para dar um teste de Domínio (DT 26) e desviar a bola dos adversários. Você encerra a jogada (junto de qualquer efeito relacionado a uma), podendo realizar qualquer outra ação com +4, como passes, chutes, etc. Alvos que tentaram te impedir não conseguiram, tendo que reagir a sua nova ação (com uma penalidade igual a 1 para cada 1 que tirou acima da DT do teste de Domínio).'
       },
       {
         name: 'Domínio Aprimorado',
-        description: 'Você consegue enfrentar até 5 adversários com "Armadilha", os gastos de "Domínio Perfeito" são anulados e os gastos de "GRZ" são reduzidos em 3.'
+        description: 'Você consegue enfrentar até 5 adversários com “Armadilha”, os gastos de “Domínio Perfeito” são anulados e os gastos de “GRZ” são reduzidos em 3. Você também recebe +1 Classe em Domínio.'
       },
       {
         name: 'Expansão de Domínio',
