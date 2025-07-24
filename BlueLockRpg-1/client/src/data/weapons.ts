@@ -362,15 +362,15 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'A Sombra',
-        description: 'Funciona a 20m do Atacante Principal enquanto furtivo. Escolha "Receptor" (recebe bola quando Principal perderia, +1/+2/+3 Classes por 5 FOL) ou "Doador" (passe com +1/+3/+5/+7/+9/+11 por 3 FOL). Cada 5/3 FOL extra aumenta bônus em 1.'
+        description: 'A sua função é estar sempre junto de outro atacante, para criar jogadas e ajudar a sair de enrascadas. Sempre que se manter a pelo menos 20m do Atacante Principal e estiver escondido (Furtividade), o efeito será aplicado. No começo da partida, você tem que escolher entre "Receptor" ou "Doador". Se for receptor, quando o Atacante Principal for perder a bola, ele poderá gastar 5 FOL para tocar a bola para você, com +1/+2/+3 Classes. Caso você seja um "Doador", sempre que o Atacante Principal estiver numa brecha para avançar, você pode gastar 3 FOL para fazer um passe com +1/+3/+5/+7/+9/+11 para ele (Nesse efeito, o Atacante Principal é quem deve estar furtivo para funcionar, não você). Em ambos efeitos, cada 5 ou 3 de Fôlego que gastar aumenta em 1 o nível do bônus.'
       },
       {
         name: 'A Sombra (2)',
-        description: 'Distância aumenta para 30m, gastos reduzem para 5/2 FOL, +2 em Furtividade, pode trocar Ação Mental por Física sob efeito.'
+        description: 'A distância aumenta para 30m, os gastos são reduzidos para 5 FOL e 2 FOL, você recebe +2 em Furtividade e pode trocar sua Ação Mental por Física enquanto estiver sobre o efeito.'
       },
       {
         name: 'Inversão Fantasmagórica',
-        description: 'Se ambos gastarem FOL, pode trocar papéis, você vira Atacante Principal e ele segue sua escolha anterior. Troca pode ser feita como Reação no seu turno ou do antigo Principal.'
+        description: 'Se ambos gastarem o Fôlego necessário, os papéis podem ser trocados, com você se tornando o Atacante Principal, enquanto o antigo Principal não poderá escolher entre Receptor e Doador, tendo que seguir o que você escolheu anteriormente. Essa troca pode ser feita como Reação, no seu turno ou no turno do antigo Atacante Principal.'
       }
     ]
   },
