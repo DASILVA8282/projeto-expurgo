@@ -196,23 +196,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Corrida Constante',
-        description: 'Recebe +10m metros de deslocamento, e recebe uma Ação Física extra somente para correr.'
+        description: 'Você recebe +10m metros de deslocamento, e recebe uma Ação Física extra somente para correr.'
       },
       {
         name: 'Corrida da Vitória',
-        description: 'Alcance do Chute máximo é igual ao seu deslocamento (limitado em 60m). Se estiver fora do alcance, gaste 7 FOL para correr direto ao alcance (limite 20m de diferença).'
+        description: 'O alcance do Chute máximo é igual ao seu deslocamento (limitado em até 60 metros). Supondo que seja 30m, você precisaria estar a 30m do gol para chutar na direção dele (desconsiderando habilidades e bônus que podem alterar esse valor). Caso esteja numa distância maior que o alcance necessário, você pode gastar 7 FOL para correr com Ação Livre direto ao alcance (limite de 20m de diferença).'
       },
       {
         name: 'Medalhista em Maratona',
-        description: 'Velocidade surpreendente em todos movimentos. Com 0 FOL, desde que percorra 40m todo turno, ainda pode jogar normalmente, usando habilidades de até 3 FOL.'
+        description: 'Seu nível de velocidade é surpreendente. Seu chute é veloz, assim como todos seus movimentos. Você consegue correr quilômetros sem parar, e mesmo se cansar, seu corpo se moverá por instinto. Quando estiver com 0 de FOL, desde que percorra 40m todo turno, ainda pode jogar normalmente, podendo usar habilidades de até 3 FOL.'
       },
       {
         name: 'Corrida de Captura',
-        description: 'Quando adversário estiver com bola, gaste 15 FOL para, se roubar ela, receber bônus baseado na distância: 15-29m = +1 PA, 30-59m = +1 CA, 60+m = 20 FOL.'
+        description: 'Quando um adversário estiver com a bola, você pode gastar 15 FOL para, caso roube ela, receber bônus baseado na distância da sua última corrida até ela. Em 15-29m, você ganha +1 PA. Em 30-59m, você ganha +1 CA. E de 60+m, você recebe 20 FOL.'
       },
       {
         name: 'A Velocidade',
-        description: 'Gastando 25 FOL, atravessa o campo inteiro. Com teste de Roubar (DT 35), pega a bola se ela estiver no fim da travessia.'
+        description: 'Gastando 25 FOL, você atravessa o campo inteiro. E com um teste de Roubar (DT 35), pega a bola caso ela esteja no fim de sua travessia.'
       }
     ]
   },
@@ -225,23 +225,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Ascensão Velocímetra',
-        description: 'Sua aceleração se torna surreal. Baseado na Velocidade anterior: Aceleração (deslocamento dobrado sustentando 3 VEL), Explosão (parar 2 turnos para 150m no próximo), Ninjutsu (mover para qualquer ponto do campo).'
+        description: 'Sua aceleração, explosão ou movimentação se tornam totalmente surreais. Baseado nas Velocidades que você tinha anteriormente você ganha determinados benefícios: Velocidade: Aceleração: Seu deslocamento é dobrado enquanto sustentar com 3 VEL. Velocidade: Explosão: Você pode ficar parado por 2 turnos para se mover 150m no seu próximo. Velocidade: Ninjutsu: Pode se mover para qualquer ponto do campo, porém só poderá se deslocar até 20 metros no próximo turno.'
       },
       {
-        name: 'Velocidade Transcendental',
-        description: 'Seus movimentos transcendem a física normal. Pode ignorar obstáculos, atravessar múltiplos adversários sem ser interceptado, e realizar ações impossíveis de velocidade.'
+        name: 'Godspeed',
+        description: 'Quando se vê frente a frente com alguém que conseguiu te ler, você pode gastar até 20 FOL para refazer sua corrida sabendo da reação adversária, indo para outra direção ou simplesmente disparando. Você pode refazer sua rota com base no ponto original, porém com até +20m de deslocamento (+1m = 1 FOL).'
       },
       {
-        name: 'Ruptura Temporal',
-        description: 'Sua velocidade afeta o tempo ao redor. Pode "pausar" o jogo por um momento para reposicionar-se, ou criar múltiplas imagens de movimento simultâneo.'
+        name: 'Corrida Celestial',
+        description: 'Você se move tão rapidamente e tão perfeitamente, que é como se vagase por outro plano enquanto passa pelo campo, sem que ninguém possa te acompanhar. Todo teste feito durante a sua movimentação pode ser substituído por Corrida, e para cada 100m percorridos em um turno, pode receber um +1 CA e +4 em alguma Perícia que some VEL utilizada nessa travessia.'
       },
       {
-        name: 'Omnipresença Veloz',
-        description: 'Pode estar em múltiplos lugares ao mesmo tempo durante uma jogada. Seus movimentos se tornam tão rápidos que parecem estar em todos os lugares simultaneamente.'
+        name: 'Distorção de Velocidade Divina',
+        description: 'Sua forma de movimentação já não é mais humana. Conforme corre, o campo se distorce de forma que ninguém mais consegue acompanhar seus movimentos. Uma corrida divina como essa é algo que ninguém jamais poderia replicar. Ao ativar (24 FOL), você dobra o alcance do seu deslocamento, e nesse espaço de corrida, você cria uma zona. Ao passar por uma das pontas dessa zona, você é “teleportado” até a outra instantaneamente, como se tivesse corrido tudo aquilo em um único instante. Você só pode ter uma zona ativa por vez.'
       },
       {
-        name: 'Velocidade Absoluta',
-        description: 'Atinge a velocidade máxima concebível. Pode atravessar o campo instantaneamente, interferir em qualquer jogada no campo, e seus movimentos se tornam imparáveis por meios convencionais.'
+        name: 'Apoteose de Velocidade',
+        description: 'Você quebrou qualquer barreira de velocidade que já existiu dentro de você, podendo atingir velocidades que nenhuma outra pessoa atingiu, se tornando um dos seres humanos mais rápidos existentes. Sua elevação divina permite que também atinja altos níveis de aceleração em sua evolução. A cada 100m percorridos, você recebe 1 NT temporário. A cada 10 NTs temporários, recebe 1 NT permanente. Quando atingir 4 NTs temporários, entra em Fluxo, e com 8 NTs temporários, ativa o Despertar. Se estiver NT 50, troca a evolução por +1 em todas as perícias, e a cada +3 obtido, ganha +1 permanente.'
       }
     ]
   },
@@ -254,23 +254,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Combustão Instantânea',
-        description: 'Uma vez por turno, gastando 5 FOL, pode aumentar seu deslocamento em +24m. Pode reagir a ações além do alcance de reação, até 5m + Mod. VEL além do limite.'
+        description: 'Uma vez por turno, gastando 5 FOL, pode aumentar seu deslocamento em +24m. Além disso, você ainda pode reagir a ações feitas além do seu alcance de reação, desde que estejam em uma distância de, no máximo, 5m + Mod. de VEL além do alcance.'
       },
       {
         name: 'Trem Bala Maglev',
-        description: 'Ao disputar corrida, gastando 1 CA, pague FOL à escolha para aumentar resultado puro (+1 por FOL). Com 20 puro, ganha +5m DESL permanente (limite ⅓ do deslocamento padrão).'
+        description: 'Quando disputar corrida com alguém, gastando 1 CA, você pode pagar uma quantidade de FOL à sua escolha para aumentar o valor puro do resultado (Para cada 1 FOL, +1). Se atingir 20, não ganha uma Carga de Adrenalina, e sim +5m de DESL, até o fim da partida (Limite igual à ⅓ do seu deslocamento total padrão, arredondando para baixo) .'
       },
       {
         name: 'Jet Counter',
-        description: 'Contra múltiplos defensores, gaste 7 FOL para teste Correr (DT 22 +1 por defensor, +2 se tiver Velocidade). Se passar, move 5m por defensor e ultrapassa todos.'
+        description: 'Quando mais de um defensor vier te barrar, você pode gastar 7 FOL para dar um teste de Correr (DT 22 +1 por defensor) para passar de todos, se movendo 5m por defensor. Para cada defensor com um tipo de Velocidade, a DT aumenta em +2, e se passar de 5, além do aumento na DT, os outros defensores (sem Velocidade) te dão -1 no teste (Se não passar no teste, não perde os FOL).'
       },
       {
         name: 'Velocidade Explosiva',
-        description: 'Pode usar "Combustão Instantânea" duas vezes por turno, DT base de "Jet Counter" vira 20, anula bônus extra de velocistas defensores.'
+        description: 'Você pode usar “Combustão Instantânea” até duas vezes por turno, a DT base de “Jet Counter” se torna 20, além de anular o bônus extra por velocistas como defensores.'
       },
       {
         name: 'Rei Velocista',
-        description: 'Velocidade "mais rápida que o som". Meta exclusiva: mover 1500 metros por partida. Se cumprir, entra em Fluxo automaticamente.'
+        description: 'Você é capaz de explodir a uma velocidade que pode ser chamada de "mais rápida que o som". É anormal. Você tem uma meta exclusiva: se mover 1500 metros por partida. Se cumpri-la, entra em Fluxo automaticamente.'
       }
     ]
   },
@@ -278,28 +278,28 @@ export const weaponsData: Weapon[] = [
     id: 'velocidade-ninjutsu',
     name: 'Velocidade: Ninjutsu',
     category: 'Físico',
-    description: 'A Velocidade: Ninjutsu não foca na constância de corrida, e sim na forma que ela é realizada, através de passos ligeiros e silenciosos, como um verdadeiro ninja.',
+    description: 'Por último, a Velocidade: Ninjutsu (ou só “Ninjutsu”) não foca na constância de corrida, e sim na forma que ela é realizada, através de passos ligeiros e silenciosos, como um verdadeiro ninja.',
     specialization: ['Furtividade', 'Ninjutsu', 'Velocidade'],
     levels: [
       {
         name: 'Jutsu da Folha: Som da Ventania',
-        description: 'Enquanto furtivo, qualquer oponente atrás de você conta como "Ultrapassado". Sempre estará no Ponto Cego dos adversários enquanto furtivo.'
+        description: 'Você consegue se posicionar perfeitamente para passar pelos adversários. Enquanto estiver furtivo, qualquer oponente que estiver atrás de você já constará como “Ultrapassado”. Além disso, você sempre estará no Ponto Cego de seus adversários enquanto furtivo.'
       },
       {
         name: 'Jutsu da Folha: Arte da Ocultação',
-        description: 'Não perde furtividade ao falhar teste gastando 3 FOL. Sustentando 5 FOL, fica furtivo com a bola. No Ponto Cego, pode trocar perícia de referência para Furtividade.'
+        description: 'Você não deixa de ficar furtivo caso falhe em um teste se gastar 3 de Fôlego, e enquanto sustentar 5 FOL, você também pode ficar furtivo com a posse da bola. Além disso, no Ponto Cego de alguém, você pode trocar a Perícia de referência (sua) para Furtividade.'
       },
       {
         name: 'Jutsu da Folha: Maestria Ninja',
-        description: 'Turnos não contam para andamento das Rodadas. Gastando 2 CA, pode usar 3 Ações Físicas despercebido (2 com bola). Pode trocar perícias físicas/livres por Furtividade.'
+        description: 'Seus turnos não contam mais para o andamento das Rodadas, e se gastar 2 CA, você pode passar 3 Ações Físicas totalmente despercebido, sem que ninguém possa te ver (com a bola, somente duas). Você pode trocar qualquer teste de Perícia Física ou Livre (que envolva o corpo) por um de Furtividade.'
       },
       {
         name: 'Ninjutsu Secreto: Espionagem Shinobi',
-        description: 'Sustentando Furtividade (DT 25), fica furtivo a 15m de alvo que estava a 30m. Pode interromper ações dele, removendo bônus ou aplicando "Surpreso"/"Ponto Cego".'
+        description: 'Enquanto sustentar um teste de Furtividade (DT 25), você pode ficar furtivo a 15m de um alvo que estava a 30m de você no turno em que usou, somente esperando o momento certo de agir. Quando quiser, pode interromper uma Ação dele. Se era uma disputa, pode fazer com que ele perca todo bônus em teste/dado que não seja o bônus de classe de perícia. Se era uma ação individual, você pode fazer o que bem entender, aplicando os bônus de “Surpreso” e “Ponto Cego”.'
       },
       {
         name: 'Ninjutsu Final: Técnica do Passo do Dragão',
-        description: 'Gastando 15 FOL: "Sabotagem" (-16 em perícias no próximo turno, máximo 2x por alvo) ou "Infiltração" (ativa "Espionagem Shinobi" automaticamente).'
+        description: 'Você incorpora o Ninjutsu em cada movimento seu no futebol. Você pode gastar 15 FOL para ativar uma habilidade com dois usos diferentes. O primeiro é a "Sabotagem", onde você escolhe um alvo e gasta seu turno para atrapalhá-lo. No turno seguinte dele, o alvo terá -16 em todas as perícias (e efeitos de Sucesso Automático precisarão de teste com -8). Um mesmo alvo só pode ser afetado pela sabotagem 2 vezes. E o outro é a "Infiltração", que permite que, caso queira, use essa habilidade para ativar automaticamente a "Espionagem Shinobi" no começo do turno de um adversário. Se ele fizer, nesse mesmo turno uma das ações, você interrompe a ação.'
       }
     ]
   },
