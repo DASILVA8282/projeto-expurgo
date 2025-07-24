@@ -1165,6 +1165,27 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+    id: 'dependência-draconica',
+    name: 'Dependência Draconica (NOVO)',
+    category: 'Mental',
+    description: 'Certos jogadores precisam de um parceiro habilidoso para chegarem em seu máximo desempenho, essa arma foca nisso em ter um parceiro provedor de jogadas.',
+    specialization: ['Sinergia', 'Instinto', 'Trabalho em Equipe'],
+    levels: [
+      {
+        name: 'Dragão Domado',
+        description: 'Escolha alguém em partida para ser o “seu dono”, você tem +1d para dominar passes dele e sempre que for chutar após ter recebido um passe do seu dono, você recebe +1 classe nesse chute. Além disso o valor necessário para ter um sucesso automático no passe dele cai em um caso seja direcionada para você (20 cai para 19) e caso ele tire um 20 e ganhe uma CA, você também recebe uma. Você só pode ter um dono por vez, caso pare de jogar com seu dono você pode trocá-lo, mas assim que voltar a jogar com ele, será seu dono novamente.'
+      },
+      {
+        name: 'ME PASSA SEU NÚMERO',
+        description: 'Para cada gol que marcar na partida com ajuda do seu dono você recebe +3 em uma perícia a sua escolha e ganha 1 CA. Bônus de perícias recebidos por sinergias entre vocês dois são dobrados. Além disso vocês recebem a habilidade geral Egoísmo Duplo e você recebe a habilidade Explosão de Dopamina, só podendo ser usada após receber um passe do seu dono. Caso já tivesse Explosão de Dopamina o custo dela cai em 3 e os bônus são dobrados e caso já tivessem Egoísmo Duplo, recebem o poder Outro Eu.'
+      },
+      {
+        name: 'Quer Ser Meu Amigo Pra Sempre?',
+        description: 'Você recebe a habilidade exótica “Reflexos” e seu gatilho deve ser um passe realizado pelo seu dono. Caso já tivesse a habilidade você recebe +1 classe na perícia especial reflexos e pode adicionar outro gatilho. Além disso você e seu dono sempre estão em sinergia e você está sempre sob a condição empolgado enquanto jogar com ele. Caso vocês já estejam sempre em sinergia um com o outro por conta da habilidade Sinergia Constante, vocês passam a poder ter dois tipos de sinergia ao mesmo tempo.'
+      }
+    ]
+  },
+  {
     id: 'impulso-cabeceio',
     name: 'Impulso Cabeceio',
     category: 'Físico',
