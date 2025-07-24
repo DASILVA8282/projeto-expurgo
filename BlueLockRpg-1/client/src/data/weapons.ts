@@ -17,28 +17,28 @@ export const weaponsData: Weapon[] = [
     id: 'dribles-magicos',
     name: 'Dribles Mágicos',
     category: 'Técnico',
-    description: 'Os Dribles Mágicos são o tipo de Drible mais voltado para a enganação, usando de toda sua criatividade e "magia" para ultrapassar todo e qualquer oponente.',
+    description: 'Os Dribles Mágicos são o tipo de Drible mais voltado para a enganação, usando de toda sua criatividade e “magia” para ultrapassar todo e qualquer oponente.',
     specialization: ['Drible', 'Finta', 'Criatividade'],
     levels: [
       {
         name: 'Truque de Mágica',
-        description: 'Os "Dribles Mágicos" visam fazer jogadas criativas e "estranhas". Gastando 5 FOL, você pode usar "Você não contava que..." para fazer algo surpreendente. DT varia entre 12-30 baseada na criatividade.'
+        description: 'Os "Dribles Mágicos" ou "Dribles Flexíveis" são uma técnica de dribles que visa fazer jogadas criativas e "estranhas" aos olhos de quem testemunhou o movimento. Ela usa da elasticidade e criatividade do jogador para ter um bom desempenho. Gastando 5 FOL, você pode usar a cartada do "Você não contava que..." para fazer algo surpreendente e "driblar" a situação. Por exemplo, vamos supor que você está no 1v1 com um adversário que possui uma velocidade de reação extremamente superior a sua. Ao gastar os 5 de Fôlego, você pode usar a seguinte frase. "Você não contava que eu jogaria a bola para trás, pegando a bola e correndo em disparada no seu ponto cego." Assim, você dá um teste de Drible. DT varia entre 12, 20, 26 e 30 + 1 para cada 5 NT seu (A DT é definida com base na criatividade da descrição (partindo do 30 sendo o menos criativo, e 12 o mais criativo), com base no julgamento do Mestre).'
       },
       {
         name: 'O Cartoleiro Louco',
-        description: 'Você recebe movimento "Cartola" (gasto 1 FOL, DT 28, precisa teste Reação DT 25). Usar Cartola 3 vezes seguidas anula gasto do próximo drible e vira Ação Livre.'
+        description: 'Você recebe um movimento de Drible exclusivo, que varia do drible "Chapéu", sendo ele a "Cartola". O gasto de Fôlego se torna 1, a DT do cabeceio se torna 28 e antes dele é necessário um teste de Reação (DT 25). Caso use a Cartola 3 vezes seguidas, seu próximo drible tem gasto anulado e pode ser usado como Ação Livre.'
       },
       {
         name: 'Abracadabra',
-        description: 'Gastando 15 FOL e Ação Mental, use "Abracadabra" com d6 mágico. Cada face tem efeito escolhido por você com aprovação do Mestre (ex: movimento extra, acerto garantido).'
+        description: '"Abracadabra" é um encantamento mágico usado na modernidade e no ilusionismo. Como um verdadeiro mágico, você é especialista em encantamentos. Você pode gastar 15 FOL e uma Ação Mental para usar "Abracadabra". E o que isso faz? Nem eu sei! Você terá um "d6 mágico". Cada face do d6 terá um efeito, esses que serão escolhidos por você com aprovação do Mestre. Por exemplo, na face 1, você pode ganhar 1 movimento de drible extra, na face 2 um acerto garantido de drible etc.'
       },
       {
         name: 'Truque de Encerramento',
-        description: 'Durante Acréscimos: gasto da "Cartola" anulado, "Truque de Mágica" custa 1 FOL, todas as DTs viram 15.'
+        description: 'Durante os Acréscimos, seu show começa a se encerrar. Então, é digno um último truque para a plateia. O gasto da "Cartola" é anulado, já o do "Truque de Mágica" se torna 1, além de as DT's serem sempre 15.'
       },
       {
         name: 'Ilusionismo',
-        description: 'Gastando 20 FOL, crie ilusões em todos que interagiram com você no turno. Movimentos impossíveis e absurdos. Máximo 3x por partida, ganha 20-100 fama por uso.'
+        description: 'Você é capaz de enganar até mesmo os mais perspicazes. Com seu ilusionismo, o impossível pode ser feito com facilidade. Você pode gastar 20 FOL para usar essa habilidade. Você irá jogar seu turno com tranquilidade, porém enquanto ele rola, você usa toda sua criatividade. Você pode criar ilusões envolvendo todos que passaram perto de você ou interagiram com você durante seu turno, podendo elas serem as coisas mais absurdas e impossíveis possíveis (irônicas). Por exemplo, você passa por dois meio campo, dribla um zagueiro e chuta ao gol. Você pode fazer com que um meio campo pegou a bola, o outro que outro aliado seu está com ela, o zagueiro achar que está te marcando e o goleiro que você marcou o gol, mas na verdade tocou para seu aliado, que pegou ele de surpresa e chutou. Por serem movimentos incrivelmente graciosos, você só pode usar 3 vezes por partida. Além disso, cada uso de "Ilusionismo" pode aumentar sua fama de 20 a 100.'
       }
     ]
   },
@@ -51,23 +51,23 @@ export const weaponsData: Weapon[] = [
     levels: [
       {
         name: 'Contra Drible',
-        description: 'Observe testes de Roubo ruins do adversário, teste Análise (DT 26) para registrar resultado. Quando driblar ele, use o valor registrado em vez de dados.'
+        description: 'Durante a partida, você pode observar os testes de Roubo do adversário, e quando ver um resultado ruim, pode dar um teste de Análise (DT 26) para registrá-lo (só pode ter um valor registrado por alvo, que não pode ser trocado). Quando for usar seu drible contra ele, ao invés de girar o teste, o valor que ele irá usar será o que você registrou.'
       },
       {
         name: 'Quebra de Movimentação',
-        description: 'Se adversário tirar resultado "Medíocre" ou menor em teste de Drible, você passa automaticamente sem precisar testar.'
+        description: 'Ao aprimorar ainda mais o Contra Drible, agora nem mais esforço precisa ser feito. Somente do adversário cometer um leve deslize, você já consegue se sobrepor. Em testes de Drible, se o adversário tirar um dado com resultado “Medíocre” para baixo, você já passa automaticamente, sem precisar do seu teste.'
       },
       {
         name: 'Drible Fluido',
-        description: 'Passando por 1 defensor, gaste 15 FOL para passar por todos em 15m dele (exceto goleiro). Basta um para passar por todos.'
+        description: 'Basta passar por 1, que passa por todos. Afinal, sem egoísmo, é um por todos e todos por um. Se passar por um defensor, pode gastar 15 FOL e passar por todos que estejam em até 15m dele (sem contar o goleiro).'
       },
       {
         name: 'Sucesso Sucessivo',
-        description: 'Com Sucesso Automático por 20 puro, anule para "guardar" e receber +6. Use o Sucesso guardado em outro teste de Drible.'
+        description: 'Quando conseguir um Sucesso Automático por 20 puro, você pode anular ele propositalmente, gastando a Carga de Adrenalina que ganharia para “guardá-lo”. No lugar do Sucesso, você recebe +6, e o Sucesso Automático que guardou pode ser usado em outro teste de Drible à sua escolha.'
       },
       {
         name: 'Drible Genial',
-        description: 'Contra Drible usado 2x, Quebra funciona até "Bom", Drible Fluido alcança 15m, Sucesso Sucessivo dá +10.'
+        description: 'O valor de “Contra Drible” pode ser utilizado até 2 vezes, o alvo pode tirar até no máximo “Bom” para o efeito de “Quebra de Movimentação” funcionar, o alcance de “Drible Fluido” se torna 15m, e o “Sucesso Sucessivo” te dá +10.'
       }
     ]
   },
@@ -75,28 +75,28 @@ export const weaponsData: Weapon[] = [
     id: 'forca-fisica',
     name: 'Força Física',
     category: 'Físico',
-    description: 'A Força Física é uma arma natural que consiste em um poder muscular imenso e descontrolado, usado principalmente por brutamontes para neutralizar qualquer tentativa de movimentação oposta.',
+    description: 'A Força Física é uma arma natural que consiste em um poder muscular imenso e descontrolado, usado principalmente por brutamontes para neutralizar qualquer tentativa de movimentação oposta de seus adversários.',
     specialization: ['Físico', 'Corpo a Corpo', 'Intimidação'],
     levels: [
       {
         name: 'Brutamonte',
-        description: 'Seu corpo é incrivelmente forte, um verdadeiro saco de músculos. Você recebe +1 Classe em 3 Perícias Físicas à sua escolha.'
+        description: 'Seu corpo é incrivelmente forte, um verdadeiro saco de músculos. Você recebe +1 Classe em 3 Perícias Físicas a sua escolha.'
       },
       {
         name: 'Jogo de Ombros',
-        description: 'Recebe movimento "Jogo de Ombros" e "Forçar Corpo a Corpo". DT para tomar bola: 10 + FÍS + Mod. FÍS. Gasto: 2 FOL/turno, perde 1 Ação Física.'
+        description: 'Você recebe o Movimento “Jogo de Ombros”, e também recebe um movimento exclusivo chamado “Forçar Corpo a Corpo”. Você posiciona seu corpo de forma que consegue usar todos os seus músculos como uma barreira. A DT de todos os testes para tomar a bola se tornam 10 + FÍS + Mod. FÍS, e você não pode gastar Pontos de Físico para aumentar. Enquanto manter esse movimento ativo (2 FOL por turno), perde 1 Ação Física.'
       },
       {
         name: 'Ego Protein',
-        description: 'Soma Modificador de Egoísmo no seu Físico, e pode usar pontos de EGO para repor pontos de FÍS.'
+        description: 'Você soma seu Modificador de Egoísmo no seu Físico, e pode usar pontos de EGO para repor pontos de FÍS.'
       },
       {
         name: 'Músculo Ambulante',
-        description: 'Gastando 2 Pontos FÍS, troque dados de perícia para valor = Mod. FÍS. +2 Pontos para fazer mesmo com bônus.'
+        description: 'Gastando 2 Pontos de FÍS, você pode trocar os dados de uma perícia para um valor igual seu Modificador de FÍS (Se tem Mod. 4, troca para 4 dados). Pode gastar +2 Pontos para fazer o mesmo com o bônus.'
       },
       {
         name: 'Monstro Imparável',
-        description: 'Em vez de gastar Pontos Físico no bônus, gaste para somar no resultado puro. Força inacreditável no corpo a corpo.'
+        description: 'Sua Força é inacreditável, e no corpo a corpo, ninguém te para. Ao invés de gastar Pontos de Físico para somar no bônus, você pode gastar para somar no resultado puro.'
       }
     ]
   },
@@ -588,28 +588,28 @@ export const weaponsData: Weapon[] = [
     id: 'fisico-escultural',
     name: 'Físico Escultural',
     category: 'Físico',
-    description: 'Similar à Força Física, mas prioriza a inteligência corporal e "construção corporal" ao invés de força descontrolada. Meta de vários jogadores.',
+    description: 'Assim como a Força Física, é uma arma que foca no poder muscular. Todavia, o Físico Escultural prioriza a inteligência corporal e a “construção corporal” do que uma simples força descontrolada.',
     specialization: ['Físico', 'Técnica Corporal', 'Versatilidade'],
     levels: [
       {
         name: 'Construtor Corporal',
-        description: 'Com 5 FOL, use primeiro poder de: Velocidade, Aríete, Imperador X1, Dribles Agressivos, Marcação Stalker. 2 rodadas, depois não pode mais usar na partida.'
+        description: 'Similar a "Força Física", o foco dessa Arma é seu corpo, tornando seu corpo quase que uma máquina perfeita. Saber focar sua força, controlar bem seu corpo e saber como melhorar constantemente fazem o "Físico Escultural" ser a meta de vários jogadores. Com 5 FOL, você pode usar o primeiro poder das seguintes armas: Velocidade (Aceleração), Velocidade (Explosão), Aríete, Imperador do X1, Dribles Agressivos e Marcação Stalker (Cada uso tem 2 rodadas, e após isso a Arma que escolheu não pode mais ser usada na partida). Se estiver usando a Regra Opcional “Ferimento Especial”, pode sustentar 1 FOL para anular Lesões Musculares.'
       },
       {
         name: 'Físico Versátil',
-        description: 'Recebe Especialidade em +1 Perícia Física. Converte 1 CA em +1d Perícia Física, 2 CA transforma Perícia Livre em Física até fim da partida.'
+        description: 'Você recebe Especialidade em mais uma Perícia Física a sua escolha. Além disso, você pode converter 1 CA em +1d em uma Perícia Física, e 2 CA para transformar uma Perícia Livre em Perícia Física para você até o fim da partida.'
       },
       {
         name: 'Treinamento Pesado',
-        description: 'Todos treinamentos físicos (exceto Perícias Físicas) +1 Nível. Cada 5 CA com Perícias Físicas = 1 Treinamento (limite = Mod. Físico).'
+        description: 'Quando liberar esse Nível, todos os seus treinamentos físicos (exceto por Perícias Físicas) aumentam em 1 Nível. Nas partidas seguintes, cada 5 CA que você conseguir com Perícias Físicas, é convertido em 1 Treinamento (Limite = seu Modificador de Físico).'
       },
       {
         name: 'Corpo Sincronizado',
-        description: 'Habilidades 10- FOL custam 1d4. 0 FOL: perde só 1 Ação Física, primeira vez ganha 1d20+5. Recebe todas Perícias Físicas (+1 Classe se já tinha).'
+        description: 'Todos os sistemas do seu corpo estão em sincronia, trabalhando da melhor forma possível. Todas suas habilidades de 10- FOL tem custo arredondado para 1d4. Quando chega a 0 FOL, você somente perde uma Ação Física, além de que, na primeira rodada que zerar o Fôlego, ganha 1d20+5. Recebe todas as Perícias Físicas (se já tinha todas, ganha uma Classe extra em todas).'
       },
       {
         name: 'Colosso do Futebol',
-        description: 'Início da partida: gire 10d20, guarde resultados. Use como resultado definitivo 1x cada. Valores "20" podem ser usados 2x.'
+        description: 'No começo da partida, você gira 10d20. Esses resultados ficam guardados, e cada um deles pode ser usado uma vez no futuro, como resultado definitivo para alguma perícia. Os resultados de valor "20" podem ser usados duas vezes.'
       }
     ]
   },
