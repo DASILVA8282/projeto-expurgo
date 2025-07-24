@@ -1186,6 +1186,28 @@ export const weaponsData: Weapon[] = [
     ]
   },
   {
+  {
+    id: 'reconstrução',
+    name: 'Reconstrução (NOVO)',
+    category: 'Mental',
+    description: 'Reconstrução é uma Arma Menor baseada na capacidade de se destruir e reconstruir, se adaptando perfeitamente a cada alvo em campo, ficando cada vez mais forte conforme a partida avança.',
+    specialization: ['Análise', 'Estratégia', 'Intelecto'],
+    levels: [
+      {
+        name: 'Ás do Baralho',
+        description: 'Conforme a partida avança, você se adapta e se torna cada vez mais forte, digno de ser o Ás da partida. Ao se Adaptar, você recebe 1 Ponto de Adaptabilidade, podendo acumular até 20 Pontos, se tornando mais poderoso de pouco em pouco. Gastando 3 Pontos, você pode compreender como uma Arma funciona, você recebe +4 em testes relacionados a ela (Exemplo: Defender um chute de Perfeição ou dominar uma bola de Passes Travessos) Gastando 5 Pontos você pode ler um Alvo, você deve dar um teste de Análise contra uma DT igual a 10+NT/2, e num sucesso, suas Reações contra ele passam a acontecer “Antes da Ação”, também tendo Prioridade sobre outros alvos que também tentem reagir (Exemplo: Ser o primeiro a correr até uma bola avulsa ou roubar um alvo antes dele finalizar seu drible.) Gastando 8 Pontos você descobre a Fraqueza de um “Alvo”, assim, podendo formular uma teoria vitoriosa, caso sua teoria esteja correta, escolha entre Estilo, Habilidade Geral, Olhos do Predador ou Inteligência Espacial para evoluir prematuramente até o final da partida. (Exemplo: Ubers tem uma defesa impenetrável, Isagi descobre que os passes de Hiori são desconhecidos pelo time, e então, formula sua teoria vitoriosa “Mestre, a minha teoria é a seguinte: Considerando a Meta Visão e os Passes do Hiori, caso nós conseguíssemos achar um Faro do Gol em comum, o passe dele seria capaz de ultrapassar a defesa do Ubers e cair em meus pés!”) Gastar seus Pontos é uma Ação Mental.'
+      },
+      {
+        name: 'Ressonância Absoluta',
+        description: 'Sua vitória é decretada no momento em que as peças se encaixam, o mundo todo irá saber de sua vitória. Seus ganhos de Pontos de Adaptabilidade são Dobrados, e você recebe duas novas funções a seus Pontos. Gastando 4 Pontos você se adapta ao Egoísmo dos outros, assim, classificando o alvo entre Suporte, Egoísta ou Muralha, recebendo +4 em Interceptação e Análise, Roubo e Defesa ou Chute e Drible respectivamente contra ele. (Exemplo: Isagi compreende o estilo egoísta de Meguru Bachira, assim, se posicionando apropriadamente para defender em vez de esperar passes ou cruzamentos.) Gastando 8 Pontos você compreende seus aliados mais profundamente, devendo escolher 1 Alvo, recebendo Sinergia com ele, todavia, apenas você se beneficia dos Bônus, podendo escolher múltiplos Módulos, um para cada aliado sob esse efeito. (Exemplo: Durante a Sub-20, Isagi passa a seguir Rin pelo campo, servindo para abrir as opções de passe para ele, após entender seus movimentos, forçando uma sinergia no mesmo).'
+      },
+      {
+        name: 'Super Teoria da Vitória',
+        description: 'Atingindo o máximo de sua adaptabilidade, sua visão de jogo vai além daqueles no pódio, uma dádiva dos céus digna do topo. Seus gastos em Adaptabilidade diminuem em 2 FOL e passam a ser uma Ação Livre ou Mental, também recebendo duas novas funções para seus Pontos. Pagando 10 Pontos você começa a Sustentar testes de Análise, com a DT sendo 25, somando +5 a cada Sucesso, durante esse momento, sua Adaptabilidade se torna incomparável. Seus gastos para se Adaptar são Zerados e são feitos sem a necessidade de testes, necessitando apenas da Ação, e os custos de Pontos de Adaptabilidade são diminuídos em 2, caso falhe no teste, seus FOL são Zerados, não podendo desativar após ativar a habilidade. Por fim, pagando 16 Pontos de Adaptabilidade, você altera sua mentalidade totalmente para a situação, sendo assim, o mestre define se a partida se encontra em Último Gol, onde o próximo gol irá decidir o final da partida, Massacre Unilateral, onde seu time está perdendo de forma miserável ou Dominação Total, onde seu time está vencendo por uma grande margem, assim, baseado nesses cenários, você: Último Gol: Seu corpo se move em prol desse gol, seus bônus contra o Às do time inimigo provindos dessa arma são Dobrados, você recebe a condição Às e entra no Fluxo, caso já esteja, recebe 1 Melhoria ou Foco Extra. Massacre Unilateral: Focado na defensiva e em contra ataques, você dá de tudo para salvar essa batalha perdida, todas as suas Reações passam a ser “Antes da Ação”, bônus provindos dessa Arma contra Egoístas e Suportes são Dobrados, e seu Alcance de Reação é dobrado. Dominação Total: Para destruir esses vermes mais ainda, você recebe +1 Ação Física, bônus provindos dessa Arma contra Muralhas são Dobrados, Goleiros tem -1d e -4 contra você e por fim, recebe +4 em Finalizações.'
+      }
+    ]
+  },
+  {
     id: 'impulso-cabeceio',
     name: 'Impulso Cabeceio',
     category: 'Físico',
