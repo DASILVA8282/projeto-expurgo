@@ -705,7 +705,7 @@ export default function Character() {
                 <div className="mb-6">
                   <div className="space-y-6">
                     <div className="text-center mb-6">
-                      <h3 className="font-bebas text-2xl text-red-400 tracking-wider mb-2:ATRIBUTOS</h3>
+                      <h3 className="font-bebas text-2xl text-red-400 tracking-wider mb-2">ATRIBUTOS</h3>
                       <p className="text-gray-300 font-oswald">
                         Definem o limite das capacidades do seu sobrevivente.<br/>
                         <span className="text-red-400 font-bold">Você tem {remainingAttributePoints} pontos restantes para distribuir (máximo de 10 por atributo).</span>
