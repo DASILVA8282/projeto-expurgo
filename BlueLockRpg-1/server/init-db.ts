@@ -425,7 +425,7 @@ export const storage = new DatabaseStorage();
 
 export async function initializeDatabase() {
   console.log("Inicializando banco de dados...");
-  
+
   try {
     // Executar migração automática para adicionar novas colunas
     await runMigration();
@@ -434,38 +434,56 @@ export async function initializeDatabase() {
     console.error("Erro durante inicialização do banco:", error);
     // Não falhar completamente, permitir que o servidor continue
   }
-  
+
   return storage;
 }
 
 async function runMigration() {
   console.log("Executando migração automática...");
-  
+
+  const columnsToAdd = [
+    { name: 'pontos_folego', type: 'INTEGER', default: '10' },
+    { name: 'deslocamento', type: 'INTEGER', default: '27' },
+    { name: 'fama', type: 'INTEGER', default: '0' },
+    { name: 'adrenalina', type: 'INTEGER', default: '0' },
+    { name: 'aura', type: 'INTEGER', default: '0' },
+    { name: 'furia', type: 'INTEGER', default: '0' }
+  ];
+
+  for (const column of columnsToAdd) {
+    try {
+      console.log(`Adicionando coluna ${column.name}...`);
+      await db.execute(sql.raw(`
+        ALTER TABLE characters 
+        ADD COLUMN IF NOT EXISTS ${column.name} ${column.type} DEFAULT ${column.default} NOT NULL
+      `));
+      console.log(`Coluna ${column.name} adicionada com sucesso`);
+    } catch (error) {
+      console.log(`Coluna ${column.name} já existe ou erro ao adicionar:`, error);
+      // Continua para próxima coluna
+    }
+  }
+
   try {
-    // Adicionar novas colunas se não existirem
-    await db.execute(sql`
-      ALTER TABLE characters 
-      ADD COLUMN IF NOT EXISTS pontos_folego INTEGER DEFAULT 10 NOT NULL,
-      ADD COLUMN IF NOT EXISTS deslocamento INTEGER DEFAULT 27 NOT NULL,
-      ADD COLUMN IF NOT EXISTS fama INTEGER DEFAULT 0 NOT NULL,
-      ADD COLUMN IF NOT EXISTS adrenalina INTEGER DEFAULT 0 NOT NULL,
-      ADD COLUMN IF NOT EXISTS aura INTEGER DEFAULT 0 NOT NULL,
-      ADD COLUMN IF NOT EXISTS furia INTEGER DEFAULT 0 NOT NULL
-    `);
-    
-    // Atualizar personagens existentes para calcular pontos_folego e deslocamento
+    // Atualizar personagens existentes que ainda têm valores padrão
+    console.log("Atualizando valores calculados...");
     await db.execute(sql`
       UPDATE characters 
       SET 
-        pontos_folego = 10 + fisico,
-        deslocamento = 27 + velocidade
-      WHERE pontos_folego = 10 AND deslocamento = 27
+        pontos_folego = CASE 
+          WHEN pontos_folego = 10 THEN 10 + COALESCE(fisico, 0)
+          ELSE pontos_folego 
+        END,
+        deslocamento = CASE 
+          WHEN deslocamento = 27 THEN 27 + COALESCE(velocidade, 0)
+          ELSE deslocamento 
+        END
+      WHERE pontos_folego = 10 OR deslocamento = 27
     `);
-    
-    console.log("Migração executada com sucesso!");
-    
+    console.log("Valores calculados atualizados com sucesso!");
   } catch (error) {
-    console.error("Erro durante migração:", error);
-    throw error;
+    console.log("Erro ao atualizar valores calculados:", error);
   }
+
+  console.log("Migração concluída!");
 }
