@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 (async () => {
   // Inicializar banco de dados (criar tabelas se necessário)
   await initializeDatabase();
-  
+
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
