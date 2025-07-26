@@ -78,7 +78,7 @@ export const characters = pgTable("characters", {
   flowPhrase: varchar("flow_phrase", { length: 255 }).default("É hora de dominar o campo!").notNull(),
   
   // New character stats
-  pontosFolego: integer("pontos_folego").default(10).notNull(), // 10 base + fisico
+  folego: integer("folego").default(10).notNull(), // 10 base + fisico
   deslocamento: integer("deslocamento").default(27).notNull(), // 27 + velocidade
   fama: integer("fama").default(0).notNull(),
   adrenalina: integer("adrenalina").default(0).notNull(),
