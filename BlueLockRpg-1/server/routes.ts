@@ -244,7 +244,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/characters", requireAuth, async (req, res) => {
+  app.patch("/api/characters/me", requireAuth, async (req, res) => {
     try {
       console.log("=== RENDER DEBUG: CHARACTER UPDATE ===");
       console.log("Environment:", process.env.NODE_ENV);
