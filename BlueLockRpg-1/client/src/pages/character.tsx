@@ -34,16 +34,16 @@ export default function Character() {
         const res = await fetch("/api/characters/me", {
           credentials: "include",
         });
-        
+
         if (res.status === 401 || res.status === 403) {
           console.log("Usuário não autenticado - retornando null");
           return null;
         }
-        
+
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);
         }
-        
+
         const data = await res.json();
         console.log("DADOS DO PERSONAGEM RECEBIDOS DA API:", data);
         return data;
@@ -58,370 +58,7 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData] = useState({
-    name: "",
-    position: "Atacante",
-    motivacao: "",
-    age: "",
-    height: "",
-    bio: "",
-    weapon: "",
-    origin: "",
-    classe: "",
-    subclasse: "",
-    fisico: 0,
-    velocidade: 0,
-    intelecto: 0,
-    carisma: 0,
-    egoismo: 0,
-    // Perícias começam em 0 (sem classe)
-    chute: 0,
-    precisao: 0,
-    roubo: 0,
-    analise: 0,
-    determinacao: 0,
-    estrategia: 0,
-    intuicao: 0,
-    interacao_social: 0,
-    lingua_estrangeira: 0,
-    corrida: 0,
-    cruzamento: 0,
-    defesa: 0,
-    drible: 0,
-    passe: 0,
-    performance: 0,
-    comemoracao: 0,
-    fortitude: 0,
-    finta: 0,
-    furtividade: 0,
-    iniciativa: 0,
-    percepcao: 0,
-    sorte: 0,
-    dominio: 0,
-    cabeceio: 0,
-    interceptacao: 0,
-    reacao: 0,
-    flowColor: "red",
-    flowPhrase: "É hora de dominar o campo!",
-  });
-
-  const [showCesarMonitor, setShowCesarMonitor] = useState(false);
-  const [hasInitializedForm, setHasInitializedForm] = useState(false);
-
-  // Calculated values for attributes
-  const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = Math.max(0, 15 - totalAttributes);
-
-  useEffect(() => {
-    console.log("useEffect triggered - character:", character, "type:", typeof character, "hasInitializedForm:", hasInitializedForm);
-    if (character && typeof character === 'object') {
-      console.log("CARREGANDO DADOS DO BANCO:", character);
-      console.log("Dados específicos - origin:", (character as any).origin, "motivacao:", (character as any).motivacao, "classe:", (character as any).classe);
-      
-      // FORCE update form data - even if values are empty strings, load them from database
-      const newFormData = {
-        name: (character as any).name || "",
-        position: (character as any).position || "Atacante",
-        motivacao: (character as any).motivacao || "",
-        age: (character as any).age?.toString() || "",
-        height: (character as any).height || "",
-        bio: (character as any).bio || "",
-        weapon: (character as any).weapon || "",
-        origin: (character as any).origin || "",
-        classe: (character as any).classe || "",
-        subclasse: (character as any).subclasse || "",
-        fisico: (character as any).fisico ?? 0,
-        velocidade: (character as any).velocidade ?? 0,
-        intelecto: (character as any).intelecto ?? 0,
-        carisma: (character as any).carisma ?? 0,
-        egoismo: (character as any).egoismo ?? 0,
-        // Perícias podem ser 0 (sem classe)
-        chute: (character as any).chute ?? 0,
-        precisao: (character as any).precisao ?? 0,
-        roubo: (character as any).roubo ?? 0,
-        analise: (character as any).analise ?? 0,
-        determinacao: (character as any).determinacao ?? 0,
-        estrategia: (character as any).estrategia ?? 0,
-        intuicao: (character as any).intuicao ?? 0,
-        interacao_social: (character as any).interacao_social ?? 0,
-        lingua_estrangeira: (character as any).lingua_estrangeira ?? 0,
-        corrida: (character as any).corrida ?? 0,
-        cruzamento: (character as any).cruzamento ?? 0,
-        defesa: (character as any).defesa ?? 0,
-        drible: (character as any).drible ?? 0,
-        passe: (character as any).passe ?? 0,
-        performance: (character as any).performance ?? 0,
-        comemoracao: (character as any).comemoracao ?? 0,
-        fortitude: (character as any).fortitude ?? 0,
-        finta: (character as any).finta ?? 0,
-        furtividade: (character as any).furtividade ?? 0,
-        iniciativa: (character as any).iniciativa ?? 0,
-        percepcao: (character as any).percepcao ?? 0,
-        sorte: (character as any).sorte ?? 0,
-        dominio: (character as any).dominio ?? 0,
-        cabeceio: (character as any).cabeceio ?? 0,
-        interceptacao: (character as any).interceptacao ?? 0,
-        reacao: (character as any).reacao ?? 0,
-        flowColor: (character as any).flowColor || "red",
-        flowPhrase: (character as any).flowPhrase || "É hora de dominar o campo!",
-      };
-      
-      console.log("DEFININDO NOVOS DADOS NO FORM:", newFormData);
-      setFormData(newFormData);
-      setHasInitializedForm(true);
-      
-      console.log("FORM ATUALIZADO - Verificando valores carregados:");
-      console.log("- Origin carregado:", newFormData.origin);
-      console.log("- Motivação carregada:", newFormData.motivacao);
-      console.log("- Classe carregada:", newFormData.classe);
-      console.log("- Weapon carregada:", newFormData.weapon);
-    }
-  }, [character]);
-
-  // Show César's monitor when user doesn't have a character and hasn't seen it before
-  useEffect(() => {
-    if (!isLoading && !character && user && !user.cesarMonitorSeen) {
-      const timer = setTimeout(() => {
-        setShowCesarMonitor(true);
-      }, 1000); // Show after 1 second
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, character, user]);
-
-  const createCharacterMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/characters", data);
-      return response.json();
-    },
-    onSuccess: (savedCharacter) => {
-      // Use the actual saved character data from server instead of local form data
-      queryClient.setQueryData(["/api/characters/me"], savedCharacter);
-      
-      setHasInitializedForm(true); // Mark as initialized to prevent form reset
-      
-      // DON'T reset formData - keep user's current input values
-      
-      toast({
-        title: "Personagem criado com sucesso!",
-        description: "Sua ficha foi salva no sistema.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erro ao criar personagem",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateCharacterMutation = useMutation({
-    mutationFn: async (data: UpdateCharacter) => {
-      const response = await apiRequest("PUT", "/api/characters", data);
-      return response.json();
-    },
-    onSuccess: (savedCharacter) => {
-      // Use the actual saved character data from server instead of local form data
-      queryClient.setQueryData(["/api/characters/me"], savedCharacter);
-      
-      setHasInitializedForm(true); // Mark as initialized to prevent form reset
-      
-      // DON'T reset formData - keep user's current input values
-      
-      toast({
-        title: "Personagem atualizado com sucesso!",
-        description: "Suas alterações foram salvas.",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erro ao atualizar personagem",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const uploadAvatarMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      
-      const response = await fetch('/api/characters/avatar', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
-      toast({
-        title: "Avatar atualizado!",
-        description: "Sua imagem foi salva com sucesso.",
-      });
-    },
-    onError: (error) => {
-      console.error("Avatar upload error:", error);
-      toast({
-        title: "Erro",
-        description: "Falha ao fazer upload da imagem. Tente novamente.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-
-
-  const handleFlowColorChange = (value: string) => {
-    setFormData({
-      ...formData,
-      flowColor: value,
-    });
-  };
-
-  const handleOriginSelect = (origin: string) => {
-    setFormData({
-      ...formData,
-      origin: origin,
-    });
-  };
-
-  const handleMotivationChange = (motivacao: string) => {
-    setFormData({
-      ...formData,
-      motivacao: motivacao,
-    });
-  };
-
-  const handleWeaponSelect = (weaponId: string) => {
-    setFormData({
-      ...formData,
-      weapon: weaponId,
-    });
-  };
-
-  const handleClassChange = (className: string) => {
-    const updatedData = {
-      ...formData,
-      classe: className,
-      subclasse: "", // Reset subclass when class changes
-    };
-    
-    // Apply class skills automatically
-    const updatedSkills = applyClassSkills({
-      chute: formData.chute,
-      precisao: formData.precisao,
-      roubo: formData.roubo,
-      analise: formData.analise,
-      determinacao: formData.determinacao,
-      estrategia: formData.estrategia,
-      intuicao: formData.intuicao,
-      interacao_social: formData.interacao_social,
-      lingua_estrangeira: formData.lingua_estrangeira,
-      corrida: formData.corrida,
-      cruzamento: formData.cruzamento,
-      defesa: formData.defesa,
-      drible: formData.drible,
-      passe: formData.passe,
-      performance: formData.performance,
-      comemoracao: formData.comemoracao,
-      fortitude: formData.fortitude,
-      finta: formData.finta,
-      furtividade: formData.furtividade,
-      iniciativa: formData.iniciativa,
-      percepcao: formData.percepcao,
-      sorte: formData.sorte,
-      dominio: formData.dominio,
-      cabeceio: formData.cabeceio,
-      interceptacao: formData.interceptacao,
-      reacao: formData.reacao,
-    }, className, "");
-
-    setFormData({
-      ...updatedData,
-      ...updatedSkills,
-    });
-  };
-
-
-
-  const handleSubclassChange = (subclassName: string) => {
-    const updatedData = {
-      ...formData,
-      subclasse: subclassName,
-    };
-
-    // Apply class and subclass skills automatically
-    const updatedSkills = applyClassSkills({
-      chute: formData.chute,
-      precisao: formData.precisao,
-      roubo: formData.roubo,
-      analise: formData.analise,
-      determinacao: formData.determinacao,
-      estrategia: formData.estrategia,
-      intuicao: formData.intuicao,
-      interacao_social: formData.interacao_social,
-      lingua_estrangeira: formData.lingua_estrangeira,
-      corrida: formData.corrida,
-      cruzamento: formData.cruzamento,
-      defesa: formData.defesa,
-      drible: formData.drible,
-      passe: formData.passe,
-      performance: formData.performance,
-      comemoracao: formData.comemoracao,
-      fortitude: formData.fortitude,
-      finta: formData.finta,
-      furtividade: formData.furtividade,
-      iniciativa: formData.iniciativa,
-      percepcao: formData.percepcao,
-      sorte: formData.sorte,
-      dominio: formData.dominio,
-      cabeceio: formData.cabeceio,
-      interceptacao: formData.interceptacao,
-      reacao: formData.reacao,
-    }, formData.classe, subclassName);
-
-    setFormData({
-      ...updatedData,
-      ...updatedSkills,
-    });
-  };
-
-  const getFlowPreviewColor = (color: string) => {
-    const colorMap = {
-      cyan: "#22d3ee",
-      purple: "#a855f7",
-      red: "#ef4444",
-      blue: "#3b82f6",
-      green: "#10b981",
-      yellow: "#f59e0b",
-      orange: "#f97316",
-      pink: "#ec4899"
-    };
-    return colorMap[color as keyof typeof colorMap] || "#22d3ee";
-  };
-
-  const handleStatChange = (stat: string, value: number) => {
-    setFormData({
-      ...formData,
-      [stat]: value,
-    });
-  };
-
-  const handleSkillChange = (skillName: string, value: number) => {
-    setFormData({
+  const [formData, setFormData({
       ...formData,
       [skillName]: value,
     });
@@ -524,6 +161,11 @@ export default function Character() {
       reacao: Number(formData.reacao) || 0,
       flowColor: formData.flowColor,
       flowPhrase: formData.flowPhrase,
+      // New stats
+      fama: Number(formData.fama) || 0,
+      adrenalina: Number(formData.adrenalina) || 0,
+      aura: Number(formData.aura) || 0,
+      furia: Number(formData.furia) || 0,
     };
 
     console.log("SAVING CHARACTER DATA WITH EXPLICIT ZEROS:", characterData);
@@ -558,6 +200,10 @@ export default function Character() {
     iniciativa: formData.iniciativa, percepcao: formData.percepcao, sorte: formData.sorte,
     dominio: formData.dominio, cabeceio: formData.cabeceio, interceptacao: formData.interceptacao, reacao: formData.reacao
   }).filter(value => value > 0).length;
+
+  // Calculated stats
+  const calculatedPontosFolego = 10 + formData.fisico;
+  const calculatedDeslocamento = 27 + formData.velocidade;
 
   if (isLoading) {
     return (
@@ -863,7 +509,7 @@ export default function Character() {
                               >
                                 -
                               </Button>
-                              
+
                               <div className="flex items-center gap-1 min-w-[200px] justify-center flex-wrap">
                                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dot) => (
                                   <div
@@ -888,7 +534,7 @@ export default function Character() {
                               </Button>
                             </div>
                           </div>
-                          
+
                           <div className="text-center">
                             <span className="font-bebas text-xl text-red-400">
                               NÍVEL {attr.value}
@@ -934,6 +580,89 @@ export default function Character() {
                     </p>
                   </div>
                 )}
+
+                {/* New Character Stats Section */}
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Auto-calculated stats */}
+                  <div className="space-y-4">
+                    <h3 className="font-bebas text-xl text-red-400 tracking-wider">ESTATÍSTICAS CALCULADAS</h3>
+
+                    <div className="bg-red-950/30 border border-red-800 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-oswald font-bold text-red-400">PONTOS DE FÔLEGO</h4>
+                          <p className="text-gray-300 text-sm">10 base + Físico</p>
+                        </div>
+                        <span className="font-bebas text-2xl text-red-400">{calculatedPontosFolego}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-red-950/30 border border-red-800 rounded-lg p-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-oswald font-bold text-red-400">DESLOCAMENTO</h4>
+                          <p className="text-gray-300 text-sm">27 base + Velocidade</p>
+                        </div>
+                        <span className="font-bebas text-2xl text-red-400">{calculatedDeslocamento}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Manual stats */}
+                  <div className="space-y-4">
+                    <h3 className="font-bebas text-xl text-red-400 tracking-wider">ESTATÍSTICAS VARIÁVEIS</h3>
+
+                    <div className="space-y-3">
+                      <div>
+                        <Label className="block text-gray-300 font-oswald font-semibold mb-2">FAMA</Label>
+                        <Input
+                          type="number"
+                          value={formData.fama}
+                          onChange={(e) => setFormData({ ...formData, fama: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                          placeholder="0"
+                          min="0"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="block text-gray-300 font-oswald font-semibold mb-2">ADRENALINA</Label>
+                        <Input
+                          type="number"
+                          value={formData.adrenalina}
+                          onChange={(e) => setFormData({ ...formData, adrenalina: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                          placeholder="0"
+                          min="0"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="block text-gray-300 font-oswald font-semibold mb-2">AURA</Label>
+                        <Input
+                          type="number"
+                          value={formData.aura}
+                          onChange={(e) => setFormData({ ...formData, aura: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                          placeholder="0"
+                          min="0"
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="block text-gray-300 font-oswald font-semibold mb-2">FÚRIA</Label>
+                        <Input
+                          type="number"
+                          value={formData.furia}
+                          onChange={(e) => setFormData({ ...formData, furia: parseInt(e.target.value) || 0 })}
+                          className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white"
+                          placeholder="0"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Skills Section */}
                 <div className="mt-8">
@@ -1117,7 +846,7 @@ export default function Character() {
                           background: `radial-gradient(circle, ${getFlowPreviewColor(formData.flowColor)} 0%, transparent 70%)`
                         }}
                       />
-                      
+
                       {/* Content */}
                       <div className="relative z-10">
                         <div 
