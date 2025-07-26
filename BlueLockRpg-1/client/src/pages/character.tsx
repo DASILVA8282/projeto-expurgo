@@ -58,10 +58,241 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData({
-      ...formData,
-      [skillName]: value,
-    });
+  const [formData, setFormData] = useState({
+    name: "",
+    position: "Atacante",
+    motivacao: "",
+    age: "",
+    height: "",
+    bio: "",
+    weapon: "",
+    origin: "",
+    classe: "",
+    subclasse: "",
+    fisico: 0,
+    velocidade: 0,
+    intelecto: 0,
+    carisma: 0,
+    egoismo: 0,
+    chute: 0,
+    precisao: 0,
+    roubo: 0,
+    analise: 0,
+    determinacao: 0,
+    estrategia: 0,
+    intuicao: 0,
+    interacao_social: 0,
+    lingua_estrangeira: 0,
+    corrida: 0,
+    cruzamento: 0,
+    defesa: 0,
+    drible: 0,
+    passe: 0,
+    performance: 0,
+    comemoracao: 0,
+    fortitude: 0,
+    finta: 0,
+    furtividade: 0,
+    iniciativa: 0,
+    percepcao: 0,
+    sorte: 0,
+    dominio: 0,
+    cabeceio: 0,
+    interceptacao: 0,
+    reacao: 0,
+    flowColor: "cyan",
+    flowPhrase: "É hora de dominar o campo!",
+    fama: 0,
+    adrenalina: 0,
+    aura: 0,
+    furia: 0,
+  });
+
+  console.log("Query status:", { character, isLoading, error, user: !!user });
+
+  const [showCesarMonitor, setShowCesarMonitor] = useState(false);
+
+  // Mutations
+  const createCharacterMutation = useMutation({
+    mutationFn: async (characterData: any) => {
+      const response = await apiRequest("POST", "/api/characters", characterData);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Personagem criado!",
+        description: "Seu sobrevivente foi criado com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: "Falha ao criar personagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateCharacterMutation = useMutation({
+    mutationFn: async (characterData: any) => {
+      const response = await apiRequest("PATCH", "/api/characters/me", characterData);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Personagem atualizado!",
+        description: "Suas alterações foram salvas.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar personagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const uploadAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const response = await fetch('/api/characters/me/avatar', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Avatar atualizado!",
+        description: "Sua imagem foi salva com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erro no upload",
+        description: "Falha ao enviar a imagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Load character data into form when available
+  useEffect(() => {
+    if (character) {
+      setFormData({
+        name: character.name || "",
+        position: character.position || "Atacante",
+        motivacao: character.motivacao || "",
+        age: character.age?.toString() || "",
+        height: character.height || "",
+        bio: character.bio || "",
+        weapon: character.weapon || "",
+        origin: character.origin || "",
+        classe: character.classe || "",
+        subclasse: character.subclasse || "",
+        fisico: character.fisico || 0,
+        velocidade: character.velocidade || 0,
+        intelecto: character.intelecto || 0,
+        carisma: character.carisma || 0,
+        egoismo: character.egoismo || 0,
+        chute: character.chute || 0,
+        precisao: character.precisao || 0,
+        roubo: character.roubo || 0,
+        analise: character.analise || 0,
+        determinacao: character.determinacao || 0,
+        estrategia: character.estrategia || 0,
+        intuicao: character.intuicao || 0,
+        interacao_social: character.interacao_social || 0,
+        lingua_estrangeira: character.lingua_estrangeira || 0,
+        corrida: character.corrida || 0,
+        cruzamento: character.cruzamento || 0,
+        defesa: character.defesa || 0,
+        drible: character.drible || 0,
+        passe: character.passe || 0,
+        performance: character.performance || 0,
+        comemoracao: character.comemoracao || 0,
+        fortitude: character.fortitude || 0,
+        finta: character.finta || 0,
+        furtividade: character.furtividade || 0,
+        iniciativa: character.iniciativa || 0,
+        percepcao: character.percepcao || 0,
+        sorte: character.sorte || 0,
+        dominio: character.dominio || 0,
+        cabeceio: character.cabeceio || 0,
+        interceptacao: character.interceptacao || 0,
+        reacao: character.reacao || 0,
+        flowColor: character.flowColor || "cyan",
+        flowPhrase: character.flowPhrase || "É hora de dominar o campo!",
+        fama: character.fama || 0,
+        adrenalina: character.adrenalina || 0,
+        aura: character.aura || 0,
+        furia: character.furia || 0,
+      });
+    }
+  }, [character]);
+
+  // Helper functions
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatChange = (statName: string, value: number) => {
+    setFormData(prev => ({ ...prev, [statName]: value }));
+  };
+
+  const handleOriginSelect = (origin: string) => {
+    setFormData(prev => ({ ...prev, origin }));
+  };
+
+  const handleMotivationChange = (motivacao: string) => {
+    setFormData(prev => ({ ...prev, motivacao }));
+  };
+
+  const handleClassChange = (classe: string) => {
+    setFormData(prev => ({ ...prev, classe, subclasse: "" }));
+  };
+
+  const handleSubclassChange = (subclasse: string) => {
+    setFormData(prev => ({ ...prev, subclasse }));
+  };
+
+  const handleWeaponSelect = (weapon: string) => {
+    setFormData(prev => ({ ...prev, weapon }));
+  };
+
+  const handleFlowColorChange = (flowColor: string) => {
+    setFormData(prev => ({ ...prev, flowColor }));
+  };
+
+  const handleSkillChange = (skillName: string, value: number) => {
+    setFormData(prev => ({ ...prev, [skillName]: value }));
+  };
+
+  // Calculate remaining attribute points
+  const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
+  const remainingAttributePoints = 18 - totalAttributes;
+
+  // Helper function for flow color preview
+  const getFlowPreviewColor = (color: string) => {
+    const colors: { [key: string]: string } = {
+      cyan: "#06b6d4",
+      purple: "#a855f7",
+      red: "#ef4444",
+      blue: "#3b82f6",
+      green: "#22c55e",
+      yellow: "#eab308",
+      orange: "#f97316",
+      pink: "#ec4899",
+    };
+    return colors[color] || "#06b6d4";
   };
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -474,7 +705,7 @@ export default function Character() {
                 <div className="mb-6">
                   <div className="space-y-6">
                     <div className="text-center mb-6">
-                      <h3 className="font-bebas text-2xl text-red-400 tracking-wider mb-2">ATRIBUTOS</h3>
+                      <h3 className="font-bebas text-2xl text-red-400 tracking-wider mb-2:ATRIBUTOS</h3>
                       <p className="text-gray-300 font-oswald">
                         Definem o limite das capacidades do seu sobrevivente.<br/>
                         <span className="text-red-400 font-bold">Você tem {remainingAttributePoints} pontos restantes para distribuir (máximo de 10 por atributo).</span>
