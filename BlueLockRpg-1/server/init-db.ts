@@ -1,6 +1,6 @@
 import { users, characters, wildCardInvitations, matches, goals, flowStates, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals, type InsertFlowState, type FlowState, type FlowStateWithPlayer } from "@shared/schema";
 import { db } from "./db";
-import { eq, or, desc, and } from "drizzle-orm";
+import { eq, or, desc, and, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -424,8 +424,48 @@ export class DatabaseStorage implements IStorage {
 export const storage = new DatabaseStorage();
 
 export async function initializeDatabase() {
-  // Se quiser colocar lógica de verificação ou seed, você pode
-  console.log("Banco de dados inicializado (sem migrations explícitas).");
-  // Apenas retorna o storage por enquanto
+  console.log("Inicializando banco de dados...");
+  
+  try {
+    // Executar migração automática para adicionar novas colunas
+    await runMigration();
+    console.log("Banco de dados inicializado com sucesso!");
+  } catch (error) {
+    console.error("Erro durante inicialização do banco:", error);
+    // Não falhar completamente, permitir que o servidor continue
+  }
+  
   return storage;
+}
+
+async function runMigration() {
+  console.log("Executando migração automática...");
+  
+  try {
+    // Adicionar novas colunas se não existirem
+    await db.execute(sql`
+      ALTER TABLE characters 
+      ADD COLUMN IF NOT EXISTS folego INTEGER DEFAULT 10 NOT NULL,
+      ADD COLUMN IF NOT EXISTS deslocamento INTEGER DEFAULT 27 NOT NULL,
+      ADD COLUMN IF NOT EXISTS fama INTEGER DEFAULT 0 NOT NULL,
+      ADD COLUMN IF NOT EXISTS adrenalina INTEGER DEFAULT 0 NOT NULL,
+      ADD COLUMN IF NOT EXISTS aura INTEGER DEFAULT 0 NOT NULL,
+      ADD COLUMN IF NOT EXISTS furia INTEGER DEFAULT 0 NOT NULL
+    `);
+    
+    // Atualizar personagens existentes para calcular pontos_folego e deslocamento
+    await db.execute(sql`
+      UPDATE characters 
+      SET 
+        folego = 10 + fisico,
+        deslocamento = 27 + velocidade
+      WHERE pontos_folego = 10 AND deslocamento = 27
+    `);
+    
+    console.log("Migração executada com sucesso!");
+    
+  } catch (error) {
+    console.error("Erro durante migração:", error);
+    throw error;
+  }
 }
