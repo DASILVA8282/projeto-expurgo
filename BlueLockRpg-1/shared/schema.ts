@@ -76,6 +76,15 @@ export const characters = pgTable("characters", {
   // Flow State personalization
   flowColor: varchar("flow_color", { length: 20 }).default("cyan").notNull(),
   flowPhrase: varchar("flow_phrase", { length: 255 }).default("É hora de dominar o campo!").notNull(),
+  
+  // New character stats
+  pontosFolego: integer("pontos_folego").default(10).notNull(), // 10 base + fisico
+  deslocamento: integer("deslocamento").default(27).notNull(), // 27 + velocidade
+  fama: integer("fama").default(0).notNull(),
+  adrenalina: integer("adrenalina").default(0).notNull(),
+  aura: integer("aura").default(0).notNull(),
+  furia: integer("furia").default(0).notNull(),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
