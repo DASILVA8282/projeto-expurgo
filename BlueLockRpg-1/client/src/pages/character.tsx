@@ -433,7 +433,7 @@ export default function Character() {
   }).filter(value => value > 0).length;
 
   // Calculated stats
-  const calculatedPontosFolego = 10 + formData.fisico;
+  const calculatedFolego = 10 + formData.fisico;
   const calculatedDeslocamento = 27 + formData.velocidade;
 
   if (isLoading) {
@@ -824,7 +824,7 @@ export default function Character() {
                           <h4 className="font-oswald font-bold text-red-400">PONTOS DE FÔLEGO</h4>
                           <p className="text-gray-300 text-sm">10 base + Físico</p>
                         </div>
-                        <span className="font-bebas text-2xl text-red-400">{calculatedPontosFolego}</span>
+                        <span className="font-bebas text-2xl text-red-400">{calculatedFolego}</span>
                       </div>
                     </div>
 
