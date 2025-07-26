@@ -445,7 +445,7 @@ async function runMigration() {
     // Adicionar novas colunas se não existirem
     await db.execute(sql`
       ALTER TABLE characters 
-      ADD COLUMN IF NOT EXISTS folego INTEGER DEFAULT 10 NOT NULL,
+      ADD COLUMN IF NOT EXISTS pontos_folego INTEGER DEFAULT 10 NOT NULL,
       ADD COLUMN IF NOT EXISTS deslocamento INTEGER DEFAULT 27 NOT NULL,
       ADD COLUMN IF NOT EXISTS fama INTEGER DEFAULT 0 NOT NULL,
       ADD COLUMN IF NOT EXISTS adrenalina INTEGER DEFAULT 0 NOT NULL,
@@ -453,13 +453,13 @@ async function runMigration() {
       ADD COLUMN IF NOT EXISTS furia INTEGER DEFAULT 0 NOT NULL
     `);
     
-    // Atualizar personagens existentes para calcular folego e deslocamento
+    // Atualizar personagens existentes para calcular pontos_folego e deslocamento
     await db.execute(sql`
       UPDATE characters 
       SET 
-        folego = 10 + fisico,
+        pontos_folego = 10 + fisico,
         deslocamento = 27 + velocidade
-      WHERE folego = 10 AND deslocamento = 27
+      WHERE pontos_folego = 10 AND deslocamento = 27
     `);
     
     console.log("Migração executada com sucesso!");
