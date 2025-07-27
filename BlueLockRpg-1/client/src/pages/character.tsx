@@ -58,135 +58,7 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData] = useState({
-    name: "",
-    position: "Atacante",
-    motivacao: "",
-    age: "",
-    height: "",
-    bio: "",
-    weapon: "",
-    origin: "",
-    classe: "",
-    subclasse: "",
-    fisico: 0,
-    velocidade: 0,
-    intelecto: 0,
-    carisma: 0,
-    egoismo: 0,
-    chute: 0,
-    precisao: 0,
-    roubo: 0,
-    analise: 0,
-    determinacao: 0,
-    estrategia: 0,
-    intuicao: 0,
-    interacao_social: 0,
-    lingua_estrangeira: 0,
-    corrida: 0,
-    cruzamento: 0,
-    defesa: 0,
-    drible: 0,
-    passe: 0,
-    performance: 0,
-    comemoracao: 0,
-    fortitude: 0,
-    finta: 0,
-    furtividade: 0,
-    iniciativa: 0,
-    percepcao: 0,
-    sorte: 0,
-    dominio: 0,
-    cabeceio: 0,
-    interceptacao: 0,
-    reacao: 0,
-    flowColor: "cyan",
-    flowPhrase: "É hora de dominar o campo!",
-    fama: 0,
-    adrenalina: 0,
-    aura: 0,
-    furia: 0,
-  });
-
-  console.log("Query status:", { character, isLoading, error, user: !!user });
-
-  const [showCesarMonitor, setShowCesarMonitor] = useState(false);
-
-  // Mutations
-  const createCharacterMutation = useMutation({
-    mutationFn: async (characterData: any) => {
-      const response = await apiRequest("POST", "/api/characters", characterData);
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Personagem criado!",
-        description: "Seu sobrevivente foi criado com sucesso.",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erro",
-        description: "Falha ao criar personagem",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateCharacterMutation = useMutation({
-    mutationFn: async (characterData: any) => {
-      const response = await apiRequest("PATCH", "/api/characters/me", characterData);
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Personagem atualizado!",
-        description: "Suas alterações foram salvas.",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erro",
-        description: "Falha ao atualizar personagem",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const uploadAvatarMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      const response = await fetch('/api/characters/me/avatar', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Upload failed');
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Avatar atualizado!",
-        description: "Sua imagem foi salva com sucesso.",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
-    },
-    onError: () => {
-      toast({
-        title: "Erro no upload",
-        description: "Falha ao enviar a imagem",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Load character data into form when available
-  useEffect(() => {
-    if (character) {
-      setFormData({
+  const [formData, setFormData({
         name: character.name || "",
         position: character.position || "Atacante",
         motivacao: character.motivacao || "",
@@ -401,7 +273,7 @@ export default function Character() {
       drible: Number(formData.drible) || 0,
       passe: Number(formData.passe) || 0,
       performance: Number(formData.performance) || 0,
-      comemoracao: Number(formData.comemoracao) || 0,
+      comemoracao: formData.comemoracao || 0,
       // Perícias livres - preservar valores 0
       fortitude: Number(formData.fortitude) || 0,
       finta: Number(formData.finta) || 0,
@@ -1199,3 +1071,53 @@ export default function Character() {
     </>
   );
 }
+
+// Helper function to get origin attribute bonus
+const getOriginAttributeBonus = (origin: string, attributeName: string) => {
+  const originBonuses = {
+    "prodigio": { intelecto: 3 },
+    "jogador-estudantil": { velocidade: 3 },
+    "herdeiro": { carisma: 3 },
+    "miseravel": { fisico: 3 },
+    "familia-esportista": { egoismo: 3 },
+    "incompreendido": { egoismo: 3 },
+    "jogador-de-base": { velocidade: 3 },
+    "preguicoso": { intelecto: 3 },
+    "fracassado": { egoismo: 3 },
+    "bicho-do-mato": { fisico: 3 },
+    "monge": { intelecto: 3 },
+    "arruinado": { egoismo: 3 },
+    "esforcado": { fisico: 3 }
+  };
+  const bonus = originBonuses[origin as keyof typeof originBonuses];
+  return bonus?.[attributeName as keyof typeof bonus] || 0;
+};
+
+// Função para aplicar bônus de origem
+const applyOriginBonus = (origin: string, attributes: any) => {
+  const bonuses: Record<string, Partial<typeof attributes>> = {
+    "prodigio": { intelecto: 3 },
+    "jogador-estudantil": { velocidade: 3 },
+    "herdeiro": { carisma: 3 },
+    "miseravel": { fisico: 3 },
+    "familia-esportista": { egoismo: 3 },
+    "incompreendido": { egoismo: 3 },
+    "jogador-de-base": { velocidade: 3 },
+    "preguicoso": { intelecto: 3 },
+    "fracassado": { egoismo: 3 },
+    "bicho-do-mato": { fisico: 3 },
+    "monge": { intelecto: 3 },
+    "arruinado": { egoismo: 3 },
+    "esforcado": { fisico: 3 }
+  };
+
+  const bonus = bonuses[origin];
+  if (bonus) {
+    const newAttributes = { ...attributes };
+    Object.keys(bonus).forEach(attr => {
+      newAttributes[attr] = Math.min(10, (newAttributes[attr] || 1) + (bonus as any)[attr]);
+    });
+    return newAttributes;
+  }
+  return attributes;
+};
