@@ -58,7 +58,7 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData({
     name: "",
     position: "Atacante",
     motivacao: "",
@@ -692,6 +692,7 @@ export default function Character() {
 
           {/* Character Motivations */}
           <div className="lg:col-span-3">
+            ```python
             <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
                 <CharacterMotivations 
@@ -753,7 +754,7 @@ export default function Character() {
                       ].map((attr) => {
                         const originBonus = getOriginBonus(attr.name);
                         const totalValue = attr.value + originBonus;
-                        
+
                         return (
                         <div key={attr.name} className="bg-red-800/20 border border-red-700/30 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -789,7 +790,7 @@ export default function Character() {
                                     />
                                   ))}
                                 </div>
-                                
+
                                 {/* Origin Bonus Display */}
                                 {originBonus > 0 && (
                                   <div className="flex items-center gap-1">
@@ -954,6 +955,19 @@ export default function Character() {
                     </div>
                   </div>
                 </div>
+                {/* Ranking - Display only */}
+              <div className="text-center">
+                <p className="text-gray-400 font-oswald text-sm mb-2">RANKING</p>
+                <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 rounded-full border-2 border-red-400">
+                  <i className="fas fa-medal text-white"></i>
+                  <span className="text-white font-bebas text-lg font-bold">
+                    #{formData.ranking}
+                  </span>
+                </div>
+                <p className="text-gray-500 font-oswald text-xs mt-1">
+                  Definido pelo sistema
+                </p>
+              </div>
 
                 {/* Skills Section */}
                 <div className="mt-8">
