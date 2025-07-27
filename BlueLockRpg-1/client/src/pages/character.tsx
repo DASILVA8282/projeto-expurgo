@@ -58,7 +58,7 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData({
+  const [formData, setFormData] = useState({
     name: "",
     position: "Atacante",
     motivacao: "",
@@ -421,6 +421,7 @@ export default function Character() {
       adrenalina: Number(formData.adrenalina) || 0,
       aura: Number(formData.aura) || 0,
       furia: Number(formData.furia) || 0,
+      // NEVER include ranking in updates - it should remain fixed once set
     };
 
     console.log("SAVING CHARACTER DATA WITH EXPLICIT ZEROS:", characterData);
@@ -956,16 +957,16 @@ export default function Character() {
                   </div>
                 </div>
                 {/* Ranking - Display only */}
-              <div className="text-center">
+              <div className="text-center mt-6">
                 <p className="text-gray-400 font-oswald text-sm mb-2">RANKING</p>
                 <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 rounded-full border-2 border-red-400">
                   <i className="fas fa-medal text-white"></i>
                   <span className="text-white font-bebas text-lg font-bold">
-                    #{formData.ranking}
+                    #{character?.ranking || "Não definido"}
                   </span>
                 </div>
                 <p className="text-gray-500 font-oswald text-xs mt-1">
-                  Definido pelo sistema
+                  Definido automaticamente pelo sistema
                 </p>
               </div>
 
