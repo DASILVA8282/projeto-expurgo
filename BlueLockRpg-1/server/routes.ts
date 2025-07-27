@@ -515,6 +515,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin route to update character ranking
+  app.patch("/api/admin/character/:userId/rank", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const { newRank } = req.body;
+      
+      if (!newRank || newRank < 1 || newRank > 300) {
+        return res.status(400).json({ message: "Invalid rank. Must be between 1 and 300" });
+      }
+      
+      // Check if character exists
+      const character = await storage.getCharacter(userId);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+      
+      const updatedCharacter = await storage.updateCharacter(userId, { ranking: newRank });
+      res.json(updatedCharacter);
+    } catch (error) {
+      console.error("Update character rank error:", error);
+      res.status(500).json({ message: "Failed to update character rank" });
+    }
+  });
+
   // Match routes
   app.get("/api/matches", requireAuth, async (req, res) => {
     try {
