@@ -302,7 +302,7 @@ export default function Character() {
 
   // Calculate remaining attribute points
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = 18 - totalAttributes;
+  const remainingAttributePoints = 15 - totalAttributes;
 
   // Helper function for flow color preview
   const getFlowPreviewColor = (color: string) => {
@@ -693,7 +693,6 @@ export default function Character() {
 
           {/* Character Motivations */}
           <div className="lg:col-span-3">
-            ```python
             <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
                 <CharacterMotivations 
@@ -843,7 +842,7 @@ export default function Character() {
                 <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
                     <span className="font-oswald font-bold text-red-400">ATRIBUTOS DISTRIBUÍDOS:</span>
-                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/18</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/15</span>
                   </div>
                   {remainingAttributePoints === 0 && (
                     <p className="text-gray-300 font-oswald text-sm mt-2 text-center">
