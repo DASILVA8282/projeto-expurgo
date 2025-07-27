@@ -351,7 +351,11 @@ export default function Admin() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   useEffect(() => {
-    if (!user?.isAdmin) {
+    console.log("Admin page - Current user:", user);
+    console.log("Admin page - User isAdmin:", user?.isAdmin);
+    
+    if (user && !user.isAdmin) {
+      console.log("Admin page - User is not admin, showing access denied");
       toast({
         title: "Acesso negado",
         description: "Você não tem permissão para acessar esta página",
@@ -391,8 +395,61 @@ export default function Admin() {
     },
   });
 
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await apiRequest("DELETE", `/api/admin/user/${userId}`);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+      toast({
+        title: "Usuário Deletado",
+        description: `O usuário ${data.deletedUser.username} foi permanentemente removido do sistema`,
+      });
+    },
+    onError: (error: any) => {
+      console.error("Delete user error:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Falha ao deletar o usuário",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleEliminatePlayer = async (userId: number) => {
     eliminatePlayerMutation.mutate(userId);
+  };
+
+  const handleDeleteUser = async (userId: number, username: string) => {
+    const confirmed = window.confirm(
+      `⚠️ ATENÇÃO: AÇÃO IRREVERSÍVEL ⚠️\n\n` +
+      `Você está prestes a DELETAR PERMANENTEMENTE o usuário "${username}".\n\n` +
+      `Isso irá remover:\n` +
+      `• Conta do usuário\n` +
+      `• Personagem e todas as suas estatísticas\n` +
+      `• Histórico de partidas e gols\n` +
+      `• Convites Wild Card\n` +
+      `• TODOS os dados relacionados\n\n` +
+      `Esta ação NÃO PODE ser desfeita!\n\n` +
+      `Digite "CONFIRMAR EXCLUSÃO" para prosseguir:`
+    );
+
+    if (confirmed) {
+      const secondConfirmation = window.prompt(
+        `Por favor, digite "CONFIRMAR EXCLUSÃO" (sem aspas) para confirmar a remoção permanente do usuário ${username}:`
+      );
+
+      if (secondConfirmation === "CONFIRMAR EXCLUSÃO") {
+        deleteUserMutation.mutate(userId);
+      } else {
+        toast({
+          title: "Exclusão Cancelada",
+          description: "A exclusão foi cancelada. Texto de confirmação incorreto.",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const handleLogout = async () => {
@@ -983,11 +1040,39 @@ export default function Admin() {
                                 <i className="fas fa-user-times mr-1"></i>Eliminar
                               </Button>
                             )}
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteUser(userData.id, userData.username)}
+                              disabled={deleteUserMutation.isPending}
+                              className="bg-red-800 hover:bg-red-900 font-rajdhani font-semibold border-2 border-red-600"
+                            >
+                              {deleteUserMutation.isPending ? (
+                                <><i className="fas fa-spinner fa-spin mr-1"></i>Deletando...</>
+                              ) : (
+                                <><i className="fas fa-trash mr-1"></i>Deletar Conta</>
+                              )}
+                            </Button>
                           </>
                           ) : (
-                            <Button size="sm" disabled className="bg-gray-600 font-rajdhani font-semibold">
-                              <i className="fas fa-ban mr-1"></i>Sem Personagem
-                            </Button>
+                            <>
+                              <Button size="sm" disabled className="bg-gray-600 font-rajdhani font-semibold">
+                                <i className="fas fa-ban mr-1"></i>Sem Personagem
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleDeleteUser(userData.id, userData.username)}
+                                disabled={deleteUserMutation.isPending}
+                                className="bg-red-800 hover:bg-red-900 font-rajdhani font-semibold border-2 border-red-600"
+                              >
+                                {deleteUserMutation.isPending ? (
+                                  <><i className="fas fa-spinner fa-spin mr-1"></i>Deletando...</>
+                                ) : (
+                                  <><i className="fas fa-trash mr-1"></i>Deletar Conta</>
+                                )}
+                              </Button>
+                            </>
                           )}
                         </div>
                       </td>
