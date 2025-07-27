@@ -302,7 +302,7 @@ export default function Character() {
 
   // Calculate remaining attribute points
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = 15 - totalAttributes;
+  const remainingAttributePoints = 18 - totalAttributes;
 
   // Helper function for flow color preview
   const getFlowPreviewColor = (color: string) => {
@@ -518,6 +518,13 @@ export default function Character() {
                   <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
                     <path d="M8 8c1.5 0 3-1.5 3-3s-1.5-3-3-3-3 1.5-3 3 1.5 3 3 3zm0 1c-2 0-6 1-6 3v1h12v-1c0-2-4-3-6-3z"/>
                   </svg>MEU SOBREVIVENTE
+                </button>
+              </Link>
+              <Link href="/ranking">
+                <button className="text-gray-300 hover:text-red-400 font-oswald font-semibold transition-colors tracking-wide">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="inline mr-2" fill="currentColor">
+                    <path d="M8 1l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4L8 1z"/>
+                  </svg>RANKING EXPURGO
                 </button>
               </Link>
               <Link href="/match">
@@ -834,7 +841,7 @@ export default function Character() {
                 <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
                     <span className="font-oswald font-bold text-red-400">ATRIBUTOS DISTRIBUÍDOS:</span>
-                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/15</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/18</span>
                   </div>
                   {remainingAttributePoints === 0 && (
                     <p className="text-gray-300 font-oswald text-sm mt-2 text-center">
