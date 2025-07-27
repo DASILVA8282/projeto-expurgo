@@ -72,18 +72,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   const requireAdmin = async (req: any, res: any, next: any) => {
-    console.log("Admin check - Session userId:", req.session.userId);
-    if (!req.session.userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+    try {
+      console.log("Admin check - Session userId:", req.session.userId);
+      console.log("Admin check - Session data:", JSON.stringify(req.session, null, 2));
+      
+      if (!req.session.userId) {
+        console.log("Admin check - No userId in session");
+        return res.status(401).json({ message: "Unauthorized - No session" });
+      }
+      
+      const user = await storage.getUser(req.session.userId);
+      console.log("Admin check - User found:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
+      
+      if (!user) {
+        console.log("Admin check - User not found in database");
+        return res.status(401).json({ message: "User not found" });
+      }
+      
+      if (!user.isAdmin) {
+        console.log("Admin check - User is not admin");
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      
+      console.log("Admin check - Success, user is admin");
+      next();
+    } catch (error) {
+      console.error("Admin check error:", error);
+      return res.status(500).json({ message: "Authentication error" });
     }
-    
-    const user = await storage.getUser(req.session.userId);
-    console.log("Admin check - User:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-    
-    next();
   };
 
 
@@ -153,13 +169,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/auth/user", requireAuth, async (req, res) => {
     try {
+      console.log("Get user - Session userId:", req.session.userId);
       const user = await storage.getUserWithCharacter(req.session.userId!);
+      console.log("Get user - Found user:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
+      
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
       
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
+      console.log("Get user - Sending user data:", { id: userWithoutPassword.id, username: userWithoutPassword.username, isAdmin: userWithoutPassword.isAdmin });
       res.json(userWithoutPassword);
     } catch (error) {
       console.error("Get user error:", error);
@@ -537,6 +557,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Update character rank error:", error);
       res.status(500).json({ message: "Failed to update character rank" });
+    }
+  });
+
+  // Delete user permanently (Admin only)
+  app.delete("/api/admin/user/:userId", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      // Check if user exists
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Prevent deleting admins (safety measure)
+      if (user.isAdmin) {
+        return res.status(403).json({ message: "Cannot delete admin users" });
+      }
+      
+      // Delete all related data
+      await storage.deleteUserPermanently(userId);
+      
+      console.log(`User ${userId} (${user.username}) has been permanently deleted by admin`);
+      res.json({ message: "User deleted permanently", deletedUser: { id: user.id, username: user.username } });
+    } catch (error) {
+      console.error("Delete user error:", error);
+      res.status(500).json({ message: "Failed to delete user" });
     }
   });
 
