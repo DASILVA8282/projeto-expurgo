@@ -693,7 +693,6 @@ export default function Character() {
 
           {/* Character Motivations */}
           <div className="lg:col-span-3">
-            ```python
             <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
                 <CharacterMotivations 
