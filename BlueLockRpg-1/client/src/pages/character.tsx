@@ -276,6 +276,30 @@ export default function Character() {
     setFormData(prev => ({ ...prev, [skillName]: value }));
   };
 
+  // Origin bonuses mapping
+  const originBonuses = {
+    "prodigio": { intelecto: 3 },
+    "jogador-estudantil": { velocidade: 3 },
+    "herdeiro": { carisma: 3 },
+    "miseravel": { fisico: 3 },
+    "familia-esportista": { egoismo: 3 },
+    "incompreendido": { egoismo: 3 },
+    "jogador-de-base": { velocidade: 3 },
+    "preguicoso": { intelecto: 3 },
+    "fracassado": { egoismo: 3 },
+    "bicho-do-mato": { fisico: 3 },
+    "monge": { intelecto: 3 },
+    "arruinado": { egoismo: 3 },
+    "esforcado": { fisico: 3 }
+  };
+
+  // Get origin bonus for current selected origin
+  const getOriginBonus = (attributeName: string) => {
+    if (!formData.origin) return 0;
+    const bonus = originBonuses[formData.origin as keyof typeof originBonuses];
+    return bonus?.[attributeName as keyof typeof bonus] || 0;
+  };
+
   // Calculate remaining attribute points
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
   const remainingAttributePoints = 18 - totalAttributes;
@@ -720,6 +744,9 @@ export default function Character() {
                         { name: "carisma", displayName: "CARISMA", description: "Como lida com a fama, fãs e relações fora de campo", value: formData.carisma },
                         { name: "egoismo", displayName: "EGOÍSMO", description: "Sua ambição individual — a fome de ser o número 1", value: formData.egoismo }
                       ].map((attr) => {
+                        const originBonus = getOriginBonus(attr.name);
+                        const totalValue = attr.value + originBonus;
+                        
                         return (
                         <div key={attr.name} className="bg-red-800/20 border border-red-700/30 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -742,17 +769,36 @@ export default function Character() {
                                 -
                               </Button>
 
-                              <div className="flex items-center gap-1 min-w-[200px] justify-center flex-wrap">
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dot) => (
-                                  <div
-                                    key={dot}
-                                    className={`w-3 h-3 rounded-full border-2 ${
-                                      dot <= attr.value
-                                        ? "bg-red-500 border-red-500"
-                                        : "border-red-700/50"
-                                    }`}
-                                  />
-                                ))}
+                              <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-center gap-1 min-w-[200px] justify-center flex-wrap">
+                                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dot) => (
+                                    <div
+                                      key={dot}
+                                      className={`w-3 h-3 rounded-full border-2 ${
+                                        dot <= attr.value
+                                          ? "bg-red-500 border-red-500"
+                                          : "border-red-700/50"
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                                
+                                {/* Origin Bonus Display */}
+                                {originBonus > 0 && (
+                                  <div className="flex items-center gap-1">
+                                    <div className="text-xs text-yellow-400 font-oswald font-bold">
+                                      +{originBonus} ORIGEM
+                                    </div>
+                                    <div className="flex gap-1">
+                                      {Array.from({ length: originBonus }).map((_, i) => (
+                                        <div
+                                          key={i}
+                                          className="w-2 h-2 rounded-full bg-yellow-400 border border-yellow-300"
+                                        />
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
 
                               <Button
@@ -769,7 +815,12 @@ export default function Character() {
 
                           <div className="text-center">
                             <span className="font-bebas text-xl text-red-400">
-                              NÍVEL {attr.value}
+                              NÍVEL {totalValue}
+                              {originBonus > 0 && (
+                                <span className="text-sm text-yellow-400 ml-2">
+                                  ({attr.value} + {originBonus})
+                                </span>
+                              )}
                             </span>
                           </div>
                         </div>
