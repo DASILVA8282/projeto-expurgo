@@ -58,7 +58,135 @@ export default function Character() {
 
   console.log("Query status:", { character, isLoading, error, user: !!user });
 
-  const [formData, setFormData({
+  const [formData, setFormData] = useState({
+    name: "",
+    position: "Atacante",
+    motivacao: "",
+    age: "",
+    height: "",
+    bio: "",
+    weapon: "",
+    origin: "",
+    classe: "",
+    subclasse: "",
+    fisico: 0,
+    velocidade: 0,
+    intelecto: 0,
+    carisma: 0,
+    egoismo: 0,
+    chute: 0,
+    precisao: 0,
+    roubo: 0,
+    analise: 0,
+    determinacao: 0,
+    estrategia: 0,
+    intuicao: 0,
+    interacao_social: 0,
+    lingua_estrangeira: 0,
+    corrida: 0,
+    cruzamento: 0,
+    defesa: 0,
+    drible: 0,
+    passe: 0,
+    performance: 0,
+    comemoracao: 0,
+    fortitude: 0,
+    finta: 0,
+    furtividade: 0,
+    iniciativa: 0,
+    percepcao: 0,
+    sorte: 0,
+    dominio: 0,
+    cabeceio: 0,
+    interceptacao: 0,
+    reacao: 0,
+    flowColor: "cyan",
+    flowPhrase: "É hora de dominar o campo!",
+    fama: 0,
+    adrenalina: 0,
+    aura: 0,
+    furia: 0,
+  });
+
+  console.log("Query status:", { character, isLoading, error, user: !!user });
+
+  const [showCesarMonitor, setShowCesarMonitor] = useState(false);
+
+  // Mutations
+  const createCharacterMutation = useMutation({
+    mutationFn: async (characterData: any) => {
+      const response = await apiRequest("POST", "/api/characters", characterData);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Personagem criado!",
+        description: "Seu sobrevivente foi criado com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: "Falha ao criar personagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateCharacterMutation = useMutation({
+    mutationFn: async (characterData: any) => {
+      const response = await apiRequest("PATCH", "/api/characters/me", characterData);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Personagem atualizado!",
+        description: "Suas alterações foram salvas.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar personagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const uploadAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const response = await fetch('/api/characters/me/avatar', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Avatar atualizado!",
+        description: "Sua imagem foi salva com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: () => {
+      toast({
+        title: "Erro no upload",
+        description: "Falha ao enviar a imagem",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Load character data into form when available
+  useEffect(() => {
+    if (character) {
+      setFormData({
         name: character.name || "",
         position: character.position || "Atacante",
         motivacao: character.motivacao || "",
@@ -174,7 +302,7 @@ export default function Character() {
 
   // Calculate remaining attribute points
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = 15 - totalAttributes;
+  const remainingAttributePoints = 18 - totalAttributes;
 
   // Helper function for flow color preview
   const getFlowPreviewColor = (color: string) => {
@@ -565,6 +693,7 @@ export default function Character() {
 
           {/* Character Motivations */}
           <div className="lg:col-span-3">
+            ```python
             <Card className="bg-gray-900 border-2 border-red-600 hud-corner">
               <CardContent className="p-6">
                 <CharacterMotivations 
@@ -714,7 +843,7 @@ export default function Character() {
                 <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
                     <span className="font-oswald font-bold text-red-400">ATRIBUTOS DISTRIBUÍDOS:</span>
-                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/15</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/18</span>
                   </div>
                   {remainingAttributePoints === 0 && (
                     <p className="text-gray-300 font-oswald text-sm mt-2 text-center">
