@@ -231,9 +231,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/ranking/public", requireAuth, async (req, res) => {
     try {
       const users = await storage.getAllUsersWithCharacters();
-      // Filter only users with characters and remove passwords
+      // Filter only users with characters, exclude admins, and remove passwords
       const usersWithCharacters = users
-        .filter(user => user.character)
+        .filter(user => user.character && !user.isAdmin)
         .map(({ password, ...user }) => user)
         .sort((a, b) => (a.character?.ranking || 300) - (b.character?.ranking || 300));
       res.json(usersWithCharacters);
@@ -557,6 +557,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Update character rank error:", error);
       res.status(500).json({ message: "Failed to update character rank" });
+    }
+  });
+
+  // Admin route to calculate automatic ranking
+  app.post("/api/admin/character/:userId/calculate-rank", requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Check if character exists
+      const character = await storage.getCharacter(userId);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+
+      // Simple ranking calculation based on stats and performance
+      const baseRank = 300;
+      let rankReduction = 0;
+
+      // Factor in goals (each goal reduces rank by 5)
+      rankReduction += character.goals * 5;
+      
+      // Factor in matches (each match reduces rank by 1)
+      rankReduction += character.matches * 1;
+      
+      // Factor in level (each level above 1 reduces rank by 3)
+      rankReduction += (character.level - 1) * 3;
+      
+      // Factor in key stats (total physical stats above 20 gives bonus)
+      const totalPhysicalStats = (character.fisico || 0) + (character.velocidade || 0);
+      if (totalPhysicalStats > 20) {
+        rankReduction += Math.floor((totalPhysicalStats - 20) / 2);
+      }
+      
+      // Calculate final ranking (minimum rank 1)
+      const calculatedRank = Math.max(1, baseRank - rankReduction);
+      
+      const updatedCharacter = await storage.updateCharacter(userId, { ranking: calculatedRank });
+      res.json({ ranking: calculatedRank, character: updatedCharacter });
+    } catch (error) {
+      console.error("Calculate character rank error:", error);
+      res.status(500).json({ message: "Failed to calculate character rank" });
     }
   });
 
