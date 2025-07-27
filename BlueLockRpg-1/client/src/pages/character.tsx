@@ -278,7 +278,7 @@ export default function Character() {
 
   // Calculate remaining attribute points
   const totalAttributes = formData.fisico + formData.velocidade + formData.intelecto + formData.carisma + formData.egoismo;
-  const remainingAttributePoints = 15 - totalAttributes;
+  const remainingAttributePoints = 18 - totalAttributes;
 
   // Helper function for flow color preview
   const getFlowPreviewColor = (color: string) => {
@@ -719,7 +719,8 @@ export default function Character() {
                         { name: "intelecto", displayName: "INTELECTO", description: "Estratégia, leitura de jogo e tomada de decisão", value: formData.intelecto },
                         { name: "carisma", displayName: "CARISMA", description: "Como lida com a fama, fãs e relações fora de campo", value: formData.carisma },
                         { name: "egoismo", displayName: "EGOÍSMO", description: "Sua ambição individual — a fome de ser o número 1", value: formData.egoismo }
-                      ].map((attr) => (
+                      ].map((attr) => {
+                        return (
                         <div key={attr.name} className="bg-red-800/20 border border-red-700/30 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-3">
                             <div>
@@ -772,7 +773,8 @@ export default function Character() {
                             </span>
                           </div>
                         </div>
-                      ))}
+                      );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -781,7 +783,7 @@ export default function Character() {
                 <div className="mt-6 p-4 bg-gray-800 rounded-lg border-2 border-red-500">
                   <div className="flex justify-between items-center">
                     <span className="font-oswald font-bold text-red-400">ATRIBUTOS DISTRIBUÍDOS:</span>
-                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/15</span>
+                    <span className="font-bebas text-lg font-bold text-red-400">{totalAttributes}/18</span>
                   </div>
                   {remainingAttributePoints === 0 && (
                     <p className="text-gray-300 font-oswald text-sm mt-2 text-center">
