@@ -58,7 +58,7 @@ const ORIGINS = [
     description: "Sempre solitário; o futebol era o único amigo."
   },
   {
-    id: "jogador-base",
+    id: "jogador-de-base",
     name: "Jogador de Base",
     emoji: "⚽",
     attribute: "+3 VEL",
@@ -82,7 +82,7 @@ const ORIGINS = [
     description: "Ignorado, desacreditado — o Projeto Expurgo é sua chance."
   },
   {
-    id: "bicho-mato",
+    id: "bicho-do-mato",
     name: "Bicho do Mato",
     emoji: "🌲",
     attribute: "+3 FÍS",
