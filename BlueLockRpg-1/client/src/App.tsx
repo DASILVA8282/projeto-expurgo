@@ -9,10 +9,11 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Character from "@/pages/character";
-import Admin from "@/pages/admin";
+import Ranking from "@/pages/ranking";
 import Match from "@/pages/match";
 import Guide from "@/pages/guide";
 import WeaponsManual from "@/pages/weapons-manual";
+import Admin from "@/pages/admin";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -69,7 +70,7 @@ function Router() {
         <>
           <Route path="/" component={Dashboard} />
           <Route path="/character" component={Character} />
-          <Route path="/admin" component={Admin} />
+          <Route path="/ranking" component={Ranking} />
           <Route path="/match" component={Match} />
           <Route path="/guide" component={Guide} />
           <Route path="/weapons-manual" component={WeaponsManual} />
