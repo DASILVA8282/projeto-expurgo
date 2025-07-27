@@ -31,7 +31,7 @@ export const characters = pgTable("characters", {
   experience: integer("experience").default(0).notNull(),
   matches: integer("matches").default(0).notNull(),
   goals: integer("goals").default(0).notNull(),
-  ranking: integer("ranking").default(299).notNull(),
+  ranking: integer("ranking").default(300).notNull(),
   isEliminated: boolean("is_eliminated").default(false).notNull(),
   // Novos Atributos
   fisico: integer("fisico").default(0).notNull(),
