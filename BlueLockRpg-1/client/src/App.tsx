@@ -72,6 +72,7 @@ function Router() {
           <Route path="/character" component={Character} />
           <Route path="/ranking" component={Ranking} />
           <Route path="/match" component={Match} />
+          <Route path="/admin" component={Admin} />
           <Route path="/guide" component={Guide} />
           <Route path="/weapons-manual" component={WeaponsManual} />
         </>
