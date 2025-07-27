@@ -232,27 +232,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("User ID from session:", req.session.userId);
       console.log("Received character data:", req.body);
       
-      const characterData = insertCharacterSchema.parse({
-        ...req.body,
-        userId: req.session.userId,
-      });
-      
-      // Auto-assign random ranking between 250-300
-      const randomRanking = Math.floor(Math.random() * 51) + 250; // 250-300
-      characterData.ranking = randomRanking;
-      
-      console.log("Parsed character data with auto-ranking:", characterData);
-
-      // Check if user already has a character
+      // Check if user already has a character first
       const existingCharacter = await storage.getCharacter(req.session.userId!);
       if (existingCharacter) {
         console.log("RENDER DEBUG: Character already exists for user");
         return res.status(400).json({ message: "Character already exists for this user" });
       }
+      
+      const characterData = insertCharacterSchema.parse({
+        ...req.body,
+        userId: req.session.userId,
+      });
+      
+      // Auto-assign random ranking between 250-300 ONLY for new characters
+      const randomRanking = Math.floor(Math.random() * 51) + 250; // 250-300
+      characterData.ranking = randomRanking;
+      
+      console.log("Parsed character data with auto-ranking:", characterData);
+      console.log("RENDER DEBUG: Assigning random ranking:", randomRanking);
 
       console.log("RENDER DEBUG: Creating character in database...");
       const character = await storage.createCharacter(characterData);
-      console.log("RENDER DEBUG: Character created successfully:", character);
+      console.log("RENDER DEBUG: Character created successfully with ranking:", character.ranking);
       res.json(character);
     } catch (error) {
       console.error("=== RENDER DEBUG: CREATE CHARACTER ERROR ===");
