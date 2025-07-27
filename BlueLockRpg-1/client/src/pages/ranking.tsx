@@ -31,15 +31,11 @@ export default function Ranking() {
   };
 
   const getRankColor = (rank: number) => {
-    if (rank <= 260) return "text-yellow-400"; // Top tier
-    if (rank <= 280) return "text-red-400";    // High tier
-    return "text-gray-400";                    // Standard tier
+    return "text-red-400"; // Unified color for all player ranks
   };
 
   const getRankBadgeStyle = (rank: number) => {
-    if (rank <= 260) return "bg-gradient-to-r from-yellow-500 to-yellow-600 border-yellow-400";
-    if (rank <= 280) return "bg-gradient-to-r from-red-500 to-red-600 border-red-400";
-    return "bg-gradient-to-r from-gray-500 to-gray-600 border-gray-400";
+    return "bg-gradient-to-r from-red-500 to-red-600 border-red-400"; // Unified style for all player ranks
   };
 
   if (isLoading) {
@@ -212,12 +208,7 @@ export default function Ranking() {
                                 #{user.character.ranking}
                               </div>
                             </div>
-                            {/* Rank decoration for top players */}
-                            {user.character.ranking <= 260 && (
-                              <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center border-2 border-yellow-300">
-                                <i className="fas fa-crown text-xs text-black"></i>
-                              </div>
-                            )}
+                            
                           </div>
 
                           {/* Character Info */}
@@ -288,23 +279,9 @@ export default function Ranking() {
 
               {/* Footer Info */}
               <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                      <span className="text-gray-400 font-oswald">Rank 250-260: Elite</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                      <span className="text-gray-400 font-oswald">Rank 261-280: Veterano</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-                      <span className="text-gray-400 font-oswald">Rank 281-300: Iniciante</span>
-                    </div>
-                  </div>
-                  <div className="text-gray-500 font-oswald text-xs">
-                    Sistema atualizado automaticamente
+                <div className="flex items-center justify-center">
+                  <div className="text-gray-500 font-oswald text-sm text-center">
+                    Rankings são atribuídos automaticamente e gerenciados pelo sistema
                   </div>
                 </div>
               </div>
