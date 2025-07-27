@@ -12,6 +12,7 @@ export interface IStorage {
   getUserWithCharacter(id: number): Promise<UserWithCharacter | undefined>;
   getAllUsersWithCharacters(): Promise<UserWithCharacter[]>;
   markCesarMonitorSeen(userId: number): Promise<void>;
+  deleteUserPermanently(userId: number): Promise<void>;
 
   // Character operations
   getCharacter(userId: number): Promise<Character | undefined>;
@@ -162,6 +163,39 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCharacter(userId: number): Promise<void> {
     await db.delete(characters).where(eq(characters.userId, userId));
+  }
+
+  async deleteUserPermanently(userId: number): Promise<void> {
+    console.log(`=== DELETING USER ${userId} PERMANENTLY ===`);
+    
+    try {
+      // Delete all related records in order (foreign key constraints)
+      
+      // 1. Delete Flow States
+      await db.delete(flowStates).where(eq(flowStates.playerId, userId));
+      console.log(`Deleted flow states for user ${userId}`);
+      
+      // 2. Delete Goals
+      await db.delete(goals).where(eq(goals.playerId, userId));
+      console.log(`Deleted goals for user ${userId}`);
+      
+      // 3. Delete Wild Card Invitations
+      await db.delete(wildCardInvitations).where(eq(wildCardInvitations.userId, userId));
+      console.log(`Deleted wild card invitations for user ${userId}`);
+      
+      // 4. Delete Character
+      await db.delete(characters).where(eq(characters.userId, userId));
+      console.log(`Deleted character for user ${userId}`);
+      
+      // 5. Finally delete the User
+      await db.delete(users).where(eq(users.id, userId));
+      console.log(`Deleted user ${userId}`);
+      
+      console.log(`=== USER ${userId} COMPLETELY DELETED ===`);
+    } catch (error) {
+      console.error(`Error deleting user ${userId}:`, error);
+      throw new Error(`Failed to delete user permanently: ${error}`);
+    }
   }
 
   async getEliminatedCharacters(): Promise<Character[]> {
