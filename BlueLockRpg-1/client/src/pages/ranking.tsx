@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
@@ -208,7 +207,7 @@ export default function Ranking() {
                                 #{user.character.ranking}
                               </div>
                             </div>
-                            
+
                           </div>
 
                           {/* Character Info */}
@@ -292,3 +291,8 @@ export default function Ranking() {
     </div>
   );
 }
+// Filter only users with characters and remove passwords
+      const usersWithCharacters = users
+        .filter(user => user.character)
+        .map(({ password, ...user }) => user)
+        .sort((a, b) => (a.character?.ranking || 300) - (b.character?.ranking || 300));
