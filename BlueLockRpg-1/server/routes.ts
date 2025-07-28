@@ -37,14 +37,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   }));
 
+  // Ensure uploads directory exists
+  const fs = require('fs');
+  const uploadsDir = 'public/uploads/avatars';
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log("Created uploads directory:", uploadsDir);
+  }
+
   // Multer configuration for file uploads
   const storage_multer = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'public/uploads/avatars');
+      console.log("Multer destination check - uploads dir exists:", fs.existsSync(uploadsDir));
+      cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
+      const filename = 'avatar-' + uniqueSuffix + path.extname(file.originalname);
+      console.log("Generated filename:", filename);
+      cb(null, filename);
     }
   });
 
@@ -52,10 +63,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     storage: storage_multer,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
+      console.log("File filter check:", { mimetype: file.mimetype, originalname: file.originalname });
       if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
         cb(null, true);
       } else {
-        cb(new Error('Only PNG and JPEG images are allowed'));
+        const error = new Error('Apenas imagens PNG e JPEG são permitidas');
+        error.code = 'INVALID_FILE_TYPE';
+        cb(error);
       }
     }
   });
@@ -198,7 +212,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Avatar upload route
-  app.post("/api/characters/avatar", requireAuth, upload.single('avatar'), async (req, res) => {
+  app.post("/api/characters/avatar", requireAuth, (req, res, next) => {
+    upload.single('avatar')(req, res, (err) => {
+      if (err) {
+        console.error("Multer upload error:", err);
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({ message: "Arquivo muito grande. Máximo 5MB permitido." });
+        }
+        if (err.code === 'INVALID_FILE_TYPE') {
+          return res.status(400).json({ message: err.message });
+        }
+        return res.status(400).json({ message: "Erro no upload: " + err.message });
+      }
+      next();
+    });
+  }, async (req, res) => {
     try {
       console.log("Avatar upload attempt - User ID:", req.session.userId);
       console.log("File received:", req.file ? { filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype } : "No file");
@@ -236,7 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Falha no upload da imagem" });
     }
   });
-  
+
   // Public ranking route
   app.get("/api/ranking/public", requireAuth, async (req, res) => {
     try {
