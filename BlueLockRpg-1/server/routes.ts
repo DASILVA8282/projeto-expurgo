@@ -4,6 +4,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import multer from "multer";
 import path from "path";
 import express from "express";
+import fs from "fs";
 import { storage } from "./storage";
 import { insertUserSchema, insertCharacterSchema, updateCharacterSchema, insertWildCardInvitationSchema, updateWildCardInvitationSchema, insertMatchSchema, updateMatchSchema, insertGoalSchema } from "@shared/schema";
 import bcrypt from "bcrypt";
@@ -38,7 +39,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }));
 
   // Ensure uploads directory exists
-  const fs = require('fs');
   const uploadsDir = 'public/uploads/avatars';
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
