@@ -164,8 +164,10 @@ export default function Character() {
         body: formData,
         credentials: 'include',
       });
-      if (!response.ok) throw new Error('Upload failed');
-      return response.json();
+ if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new Error(errorData.message || 'Upload failed');
+      }      return response.json();
     },
     onSuccess: () => {
       toast({
