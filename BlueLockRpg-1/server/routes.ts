@@ -200,22 +200,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Avatar upload route
   app.post("/api/characters/avatar", requireAuth, upload.single('avatar'), async (req, res) => {
     try {
+      console.log("Avatar upload attempt - User ID:", req.session.userId);
+      console.log("File received:", req.file ? { filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype } : "No file");
+      
       if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
+        console.log("No file uploaded");
+        return res.status(400).json({ message: "Nenhum arquivo foi enviado" });
       }
 
       const avatarUrl = `/uploads/avatars/${req.file.filename}`;
+      console.log("Generated avatar URL:", avatarUrl);
       
       // Update character with new avatar URL
       const character = await storage.getCharacter(req.session.userId!);
       if (!character) {
-        return res.status(404).json({ message: "Character not found" });
+        console.log("Character not found for user:", req.session.userId);
+        return res.status(404).json({ message: "Personagem não encontrado" });
       }
 
       const updatedCharacter = await storage.updateCharacter(req.session.userId!, {
         avatar: avatarUrl
       });
 
+      console.log("Avatar upload successful for user:", req.session.userId);
       res.json({ 
         success: true, 
         avatarUrl: avatarUrl,
@@ -223,10 +230,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error("Avatar upload error:", error);
-      res.status(500).json({ message: "Upload failed" });
+      if (error instanceof Error && error.message.includes('Only PNG and JPEG images are allowed')) {
+        return res.status(400).json({ message: "Apenas imagens PNG e JPEG são permitidas" });
+      }
+      res.status(500).json({ message: "Falha no upload da imagem" });
     }
   });
-
+  
   // Public ranking route
   app.get("/api/ranking/public", requireAuth, async (req, res) => {
     try {
