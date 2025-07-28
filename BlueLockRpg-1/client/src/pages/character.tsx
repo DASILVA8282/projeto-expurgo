@@ -157,17 +157,34 @@ export default function Character() {
 
   const uploadAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
+      console.log("Starting avatar upload:", { name: file.name, size: file.size, type: file.type });
+      
       const formData = new FormData();
       formData.append('avatar', file);
-      const response = await fetch('/api/characters/me/avatar', {
+      
+      const response = await fetch('/api/characters/avatar', {
         method: 'POST',
         body: formData,
         credentials: 'include',
       });
- if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+      
+      console.log("Upload response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Upload error response:", errorText);
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: `Erro ${response.status}: ${errorText || 'Upload failed'}` };
+        }
         throw new Error(errorData.message || 'Upload failed');
-      }      return response.json();
+      }
+      
+      const result = await response.json();
+      console.log("Upload successful:", result);
+      return result;
     },
     onSuccess: () => {
       toast({
@@ -176,10 +193,11 @@ export default function Character() {
       });
       queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
     },
-    onError: () => {
+    onError: (error: Error) => {
+      console.error("Upload mutation error:", error);
       toast({
         title: "Erro no upload",
-        description: "Falha ao enviar a imagem",
+        description: error.message || "Falha ao enviar a imagem",
         variant: "destructive",
       });
     },
