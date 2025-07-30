@@ -1348,7 +1348,7 @@ export default function Character() {
 
                    <div>
                     <Label className="block text-purple-400 font-bebas text-lg tracking-wider mb-3">
-                      LINK DA MÚSICA (YouTube)
+                      LINK DA MÚSICA DE FLOW STATE
                     </Label>
                     <Input
                       type="text"
@@ -1356,9 +1356,11 @@ export default function Character() {
                       value={formData.flowMusicUrl}
                       onChange={handleInputChange}
                       className="w-full bg-slate-800 border-2 border-slate-700 focus:border-purple-500 text-white h-12 text-lg font-oswald"
-                      placeholder="Cole aqui o link do YouTube"
+                      placeholder="Cole aqui o link direto do áudio (.mp3, .wav, .ogg)"
                     />
                     <p className="text-slate-500 text-sm mt-2 font-oswald italic">
+                      Use links diretos de arquivos de áudio para melhor compatibilidade. Exemplos: arquivo.mp3, arquivo.wav
+                    </p>
                       Esta música tocará para todos durante seu Flow State
                     </p>
                   </div>
