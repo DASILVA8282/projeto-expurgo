@@ -1817,16 +1817,7 @@ export default function Match() {
       <FlowStateMusic
         isActive={!!activeFlowState?.isActive}
         musicUrl={activeFlowState?.flowMusicUrl || ""}
-      />green-400 font-bold mt-2">MUSIC SYSTEM</div>
-          <div>Music URL: {activeFlowState?.flowMusicUrl ? 'TEM URL' : 'SEM URL'}</div>
-          <div>Music URL Length: {activeFlowState?.flowMusicUrl?.length || 0}</div>
-          <div>Is YouTube URL: {activeFlowState?.flowMusicUrl ? (activeFlowState.flowMusicUrl.includes('youtube.com') || activeFlowState.flowMusicUrl.includes('youtu.be') ? 'SIM' : 'NÃO') : 'N/A'}</div>
-          <div>Music Should Play: {(!!activeFlowState && activeFlowState.isActive && !!activeFlowState.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== "") ? 'SIM' : 'NÃO'}</div>
-          <div className="text-blue-400 font-bold mt-2">UI STATES</div>
-          <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
-          <div>Vignette Active: {(userFlowState?.isActive && !showFlowCutscene) ? 'SIM' : 'NÃO'}</div>
-        </div>
-      )}
+      />
     </div>
   );
 }
