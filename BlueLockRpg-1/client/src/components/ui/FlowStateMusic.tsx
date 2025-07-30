@@ -99,6 +99,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       console.log('Creating new YouTube player instance');
       setIsLoading(true);
       setError(null);
+      setIsPlaying(false);
 
       // Limpar container
       containerRef.current.innerHTML = '';
@@ -128,11 +129,13 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
           start: 0,
           playsinline: 1,
           enablejsapi: 1,
-          origin: window.location.origin
+          origin: window.location.origin,
+          mute: 0 // Garantir que não está mutado
         },
         events: {
           onReady: (event: any) => {
             console.log('YouTube player ready - starting music');
+            console.log('Player instance created successfully');
             setIsLoading(false);
             playerInstanceRef.current = event.target;
             currentMusicUrlRef.current = videoUrl;
@@ -140,13 +143,21 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
             try {
               // Definir volume alto
               event.target.setVolume(100);
-              // Iniciar reprodução imediatamente
-              event.target.playVideo();
-              console.log('Music playback started successfully');
-              setIsPlaying(true);
+              event.target.unMute(); // Garantir que não está mutado
+              
+              // Aguardar um momento antes de iniciar reprodução
+              setTimeout(() => {
+                try {
+                  event.target.playVideo();
+                  console.log('Music playback command sent successfully');
+                } catch (playError) {
+                  console.error('Error in delayed playback:', playError);
+                }
+              }, 200);
+              
             } catch (e) {
-              console.error('Error starting playback:', e);
-              setError('Erro ao iniciar reprodução');
+              console.error('Error in onReady setup:', e);
+              setError('Erro ao configurar reprodução');
             }
           },
           onStateChange: (event: any) => {
@@ -244,37 +255,39 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     console.log('- current player instance exists:', !!playerInstanceRef.current);
     console.log('- current music URL in ref:', currentMusicUrlRef.current);
 
-    if (isActive && musicUrl && musicUrl.trim() !== "") {
-      console.log('✅ Flow State music should start playing');
+    // Condição mais rigorosa para tocar música
+    if (isActive && musicUrl && musicUrl.trim() !== "" && (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be'))) {
+      console.log('✅ Flow State music should start playing - all conditions met');
       
       // Se já temos um player com a mesma URL, garantir que está tocando
       if (playerInstanceRef.current && currentMusicUrlRef.current === musicUrl) {
         console.log('Player exists with same URL - ensuring it plays');
         try {
           playerInstanceRef.current.playVideo();
+          setIsPlaying(true);
         } catch (e) {
           console.warn('Error resuming existing player:', e);
+          // Se falhar, recriar o player
+          destroyPlayer();
+          setTimeout(() => createPlayer(musicUrl), 100);
         }
         return;
       }
 
-      // Destruir player existente se URL mudou
-      if (playerInstanceRef.current && currentMusicUrlRef.current !== musicUrl) {
-        console.log('Music URL changed - destroying old player');
+      // Destruir player existente se URL mudou ou não existe
+      if (playerInstanceRef.current) {
+        console.log('Destroying existing player to create new one');
         destroyPlayer();
       }
 
-      // Criar novo player após um pequeno delay
+      // Criar novo player imediatamente
       console.log('Creating new player for Flow State music');
-      const timer = setTimeout(() => {
-        createPlayer(musicUrl);
-      }, 100);
-      
-      return () => clearTimeout(timer);
+      createPlayer(musicUrl);
 
     } else {
       // Flow State desativado - destruir player
-      console.log('Flow State deactivated - destroying player');
+      console.log('Flow State deactivated or invalid URL - destroying player');
+      console.log('- Reason: isActive =', isActive, ', musicUrl =', !!musicUrl, ', isYouTube =', musicUrl ? (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) : false);
       destroyPlayer();
     }
   }, [isActive, musicUrl]);
@@ -305,8 +318,13 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     return () => clearInterval(interval);
   }, [isActive, musicUrl, isPlaying, isLoading, error]);
 
-  if (!isActive || !musicUrl || musicUrl.trim() === "") {
-    console.log('FlowStateMusic not rendering - isActive:', isActive, 'musicUrl:', !!musicUrl);
+  // Só renderizar se Flow State está ativo E tem URL válida do YouTube
+  if (!isActive || !musicUrl || musicUrl.trim() === "" || (!musicUrl.includes('youtube.com') && !musicUrl.includes('youtu.be'))) {
+    console.log('FlowStateMusic not rendering');
+    console.log('- isActive:', isActive);
+    console.log('- musicUrl exists:', !!musicUrl);
+    console.log('- musicUrl trimmed:', musicUrl ? musicUrl.trim() : 'empty');
+    console.log('- is YouTube URL:', musicUrl ? (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) : false);
     return null;
   }
 
