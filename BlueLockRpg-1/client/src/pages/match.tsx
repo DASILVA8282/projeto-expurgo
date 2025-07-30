@@ -237,13 +237,23 @@ export default function Match() {
     // Flow State ativado
     if (lastMessage?.type === "flow_state_activated") {
       console.log("🔥 Flow State ativado via WebSocket:", lastMessage);
+      console.log("🔥 WebSocket message breakdown:");
+      console.log("- playerName:", lastMessage.playerName);
+      console.log("- flowColor:", lastMessage.flowColor);
+      console.log("- flowPhrase:", lastMessage.flowPhrase);
+      console.log("- flowMusicUrl:", lastMessage.flowMusicUrl);
+      console.log("- flowMusicUrl type:", typeof lastMessage.flowMusicUrl);
+      console.log("- flowMusicUrl length:", lastMessage.flowMusicUrl?.length || 0);
       
       setFlowPlayerName(lastMessage.playerName || "");
       setFlowColor(lastMessage.flowColor || "red");
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
-      setFlowMusicUrl(lastMessage.flowMusicUrl || "");
       
-      console.log("🎵 Flow State music URL recebida:", lastMessage.flowMusicUrl);
+      const musicUrl = lastMessage.flowMusicUrl || "";
+      console.log("🎵 Setting flowMusicUrl state to:", musicUrl);
+      setFlowMusicUrl(musicUrl);
+      
+      console.log("🎵 Flow State music URL recebida via WebSocket:", musicUrl);
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id) {
@@ -1809,8 +1819,8 @@ export default function Match() {
 
       {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={!!activeFlowState?.isActive}
-        musicUrl={activeFlowState?.flowMusicUrl || ""}
+        isActive={isInFlowState || !!activeFlowState?.isActive}
+        musicUrl={flowMusicUrl || activeFlowState?.flowMusicUrl || ""}
       />
     </div>
   );
