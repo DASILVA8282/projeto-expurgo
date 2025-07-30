@@ -801,7 +801,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enviar introdução sequencial para todos os usuários conectados
       if (playersWithCharacters.length > 0) {
         console.log("=== SENDING WEBSOCKET MESSAGE ===");
-```
         console.log("Sending to", matchPageConnections.size, "connections");
 
         const message = {
