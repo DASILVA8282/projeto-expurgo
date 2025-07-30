@@ -301,28 +301,6 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 1.1 }}
                   >
-                    PROTOCOLO DE SELEÇÃO GENÉTICA
-                  </motion.h2>
-
-                  {/* Letter content - scientific style */}
-                  <motion.div 
-                    className="space-y-3 text-justify text-xs"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 1.3 }}
-                  >
-                    <p>
-                      <span className="font-bold text-red-600">[SUBJECT: GENETIC SELECTION CANDIDATE]</span>
-                    </p>
-
-                    <p className="leading-relaxed">
-                      Nossa análise biométrica identificou em seu perfil genético marcadores únicos de <strong>potencial atlético excepcional</strong>. Os dados coletados indicam uma compatibilidade de <span className="text-red-600 font-bold">97.3%</span> com os parâmetros do Projeto Expurgo.
-                    </p>
-
-                    <p className="leading-relaxed">
-                      Esta não é uma convocação aleatória. Seus índices de <strong>capacidade cardiopulmonar</strong>, <strong>densidade muscular</strong> e <strong>coordenação neuromotora</strong> estão dentro dos percentis superiores da população brasileira.
-                    </p>
-
                     <div className="bg-red-50 border-l-4 border-red-600 p-2 my-3">
                       <p className="text-red-800 font-bold text-xs">
                         LOCALIZAÇÃO: Centro de Excelência Eclipse<br/>
@@ -331,11 +309,6 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                         TRANSPORTE: Fornecido pela organização
                       </p>
                     </div>
-
-                    <p className="leading-relaxed">
-                      O protocolo de seleção envolve <strong>testes psicofísicos avançados</strong> para identificar os espécimes mais aptos. Somente indivíduos com capacidades excepcionais serão integrados ao programa.
-                    </p>
-
                     <p className="text-red-600 font-bold text-center border border-red-600 p-2 bg-red-50">
                       COMPAREÇA APENAS COM DOCUMENTOS DE IDENTIFICAÇÃO
                     </p>
