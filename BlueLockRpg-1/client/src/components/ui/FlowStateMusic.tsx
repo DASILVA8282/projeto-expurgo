@@ -232,10 +232,17 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
 
   // Effect principal
   useEffect(() => {
-    console.log('FlowStateMusic effect - isActive:', isActive, 'musicUrl:', musicUrl);
+    console.log('=== FLOW STATE MUSIC COMPONENT DEBUG ===');
+    console.log('FlowStateMusic effect triggered');
+    console.log('- isActive:', isActive);
+    console.log('- musicUrl received:', musicUrl);
+    console.log('- musicUrl type:', typeof musicUrl);
+    console.log('- musicUrl length:', musicUrl ? musicUrl.length : 0);
+    console.log('- musicUrl after trim:', musicUrl ? musicUrl.trim() : 'null/undefined');
+    console.log('- should play condition:', isActive && musicUrl && musicUrl.trim() !== "");
 
     if (isActive && musicUrl && musicUrl.trim() !== "") {
-      console.log('Flow State music should start playing');
+      console.log('✅ Flow State music should start playing');
       
       // Se já temos um player com a mesma URL, garantir que está tocando
       if (playerInstanceRef.current && currentMusicUrlRef.current === musicUrl) {
