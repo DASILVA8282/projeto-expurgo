@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useRef, useState } from 'react';
 
 interface FlowStateMusicProps {
@@ -14,6 +13,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const playerInstanceRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const apiLoadedRef = useRef(false);
+  const currentMusicUrlRef = useRef<string>("");
 
   // Extrair ID do YouTube da URL
   const extractYouTubeId = (url: string): string | null => {
@@ -83,175 +83,181 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     });
   };
 
-  // Criar/destruir player baseado no estado
-  useEffect(() => {
-    const createPlayer = async () => {
-      if (!isActive || !musicUrl) {
-        console.log('Cannot create player - not active or no music URL');
+  // Criar player apenas quando necessário
+  const createPlayer = async (videoUrl: string) => {
+    const videoId = extractYouTubeId(videoUrl);
+    if (!videoId) {
+      console.error('Invalid YouTube URL:', videoUrl);
+      setError('URL do YouTube inválida');
+      return;
+    }
+
+    console.log('Creating player for video ID:', videoId);
+
+    try {
+      // Garantir que a API está carregada
+      await ensureYouTubeAPILoaded();
+
+      if (!containerRef.current) {
+        console.error('No container element for player');
         return;
       }
 
-      const videoId = extractYouTubeId(musicUrl);
-      if (!videoId) {
-        console.error('Invalid YouTube URL:', musicUrl);
-        setError('URL do YouTube inválida');
-        return;
-      }
+      console.log('Creating new YouTube player');
+      setIsLoading(true);
+      setError(null);
 
-      console.log('Creating player for video ID:', videoId);
+      // Limpar container
+      containerRef.current.innerHTML = '';
 
-      try {
-        // Garantir que a API está carregada
-        await ensureYouTubeAPILoaded();
+      // Criar um div específico para o player
+      const playerDiv = document.createElement('div');
+      playerDiv.id = `youtube-player-${Date.now()}`;
+      containerRef.current.appendChild(playerDiv);
 
-        // Destruir player existente
-        if (playerInstanceRef.current) {
-          console.log('Destroying existing player');
-          try {
-            playerInstanceRef.current.destroy();
-          } catch (e) {
-            console.warn('Error destroying existing player:', e);
-          }
-          playerInstanceRef.current = null;
-        }
-
-        if (!containerRef.current) {
-          console.error('No container element for player');
-          return;
-        }
-
-        console.log('Creating new YouTube player');
-        setIsLoading(true);
-        setError(null);
-
-        // Limpar container
-        containerRef.current.innerHTML = '';
-
-        // Criar um div específico para o player
-        const playerDiv = document.createElement('div');
-        playerDiv.id = `youtube-player-${Date.now()}`;
-        containerRef.current.appendChild(playerDiv);
-
-        const player = new window.YT.Player(playerDiv, {
-          height: '1',
-          width: '1',
-          videoId: videoId,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            loop: 1,
-            playlist: videoId,
-            modestbranding: 1,
-            rel: 0,
-            showinfo: 0,
-            iv_load_policy: 3,
-            fs: 0,
-            cc_load_policy: 0,
-            disablekb: 1,
-            autohide: 1,
-            start: 0,
-            playsinline: 1,
-            enablejsapi: 1,
-            origin: window.location.origin
-          },
-          events: {
-            onReady: (event: any) => {
-              console.log('Player ready, setting volume and starting playback');
-              setIsLoading(false);
-              playerInstanceRef.current = event.target;
-              
-              try {
-                // Definir volume alto
-                event.target.setVolume(80);
-                // Iniciar reprodução
-                event.target.playVideo();
-                console.log('Playback started successfully');
-              } catch (e) {
-                console.error('Error starting playback:', e);
-                setError('Erro ao iniciar reprodução');
-              }
-            },
-            onStateChange: (event: any) => {
-              console.log('Player state changed:', event.data);
-              const state = event.data;
-              
-              if (state === window.YT.PlayerState.PLAYING) {
-                console.log('Music is now playing');
-                setIsPlaying(true);
-                setError(null);
-                setIsLoading(false);
-              } else if (state === window.YT.PlayerState.PAUSED) {
-                console.log('Music paused');
-                setIsPlaying(false);
-              } else if (state === window.YT.PlayerState.ENDED) {
-                console.log('Music ended, restarting...');
-                // Loop the video
-                event.target.playVideo();
-              } else if (state === window.YT.PlayerState.BUFFERING) {
-                console.log('Music buffering');
-                setIsLoading(true);
-              } else if (state === window.YT.PlayerState.CUED) {
-                console.log('Music cued');
-                setIsLoading(false);
-              }
-            },
-            onError: (event: any) => {
-              console.error('YouTube player error:', event.data);
-              let errorMessage = 'Erro na reprodução';
-              
-              switch (event.data) {
-                case 2:
-                  errorMessage = 'ID do vídeo inválido';
-                  break;
-                case 5:
-                  errorMessage = 'Erro de reprodução HTML5';
-                  break;
-                case 100:
-                  errorMessage = 'Vídeo não encontrado';
-                  break;
-                case 101:
-                case 150:
-                  errorMessage = 'Vídeo não permite reprodução incorporada';
-                  break;
-                default:
-                  errorMessage = `Erro de reprodução: ${event.data}`;
-              }
-              
-              setError(errorMessage);
-              setIsLoading(false);
-              setIsPlaying(false);
+      const player = new window.YT.Player(playerDiv, {
+        height: '1',
+        width: '1',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          loop: 1,
+          playlist: videoId,
+          modestbranding: 1,
+          rel: 0,
+          showinfo: 0,
+          iv_load_policy: 3,
+          fs: 0,
+          cc_load_policy: 0,
+          disablekb: 1,
+          autohide: 1,
+          start: 0,
+          playsinline: 1,
+          enablejsapi: 1,
+          origin: window.location.origin
+        },
+        events: {
+          onReady: (event: any) => {
+            console.log('Player ready, setting volume and starting playback');
+            setIsLoading(false);
+            playerInstanceRef.current = event.target;
+            currentMusicUrlRef.current = videoUrl;
+            
+            try {
+              // Definir volume alto
+              event.target.setVolume(80);
+              // Iniciar reprodução
+              event.target.playVideo();
+              console.log('Playback started successfully');
+            } catch (e) {
+              console.error('Error starting playback:', e);
+              setError('Erro ao iniciar reprodução');
             }
+          },
+          onStateChange: (event: any) => {
+            console.log('Player state changed:', event.data);
+            const state = event.data;
+            
+            if (state === window.YT.PlayerState.PLAYING) {
+              console.log('Music is now playing');
+              setIsPlaying(true);
+              setError(null);
+              setIsLoading(false);
+            } else if (state === window.YT.PlayerState.PAUSED) {
+              console.log('Music paused');
+              setIsPlaying(false);
+            } else if (state === window.YT.PlayerState.ENDED) {
+              console.log('Music ended, restarting...');
+              // Loop the video
+              event.target.playVideo();
+            } else if (state === window.YT.PlayerState.BUFFERING) {
+              console.log('Music buffering');
+              setIsLoading(true);
+            } else if (state === window.YT.PlayerState.CUED) {
+              console.log('Music cued');
+              setIsLoading(false);
+            }
+          },
+          onError: (event: any) => {
+            console.error('YouTube player error:', event.data);
+            let errorMessage = 'Erro na reprodução';
+            
+            switch (event.data) {
+              case 2:
+                errorMessage = 'ID do vídeo inválido';
+                break;
+              case 5:
+                errorMessage = 'Erro de reprodução HTML5';
+                break;
+              case 100:
+                errorMessage = 'Vídeo não encontrado';
+                break;
+              case 101:
+              case 150:
+                errorMessage = 'Vídeo não permite reprodução incorporada';
+                break;
+              default:
+                errorMessage = `Erro de reprodução: ${event.data}`;
+            }
+            
+            setError(errorMessage);
+            setIsLoading(false);
+            setIsPlaying(false);
           }
-        });
-
-      } catch (error) {
-        console.error('Error creating YouTube player:', error);
-        setError('Falha ao criar player de música');
-        setIsLoading(false);
-      }
-    };
-
-    const destroyPlayer = () => {
-      if (playerInstanceRef.current) {
-        console.log('Destroying player due to inactive state');
-        try {
-          playerInstanceRef.current.stopVideo();
-          playerInstanceRef.current.destroy();
-        } catch (e) {
-          console.warn('Error destroying player:', e);
         }
-        playerInstanceRef.current = null;
-        setIsPlaying(false);
-        setIsLoading(false);
-        setError(null);
+      });
+
+    } catch (error) {
+      console.error('Error creating YouTube player:', error);
+      setError('Falha ao criar player de música');
+      setIsLoading(false);
+    }
+  };
+
+  // Destruir player
+  const destroyPlayer = () => {
+    if (playerInstanceRef.current) {
+      console.log('Destroying player');
+      try {
+        playerInstanceRef.current.stopVideo();
+        playerInstanceRef.current.destroy();
+      } catch (e) {
+        console.warn('Error destroying player:', e);
       }
-    };
+      playerInstanceRef.current = null;
+      currentMusicUrlRef.current = "";
+      setIsPlaying(false);
+      setIsLoading(false);
+      setError(null);
+    }
+  };
+
+  // Effect principal - só cria/destrói player quando realmente necessário
+  useEffect(() => {
+    console.log('FlowStateMusic effect triggered:', { isActive, musicUrl, currentUrl: currentMusicUrlRef.current });
 
     if (isActive && musicUrl) {
-      // Delay para garantir que o DOM está pronto
-      const timer = setTimeout(createPlayer, 1000);
+      // Se já temos um player tocando a mesma música, não fazer nada
+      if (playerInstanceRef.current && currentMusicUrlRef.current === musicUrl) {
+        console.log('Player already active with same music URL, skipping recreation');
+        return;
+      }
+
+      // Destruir player existente se a música mudou
+      if (playerInstanceRef.current && currentMusicUrlRef.current !== musicUrl) {
+        console.log('Music URL changed, destroying old player');
+        destroyPlayer();
+      }
+
+      // Criar novo player
+      console.log('Creating new player for Flow State music');
+      const timer = setTimeout(() => createPlayer(musicUrl), 500);
       return () => clearTimeout(timer);
-    } else {
+
+    } else if (!isActive) {
+      // Só destruir quando Flow State for completamente desativado
+      console.log('Flow State deactivated, destroying player');
       destroyPlayer();
     }
   }, [isActive, musicUrl]);
@@ -259,15 +265,8 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
-      if (playerInstanceRef.current) {
-        console.log('Component unmounting, destroying player');
-        try {
-          playerInstanceRef.current.stopVideo();
-          playerInstanceRef.current.destroy();
-        } catch (e) {
-          console.warn('Cleanup error:', e);
-        }
-      }
+      console.log('FlowStateMusic component unmounting, destroying player');
+      destroyPlayer();
     };
   }, []);
 
