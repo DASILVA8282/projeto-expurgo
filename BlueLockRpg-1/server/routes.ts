@@ -731,13 +731,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("=== CREATE MATCH DEBUG ===");
       console.log("Request body:", req.body);
       console.log("User session:", req.session.userId);
-      
+
       const matchData = insertMatchSchema.parse(req.body);
       console.log("Parsed match data:", matchData);
-      
+
       const newMatch = await storage.createMatch(matchData);
       console.log("Created match:", newMatch);
-      
+
       res.json(newMatch);
     } catch (error) {
       console.error("Create match error:", error);
