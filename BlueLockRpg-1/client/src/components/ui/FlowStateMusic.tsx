@@ -6,7 +6,7 @@ interface FlowStateMusicProps {
   musicUrl?: string;
 }
 
-export function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
+export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
