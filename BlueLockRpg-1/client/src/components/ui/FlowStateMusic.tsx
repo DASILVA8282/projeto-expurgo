@@ -12,7 +12,6 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const [error, setError] = useState<string | null>(null);
   const playerInstanceRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const apiLoadedRef = useRef(false);
   const currentMusicUrlRef = useRef<string>("");
 
   // Extrair ID do YouTube da URL
@@ -32,8 +31,10 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         return;
       }
 
-      // Se o script já está sendo carregado
-      if (apiLoadedRef.current) {
+      // Se já há um script carregando
+      const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
+      if (existingScript) {
+        // Aguardar API ficar disponível
         const checkInterval = setInterval(() => {
           if (window.YT && window.YT.Player) {
             clearInterval(checkInterval);
@@ -50,14 +51,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
 
       // Carregar a API
       console.log('Loading YouTube API...');
-      apiLoadedRef.current = true;
       setIsLoading(true);
-
-      // Remover script existente se houver
-      const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
 
       const script = document.createElement('script');
       script.src = 'https://www.youtube.com/iframe_api';
@@ -65,7 +59,6 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       
       script.onerror = () => {
         console.error('Failed to load YouTube API script');
-        apiLoadedRef.current = false;
         setError('Failed to load YouTube API');
         setIsLoading(false);
         reject(new Error('Failed to load YouTube API'));
@@ -83,7 +76,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     });
   };
 
-  // Criar player apenas quando necessário
+  // Criar player
   const createPlayer = async (videoUrl: string) => {
     const videoId = extractYouTubeId(videoUrl);
     if (!videoId) {
@@ -92,7 +85,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       return;
     }
 
-    console.log('Creating player for video ID:', videoId);
+    console.log('Creating YouTube player for video ID:', videoId);
 
     try {
       // Garantir que a API está carregada
@@ -103,7 +96,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         return;
       }
 
-      console.log('Creating new YouTube player');
+      console.log('Creating new YouTube player instance');
       setIsLoading(true);
       setError(null);
 
@@ -139,17 +132,18 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         },
         events: {
           onReady: (event: any) => {
-            console.log('Player ready, setting volume and starting playback');
+            console.log('YouTube player ready - starting music');
             setIsLoading(false);
             playerInstanceRef.current = event.target;
             currentMusicUrlRef.current = videoUrl;
             
             try {
               // Definir volume alto
-              event.target.setVolume(80);
-              // Iniciar reprodução
+              event.target.setVolume(100);
+              // Iniciar reprodução imediatamente
               event.target.playVideo();
-              console.log('Playback started successfully');
+              console.log('Music playback started successfully');
+              setIsPlaying(true);
             } catch (e) {
               console.error('Error starting playback:', e);
               setError('Erro ao iniciar reprodução');
@@ -165,18 +159,21 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
               setError(null);
               setIsLoading(false);
             } else if (state === window.YT.PlayerState.PAUSED) {
-              console.log('Music paused');
-              setIsPlaying(false);
+              console.log('Music paused - attempting to resume');
+              // Tentar reativar automaticamente
+              if (playerInstanceRef.current) {
+                playerInstanceRef.current.playVideo();
+              }
             } else if (state === window.YT.PlayerState.ENDED) {
-              console.log('Music ended, restarting...');
-              // Loop the video
+              console.log('Music ended - restarting loop');
+              // Loop infinito
               event.target.playVideo();
             } else if (state === window.YT.PlayerState.BUFFERING) {
               console.log('Music buffering');
               setIsLoading(true);
             } else if (state === window.YT.PlayerState.CUED) {
-              console.log('Music cued');
-              setIsLoading(false);
+              console.log('Music cued - starting playback');
+              event.target.playVideo();
             }
           },
           onError: (event: any) => {
@@ -218,7 +215,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   // Destruir player
   const destroyPlayer = () => {
     if (playerInstanceRef.current) {
-      console.log('Destroying player');
+      console.log('Destroying YouTube player');
       try {
         playerInstanceRef.current.stopVideo();
         playerInstanceRef.current.destroy();
@@ -233,31 +230,41 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     }
   };
 
-  // Effect principal - só cria/destrói player quando realmente necessário
+  // Effect principal
   useEffect(() => {
-    console.log('FlowStateMusic effect triggered:', { isActive, musicUrl, currentUrl: currentMusicUrlRef.current });
+    console.log('FlowStateMusic effect - isActive:', isActive, 'musicUrl:', musicUrl);
 
-    if (isActive && musicUrl) {
-      // Se já temos um player tocando a mesma música, não fazer nada
+    if (isActive && musicUrl && musicUrl.trim() !== "") {
+      console.log('Flow State music should start playing');
+      
+      // Se já temos um player com a mesma URL, garantir que está tocando
       if (playerInstanceRef.current && currentMusicUrlRef.current === musicUrl) {
-        console.log('Player already active with same music URL, skipping recreation');
+        console.log('Player exists with same URL - ensuring it plays');
+        try {
+          playerInstanceRef.current.playVideo();
+        } catch (e) {
+          console.warn('Error resuming existing player:', e);
+        }
         return;
       }
 
-      // Destruir player existente se a música mudou
+      // Destruir player existente se URL mudou
       if (playerInstanceRef.current && currentMusicUrlRef.current !== musicUrl) {
-        console.log('Music URL changed, destroying old player');
+        console.log('Music URL changed - destroying old player');
         destroyPlayer();
       }
 
-      // Criar novo player
+      // Criar novo player após um pequeno delay
       console.log('Creating new player for Flow State music');
-      const timer = setTimeout(() => createPlayer(musicUrl), 500);
+      const timer = setTimeout(() => {
+        createPlayer(musicUrl);
+      }, 100);
+      
       return () => clearTimeout(timer);
 
-    } else if (!isActive) {
-      // Só destruir quando Flow State for completamente desativado
-      console.log('Flow State deactivated, destroying player');
+    } else {
+      // Flow State desativado - destruir player
+      console.log('Flow State deactivated - destroying player');
       destroyPlayer();
     }
   }, [isActive, musicUrl]);
@@ -265,18 +272,37 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   // Cleanup ao desmontar
   useEffect(() => {
     return () => {
-      console.log('FlowStateMusic component unmounting, destroying player');
+      console.log('FlowStateMusic component unmounting');
       destroyPlayer();
     };
   }, []);
 
-  if (!isActive || !musicUrl) {
+  // Debug contínuo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isActive && musicUrl) {
+        console.log('FlowStateMusic status check:', {
+          isActive,
+          musicUrl: musicUrl ? 'HAS_URL' : 'NO_URL',
+          hasPlayer: !!playerInstanceRef.current,
+          isPlaying,
+          isLoading,
+          error
+        });
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isActive, musicUrl, isPlaying, isLoading, error]);
+
+  if (!isActive || !musicUrl || musicUrl.trim() === "") {
+    console.log('FlowStateMusic not rendering - isActive:', isActive, 'musicUrl:', !!musicUrl);
     return null;
   }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {/* Player do YouTube - posicionado fora da tela mas ainda funcional */}
+      {/* Player do YouTube - oculto mas funcional */}
       <div 
         ref={containerRef} 
         style={{ 
@@ -314,7 +340,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
           </>
         ) : (
           <>
-            <div className="w-4 h-4 bg-purple-300 rounded-full"></div>
+            <div className="w-4 h-4 bg-purple-300 rounded-full animate-pulse"></div>
             <span className="font-bebas text-sm tracking-wider">INICIANDO MÚSICA</span>
           </>
         )}
