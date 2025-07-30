@@ -158,18 +158,18 @@ export default function Character() {
   const uploadAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
       console.log("Starting avatar upload:", { name: file.name, size: file.size, type: file.type });
-      
+
       const formData = new FormData();
       formData.append('avatar', file);
-      
+
       const response = await fetch('/api/characters/avatar', {
         method: 'POST',
         body: formData,
         credentials: 'include',
       });
-      
+
       console.log("Upload response status:", response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Upload error response:", errorText);
@@ -181,7 +181,7 @@ export default function Character() {
         }
         throw new Error(errorData.message || 'Upload failed');
       }
-      
+
       const result = await response.json();
       console.log("Upload successful:", result);
       return result;
@@ -465,7 +465,7 @@ export default function Character() {
 
   // Duplicate removed - already declared above
 
-  // Sistema de Classes: jogador escolhe 8 perícias iniciais que começam em Classe I
+  // Sistema de Classes: jogador escolhe 8 períícias iniciais que começam em Classe I
   const selectedSkillsCount = Object.values({
     chute: formData.chute, precisao: formData.precisao, roubo: formData.roubo,
     analise: formData.analise, determinacao: formData.determinacao, estrategia: formData.estrategia,
@@ -669,7 +669,7 @@ export default function Character() {
 
       {/* Main Content - Totalmente Reorganizado */}
       <div className="container mx-auto px-4 py-12 space-y-12">
-        
+
         {/* SEÇÃO 1: PERFIL BÁSICO DO SOBREVIVENTE */}
         <div className="relative">
           <div className="absolute -top-8 left-0 right-0">
@@ -679,12 +679,12 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 {/* Avatar Section - Melhorado */}
                 <div className="lg:col-span-1 text-center space-y-6">
                   <div className="relative inline-block">
@@ -709,7 +709,7 @@ export default function Character() {
                       )}
                     </div>
                   </div>
-                  
+
                   <input
                     type="file"
                     accept="image/*"
@@ -862,7 +862,7 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8">
@@ -883,7 +883,7 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8">
@@ -904,7 +904,7 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8">
@@ -927,7 +927,7 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8">
@@ -948,11 +948,11 @@ export default function Character() {
               </div>
             </div>
           </div>
-          
+
           <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
             <CardContent className="p-8 space-y-12">
-              
+
               {/* Atributos Principais */}
               <div>
                 <div className="text-center mb-8">
@@ -985,7 +985,7 @@ export default function Character() {
                     return (
                       <div key={attr.name} className="bg-gradient-to-r from-red-950/30 via-black to-red-950/30 border-2 border-red-700/50 rounded-xl p-8 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
-                        
+
                         <div className="flex items-center justify-between mb-6">
                           <div className="flex items-center space-x-6">
                             <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg shadow-red-500/50">
@@ -1000,7 +1000,7 @@ export default function Character() {
                               </p>
                             </div>
                           </div>
-                          
+
                           <div className="text-right">
                             <div className="font-bebas text-4xl text-red-400 mb-2">
                               NÍVEL {totalValue}
@@ -1037,7 +1037,7 @@ export default function Character() {
                                 />
                               ))}
                             </div>
-                            
+
                             {originBonus > 0 && (
                               <div className="flex items-center gap-2 ml-4">
                                 <span className="text-yellow-400 font-oswald font-bold text-sm">+{originBonus}</span>
@@ -1196,7 +1196,7 @@ export default function Character() {
 
         {/* SEÇÃO 7: BIOGRAFIA E PERSONALIZAÇÃO */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
+
           {/* Biografia */}
           <div className="relative">
             <div className="absolute -top-8 left-0 right-0">
@@ -1206,7 +1206,7 @@ export default function Character() {
                 </div>
               </div>
             </div>
-            
+
             <Card className="bg-gradient-to-br from-gray-900 via-black to-gray-900 border-4 border-red-600 shadow-2xl shadow-red-500/20 relative overflow-hidden h-full">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600"></div>
               <CardContent className="p-8 space-y-8">
@@ -1222,7 +1222,7 @@ export default function Character() {
                     className="w-full bg-gray-800 border-2 border-gray-700 focus:border-red-500 text-white h-40 text-lg font-oswald resize-none"
                     placeholder="Conte a história do seu sobrevivente... De onde veio, o que o motivou, quais foram suas lutas..."
                   />
-                </div>
+                                </div>
 
                 <div className="space-y-4">
                   <Label className="block text-red-400 font-bebas text-xl tracking-wider flex items-center">
@@ -1250,7 +1250,7 @@ export default function Character() {
                 </div>
               </div>
             </div>
-            
+
             <Card className="bg-gradient-to-br from-slate-900 via-black to-slate-900 border-4 border-purple-600 shadow-2xl shadow-purple-500/20 relative overflow-hidden h-full">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-purple-400 to-purple-600"></div>
               <CardContent className="p-8 space-y-8">
@@ -1262,7 +1262,7 @@ export default function Character() {
                     CONFIGURAÇÃO DO FLOW STATE
                   </h3>
                 </div>
-                
+
                 <div className="space-y-6">
                   <div>
                     <Label className="block text-purple-400 font-bebas text-lg tracking-wider mb-3">
