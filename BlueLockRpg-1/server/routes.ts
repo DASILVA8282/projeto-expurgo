@@ -76,6 +76,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Separate multer configuration for audio files
+  const uploadAudio = multer({
+    storage: storage_multer,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit for audio
+    fileFilter: (req, file, cb) => {
+      console.log("Audio file filter check:", { mimetype: file.mimetype, originalname: file.originalname });
+      const allowedTypes = [
+        'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 
+        'audio/m4a', 'audio/aac', 'audio/flac', 'audio/webm'
+      ];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        const error = new Error('Apenas arquivos de áudio são permitidos (MP3, WAV, OGG, M4A, AAC, FLAC)');
+        error.code = 'INVALID_FILE_TYPE';
+        cb(error);
+      }
+    }
+  });
+
   // Serve static files from uploads directory
   app.use('/uploads', express.static('public/uploads'));
 
@@ -273,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Flow music upload endpoint
-  app.post("/api/characters/flow-music", upload.single('flowMusic'), async (req, res) => {
+  app.post("/api/characters/flow-music", uploadAudio.single('flowMusic'), async (req, res) => {
     try {
       if (!req.session?.userId) {
         return res.status(401).json({ message: "Authentication required" });
