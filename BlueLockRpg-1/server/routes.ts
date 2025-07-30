@@ -1127,14 +1127,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
 
-      res.json({ 
-        message: "Flow State activated successfully",
-        flowState,
-        flowColor,
-        flowPhrase,
-        flowMusicUrl
-      }); URL being sent:', flowMusicUrl);
-
       const websocketMessage = {
         type: "flow_state_activated",
         playerId: playerId,
@@ -1146,6 +1138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       console.log('WebSocket message being sent:', JSON.stringify(websocketMessage, null, 2));
+      console.log('Flow Music URL being sent:', flowMusicUrl);
 
       // Notificar todos os jogadores via WebSocket
       wss.clients.forEach((client) => {
@@ -1154,7 +1147,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
 
-      res.json(flowState);
+      res.json({ 
+        message: "Flow State activated successfully",
+        flowState,
+        flowColor,
+        flowPhrase,
+        flowMusicUrl
+      });
     } catch (error) {
       console.error("Create flow state error:", error);
       res.status(500).json({ message: "Failed to create flow state" });
