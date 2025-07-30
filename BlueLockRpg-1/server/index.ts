@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./init-db";
+import path from 'path';
 
 const app = express();
 app.use(express.json());
@@ -59,6 +60,12 @@ app.use((req, res, next) => {
   } else {
     serveStatic(app);
   }
+
+  // Serve static files for uploads  
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+  // Also serve from parent directory if needed
+  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
   // Use PORT environment variable for production (Render) or default to 5000 for development
   const port = process.env.PORT || 5000;
