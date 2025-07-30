@@ -486,6 +486,14 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(flowStates.activatedAt))
       .limit(1);
 
+    console.log('=== FLOW STATE RETRIEVAL DEBUG ===');
+    console.log('Flow state found:', !!flowState);
+    if (flowState) {
+      console.log('Player character:', flowState.player?.character?.name);
+      console.log('Character flowMusicUrl:', flowState.player?.character?.flowMusicUrl);
+      console.log('Final flowMusicUrl will be:', flowState.player?.character?.flowMusicUrl || "");
+    }
+    
     return flowState ? {
       ...flowState,
       flowColor: flowState.player?.character?.flowColor || flowState.flowColor,
