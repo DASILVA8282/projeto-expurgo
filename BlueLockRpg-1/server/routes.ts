@@ -40,11 +40,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   }));
 
-  // Ensure uploads directory exists
+  // Ensure uploads directories exist
   const uploadsDir = 'public/uploads/avatars';
+  const musicUploadsDir = 'public/uploads';
+  
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
     console.log("Created uploads directory:", uploadsDir);
+  }
+  
+  if (!fs.existsSync(musicUploadsDir)) {
+    fs.mkdirSync(musicUploadsDir, { recursive: true });
+    console.log("Created music uploads directory:", musicUploadsDir);
   }
 
   // Multer configuration for file uploads
@@ -96,8 +103,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve static files from uploads directory
-  app.use('/uploads', express.static('public/uploads'));
+  // Serve static files from uploads directory with proper MIME types
+  app.use('/uploads', express.static('public/uploads', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.mp3')) {
+        res.setHeader('Content-Type', 'audio/mpeg');
+      } else if (path.endsWith('.wav')) {
+        res.setHeader('Content-Type', 'audio/wav');
+      } else if (path.endsWith('.ogg')) {
+        res.setHeader('Content-Type', 'audio/ogg');
+      } else if (path.endsWith('.m4a')) {
+        res.setHeader('Content-Type', 'audio/mp4');
+      } else if (path.endsWith('.aac')) {
+        res.setHeader('Content-Type', 'audio/aac');
+      } else if (path.endsWith('.flac')) {
+        res.setHeader('Content-Type', 'audio/flac');
+      }
+      // Permitir acesso cross-origin se necessário
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+  }));
 
   // Authentication middleware
   const requireAuth = (req: any, res: any, next: any) => {
