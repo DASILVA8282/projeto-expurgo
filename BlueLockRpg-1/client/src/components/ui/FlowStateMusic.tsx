@@ -16,6 +16,15 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     return /\.(mp3|wav|ogg|m4a|aac|flac)(\?.*)?$/i.test(url) || url.startsWith('/uploads/');
   };
 
+  // Função para construir URL completa para arquivos de upload
+  const buildAudioUrl = (url: string): string => {
+    if (url.startsWith('/uploads/')) {
+      // Se a URL já começa com /uploads/, usar diretamente
+      return url;
+    }
+    return url;
+  };
+
   
 
   // Função para tocar áudio direto
@@ -24,11 +33,39 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     if (!audio) return;
 
     try {
-      console.log('🎵 Tentando reproduzir áudio direto:', url);
+      const fullUrl = buildAudioUrl(url);
+      console.log('🎵 Tentando reproduzir áudio direto:', fullUrl);
+      console.log('🎵 URL original:', url);
       
-      audio.src = url;
+      // Limpar qualquer src anterior
+      audio.src = '';
+      audio.load();
+      
+      // Definir nova URL
+      audio.src = fullUrl;
       audio.loop = true;
       audio.volume = 0.7;
+      audio.preload = 'auto';
+
+      // Aguardar carregamento
+      await new Promise((resolve, reject) => {
+        const handleCanPlay = () => {
+          audio.removeEventListener('canplay', handleCanPlay);
+          audio.removeEventListener('error', handleError);
+          resolve(true);
+        };
+        
+        const handleError = (e: any) => {
+          audio.removeEventListener('canplay', handleCanPlay);
+          audio.removeEventListener('error', handleError);
+          reject(e);
+        };
+        
+        audio.addEventListener('canplay', handleCanPlay);
+        audio.addEventListener('error', handleError);
+        
+        audio.load();
+      });
 
       const playPromise = audio.play();
       
@@ -41,6 +78,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
 
     } catch (err) {
       console.error('🎵 Erro ao reproduzir áudio direto:', err);
+      console.error('🎵 Detalhes do erro:', err);
       setError('Erro na reprodução');
       setIsPlaying(false);
     }
@@ -68,10 +106,12 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     console.log('🎵 Music URL type:', typeof musicUrl);
     console.log('🎵 Music URL length:', musicUrl?.length || 0);
     console.log('🎵 Music URL starts with /uploads?', musicUrl?.startsWith('/uploads/'));
+    console.log('🎵 Is direct audio URL?', musicUrl ? isDirectAudioUrl(musicUrl) : false);
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
       console.log('🎵 Iniciando reprodução da música do Flow State');
       console.log('🎵 URL final que será reproduzida:', musicUrl);
+      console.log('🎵 URL construída:', buildAudioUrl(musicUrl));
       
       // Pequeno delay para garantir que a UI esteja pronta
       setTimeout(() => {
@@ -120,10 +160,25 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         }}
         onError={(e) => {
           console.error('🎵 Erro no elemento audio:', e);
+          console.error('🎵 Audio element src:', audioRef.current?.src);
+          console.error('🎵 Audio element error code:', e.currentTarget.error?.code);
+          console.error('🎵 Audio element error message:', e.currentTarget.error?.message);
           setError('Erro na música');
         }}
-        onLoadStart={() => console.log('🎵 Carregamento do áudio iniciado')}
-        onCanPlay={() => console.log('🎵 Áudio pode ser reproduzido')}
+        onLoadStart={() => {
+          console.log('🎵 Carregamento do áudio iniciado');
+          console.log('🎵 Audio src:', audioRef.current?.src);
+        }}
+        onCanPlay={() => {
+          console.log('🎵 Áudio pode ser reproduzido');
+          console.log('🎵 Audio duration:', audioRef.current?.duration);
+        }}
+        onLoadedData={() => console.log('🎵 Dados do áudio carregados')}
+        onLoadedMetadata={() => console.log('🎵 Metadados do áudio carregados')}
+        onProgress={() => console.log('🎵 Progresso do carregamento do áudio')}
+        onSuspend={() => console.log('🎵 Carregamento do áudio suspenso')}
+        onAbort={() => console.log('🎵 Carregamento do áudio abortado')}
+        onStalled={() => console.log('🎵 Carregamento do áudio travado')}
       />
 
       {/* Indicador visual discreto */}
