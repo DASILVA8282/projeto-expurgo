@@ -20,11 +20,11 @@ export default function FlowStateCutsceneSimple({
   
   useEffect(() => {
     if (isActive) {
-      console.log("Epic Flow State cutscene starting - 3 seconds...");
+      console.log("🎬 Epic Flow State cutscene starting - 4 seconds...");
       const timer = setTimeout(() => {
-        console.log("Epic Flow State cutscene completing now!");
+        console.log("🎬 Epic Flow State cutscene completing now!");
         onComplete();
-      }, 3000);
+      }, 4000);
       
       return () => clearTimeout(timer);
     }
