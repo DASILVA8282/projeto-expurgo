@@ -204,6 +204,56 @@ export default function Character() {
     },
   });
 
+  const uploadFlowMusicMutation = useMutation({
+    mutationFn: async (file: File) => {
+      console.log("Starting flow music upload:", { name: file.name, size: file.size, type: file.type });
+
+      const formData = new FormData();
+      formData.append('flowMusic', file);
+
+      const response = await fetch('/api/characters/flow-music', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      console.log("Flow music upload response status:", response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Flow music upload error response:", errorText);
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: `Erro ${response.status}: ${errorText || 'Upload failed'}` };
+        }
+        throw new Error(errorData.message || 'Upload failed');
+      }
+
+      const result = await response.json();
+      console.log("Flow music upload successful:", result);
+      return result;
+    },
+    onSuccess: (result) => {
+      toast({
+        title: "Música de Flow State enviada!",
+        description: "Sua música foi salva com sucesso.",
+      });
+      // Update the form data with the new music URL
+      setFormData(prev => ({ ...prev, flowMusicUrl: result.flowMusicUrl }));
+      queryClient.invalidateQueries({ queryKey: ["/api/characters/me"] });
+    },
+    onError: (error: Error) => {
+      console.error("Flow music upload mutation error:", error);
+      toast({
+        title: "Erro no upload da música",
+        description: error.message || "Falha ao enviar a música",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Load character data into form when available
   useEffect(() => {
     if (character) {
@@ -376,6 +426,43 @@ export default function Character() {
     }
 
     uploadAvatarMutation.mutate(file);
+  };
+
+  const handleFlowMusicUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if user has a character first
+    if (!character) {
+      toast({
+        title: "Crie seu personagem primeiro",
+        description: "Você precisa salvar seu personagem antes de fazer upload da música.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('audio/')) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione apenas arquivos de áudio (MP3, WAV, OGG, etc.).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "Erro",
+        description: "O arquivo de áudio deve ter no máximo 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    uploadFlowMusicMutation.mutate(file);
   };
 
   const handleSave = async () => {
@@ -1348,19 +1435,61 @@ export default function Character() {
 
                    <div>
                     <Label className="block text-purple-400 font-bebas text-lg tracking-wider mb-3">
-                      LINK DA MÚSICA DE FLOW STATE
+                      MÚSICA DE FLOW STATE
                     </Label>
-                    <Input
-                      type="text"
-                      name="flowMusicUrl"
-                      value={formData.flowMusicUrl}
-                      onChange={handleInputChange}
-                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-purple-500 text-white h-12 text-lg font-oswald"
-                      placeholder="Cole aqui o link direto do áudio (.mp3, .wav, .ogg)"
+                    
+                    {/* Current music display */}
+                    {formData.flowMusicUrl && (
+                      <div className="bg-slate-700/50 border border-slate-600 rounded-lg p-4 mb-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                              <i className="fas fa-music text-white text-sm"></i>
+                            </div>
+                            <span className="text-white font-oswald">Música atual carregada</span>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setFormData({...formData, flowMusicUrl: ""})}
+                            className="text-red-400 hover:text-red-300 hover:bg-red-950/30"
+                          >
+                            <i className="fas fa-trash mr-2"></i>
+                            Remover
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Upload input */}
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleFlowMusicUpload}
+                      className="hidden"
+                      id="flow-music-upload"
                     />
-                    <p className="text-slate-500 text-sm mt-2 font-oswald italic">
-                      Use links diretos de arquivos de áudio para melhor compatibilidade. Exemplos: arquivo.mp3, arquivo.wav. Esta música tocará para todos durante seu Flow State
-                    </p>
+                    
+                    <div className="space-y-4">
+                      <Button
+                        type="button"
+                        onClick={() => document.getElementById('flow-music-upload')?.click()}
+                        className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 font-bebas font-bold text-lg px-8 py-4 shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+                        disabled={uploadFlowMusicMutation.isPending || !character}
+                      >
+                        <i className="fas fa-upload mr-3"></i>
+                        {uploadFlowMusicMutation.isPending ? 'ENVIANDO...' : 
+                         !character ? 'CRIAR PERSONAGEM PRIMEIRO' : 
+                         formData.flowMusicUrl ? 'TROCAR MÚSICA' : 'ENVIAR MÚSICA'}
+                      </Button>
+                      
+                      <p className="text-slate-500 text-sm font-oswald italic text-center">
+                        Formatos aceitos: MP3, WAV, OGG, M4A, AAC, FLAC (máximo 10MB)
+                        <br />
+                        Esta música tocará para todos durante seu Flow State
+                      </p>
+                    </div>
                   </div>
 
                   {/* Preview */}
