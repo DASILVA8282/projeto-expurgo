@@ -1797,6 +1797,16 @@ export default function Match() {
         isActive={(isInFlowState || showFlowCutscene) && flowMusicUrl !== ""}
         musicUrl={flowMusicUrl}
       />
+      
+      {/* Debug info */}
+      {(isInFlowState || showFlowCutscene) && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-4 rounded-lg text-sm z-50">
+          <div>Flow State: {isInFlowState ? 'ATIVO' : 'INATIVO'}</div>
+          <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
+          <div>Music URL: {flowMusicUrl || 'VAZIO'}</div>
+          <div>Music Active: {((isInFlowState || showFlowCutscene) && flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
+        </div>
+      )}
     </div>
   );
 }
