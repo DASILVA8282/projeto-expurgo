@@ -10,69 +10,13 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const youtubePlayerRef = useRef<HTMLIFrameElement | null>(null);
 
-  // Função para extrair ID do YouTube
-  const getYouTubeVideoId = (url: string): string | null => {
-    if (!url) return null;
-    
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=)([^&\n?#]+)/,
-      /(?:youtu\.be\/)([^&\n?#]+)/,
-      /(?:youtube\.com\/embed\/)([^&\n?#]+)/
-    ];
-    
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match) return match[1];
-    }
-    
-    return null;
-  };
-
-  // Função para verificar se é URL do YouTube
-  const isYouTubeUrl = (url: string): boolean => {
-    return url.includes('youtube.com') || url.includes('youtu.be');
-  };
-
-  // Função para verificar se é áudio direto
+  // Função para verificar se é áudio direto (agora incluindo uploads locais)
   const isDirectAudioUrl = (url: string): boolean => {
-    return /\.(mp3|wav|ogg|m4a|aac|flac)(\?.*)?$/i.test(url);
+    return /\.(mp3|wav|ogg|m4a|aac|flac)(\?.*)?$/i.test(url) || url.startsWith('/uploads/');
   };
 
-  // Função para criar player do YouTube visível e funcional
-  const createYouTubePlayer = (videoId: string) => {
-    console.log('🎵 Criando player YouTube para:', videoId);
-    
-    // Remove player anterior
-    if (youtubePlayerRef.current) {
-      document.body.removeChild(youtubePlayerRef.current);
-      youtubePlayerRef.current = null;
-    }
-
-    // Cria iframe visível para o YouTube
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1&origin=${window.location.origin}`;
-    iframe.style.position = 'fixed';
-    iframe.style.bottom = '20px';
-    iframe.style.right = '20px';
-    iframe.style.width = '300px';
-    iframe.style.height = '169px';
-    iframe.style.border = '2px solid #dc2626';
-    iframe.style.borderRadius = '10px';
-    iframe.style.zIndex = '9999';
-    iframe.style.background = 'black';
-    iframe.allow = 'autoplay; encrypted-media';
-    iframe.setAttribute('allowfullscreen', 'true');
-    iframe.title = 'Flow State Music';
-
-    document.body.appendChild(iframe);
-    youtubePlayerRef.current = iframe;
-
-    setIsPlaying(true);
-    setError(null);
-    console.log('🎵 Player YouTube criado e anexado');
-  };
+  
 
   // Função para tocar áudio direto
   const playDirectAudio = async (url: string) => {
@@ -114,16 +58,6 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       audio.src = '';
     }
 
-    // Remover player do YouTube
-    if (youtubePlayerRef.current) {
-      try {
-        document.body.removeChild(youtubePlayerRef.current);
-      } catch (e) {
-        console.log('🎵 Player já foi removido');
-      }
-      youtubePlayerRef.current = null;
-    }
-
     setIsPlaying(false);
     setError(null);
   };
@@ -137,22 +71,8 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       
       // Pequeno delay para garantir que a UI esteja pronta
       setTimeout(() => {
-        if (isYouTubeUrl(musicUrl)) {
-          console.log('🎵 Detectado YouTube URL:', musicUrl);
-          const videoId = getYouTubeVideoId(musicUrl);
-          if (videoId) {
-            createYouTubePlayer(videoId);
-          } else {
-            console.error('🎵 Não foi possível extrair ID do vídeo');
-            setError('URL do YouTube inválida');
-          }
-        } else if (isDirectAudioUrl(musicUrl)) {
-          console.log('🎵 Detectado áudio direto:', musicUrl);
-          playDirectAudio(musicUrl);
-        } else {
-          console.log('🎵 URL não reconhecida, tentando como áudio direto');
-          playDirectAudio(musicUrl);
-        }
+        console.log('🎵 Reproduzindo áudio:', musicUrl);
+        playDirectAudio(musicUrl);
       }, 500);
     } else {
       console.log('🎵 Parando música - Flow State inativo ou sem URL');
@@ -201,7 +121,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         onCanPlay={() => console.log('🎵 Áudio pode ser reproduzido')}
       />
 
-      {/* Indicador visual discreto - posicionado para não interferir com o player do YouTube */}
+      {/* Indicador visual discreto */}
       <div className="fixed top-4 right-4 z-[9998] pointer-events-none">
         <div className="bg-black/80 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500/50 flex items-center space-x-3">
           {error ? (
