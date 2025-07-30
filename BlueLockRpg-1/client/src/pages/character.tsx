@@ -102,6 +102,7 @@ export default function Character() {
     reacao: 0,
     flowColor: "cyan",
     flowPhrase: "É hora de dominar o campo!",
+    flowMusicUrl: "",
     fama: 0,
     adrenalina: 0,
     aura: 0,
@@ -250,6 +251,7 @@ export default function Character() {
         reacao: character.reacao || 0,
         flowColor: character.flowColor || "cyan",
         flowPhrase: character.flowPhrase || "É hora de dominar o campo!",
+        flowMusicUrl: character.flowMusicUrl || "",
         fama: character.fama || 0,
         adrenalina: character.adrenalina || 0,
         aura: character.aura || 0,
@@ -436,6 +438,7 @@ export default function Character() {
       reacao: Number(formData.reacao) || 0,
       flowColor: formData.flowColor,
       flowPhrase: formData.flowPhrase,
+      flowMusicUrl: formData.flowMusicUrl,
       // New stats
       fama: Number(formData.fama) || 0,
       adrenalina: Number(formData.adrenalina) || 0,
@@ -1340,6 +1343,23 @@ export default function Character() {
                     />
                     <p className="text-slate-500 text-sm mt-2 font-oswald italic">
                       Esta frase aparecerá durante a ativação do seu Flow State
+                    </p>
+                  </div>
+
+                   <div>
+                    <Label className="block text-purple-400 font-bebas text-lg tracking-wider mb-3">
+                      LINK DA MÚSICA (YouTube)
+                    </Label>
+                    <Input
+                      type="text"
+                      name="flowMusicUrl"
+                      value={formData.flowMusicUrl}
+                      onChange={handleInputChange}
+                      className="w-full bg-slate-800 border-2 border-slate-700 focus:border-purple-500 text-white h-12 text-lg font-oswald"
+                      placeholder="Cole aqui o link do YouTube"
+                    />
+                    <p className="text-slate-500 text-sm mt-2 font-oswald italic">
+                      Esta música tocará para todos durante seu Flow State
                     </p>
                   </div>
 
