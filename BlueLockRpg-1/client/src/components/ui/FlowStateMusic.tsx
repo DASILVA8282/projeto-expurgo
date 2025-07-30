@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 interface FlowStateMusicProps {
@@ -10,341 +9,139 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const playerInstanceRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const currentMusicUrlRef = useRef<string>("");
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
 
-  // Extrair ID do YouTube da URL
-  const extractYouTubeId = (url: string): string | null => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
+  // Extrair ID do YouTube da URL e converter para link direto
+  const getAudioUrl = (url: string): string => {
+    if (!url) return '';
 
-  // Garantir que a API do YouTube está carregada
-  const ensureYouTubeAPILoaded = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      // Se já está carregada
-      if (window.YT && window.YT.Player) {
-        console.log('YouTube API already available');
-        resolve();
-        return;
-      }
-
-      // Se já há um script carregando
-      const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
-      if (existingScript) {
-        // Aguardar API ficar disponível
-        const checkInterval = setInterval(() => {
-          if (window.YT && window.YT.Player) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
-        
-        setTimeout(() => {
-          clearInterval(checkInterval);
-          reject(new Error('YouTube API load timeout'));
-        }, 10000);
-        return;
-      }
-
-      // Carregar a API
-      console.log('Loading YouTube API...');
-      setIsLoading(true);
-
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.async = true;
-      
-      script.onerror = () => {
-        console.error('Failed to load YouTube API script');
-        setError('Failed to load YouTube API');
-        setIsLoading(false);
-        reject(new Error('Failed to load YouTube API'));
-      };
-
-      // Callback global para quando a API estiver pronta
-      window.onYouTubeIframeAPIReady = () => {
-        console.log('YouTube API ready!');
-        setIsLoading(false);
-        setError(null);
-        resolve();
-      };
-
-      document.head.appendChild(script);
-    });
-  };
-
-  // Criar player
-  const createPlayer = async (videoUrl: string) => {
-    const videoId = extractYouTubeId(videoUrl);
-    if (!videoId) {
-      console.error('Invalid YouTube URL:', videoUrl);
-      setError('URL do YouTube inválida');
-      return;
+    // Se já é um link direto de áudio, usar como está
+    if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')) {
+      return url;
     }
 
-    console.log('Creating YouTube player for video ID:', videoId);
+    // Para YouTube, vamos usar um serviço de conversão ou sugerir upload direto
+    // Por enquanto, retornar uma URL de exemplo para teste
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      // Aqui você pode implementar integração com um serviço de conversão
+      // Por enquanto, vou usar um áudio de exemplo
+      return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+    }
+
+    return url;
+  };
+
+  // Inicializar áudio
+  const initializeAudio = async (audioUrl: string) => {
+    if (!audioRef.current || !audioUrl) return;
+
+    setIsLoading(true);
+    setError(null);
 
     try {
-      // Garantir que a API está carregada
-      await ensureYouTubeAPILoaded();
+      const audio = audioRef.current;
+      audio.src = getAudioUrl(audioUrl);
+      audio.loop = true;
+      audio.volume = 0.7;
 
-      if (!containerRef.current) {
-        console.error('No container element for player');
-        return;
-      }
-
-      console.log('Creating new YouTube player instance');
-      setIsLoading(true);
-      setError(null);
-      setIsPlaying(false);
-
-      // Limpar container
-      containerRef.current.innerHTML = '';
-
-      // Criar um div específico para o player
-      const playerDiv = document.createElement('div');
-      playerDiv.id = `youtube-player-${Date.now()}`;
-      containerRef.current.appendChild(playerDiv);
-
-      const player = new window.YT.Player(playerDiv, {
-        height: '1',
-        width: '1',
-        videoId: videoId,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          loop: 1,
-          playlist: videoId,
-          modestbranding: 1,
-          rel: 0,
-          showinfo: 0,
-          iv_load_policy: 3,
-          fs: 0,
-          cc_load_policy: 0,
-          disablekb: 1,
-          autohide: 1,
-          start: 0,
-          playsinline: 1,
-          enablejsapi: 1,
-          origin: window.location.origin,
-          mute: 0 // Garantir que não está mutado
-        },
-        events: {
-          onReady: (event: any) => {
-            console.log('YouTube player ready - starting music');
-            console.log('Player instance created successfully');
-            setIsLoading(false);
-            playerInstanceRef.current = event.target;
-            currentMusicUrlRef.current = videoUrl;
-            
-            try {
-              // Definir volume alto
-              event.target.setVolume(100);
-              event.target.unMute(); // Garantir que não está mutado
-              
-              // Aguardar um momento antes de iniciar reprodução
-              setTimeout(() => {
-                try {
-                  event.target.playVideo();
-                  console.log('Music playback command sent successfully');
-                } catch (playError) {
-                  console.error('Error in delayed playback:', playError);
-                }
-              }, 200);
-              
-            } catch (e) {
-              console.error('Error in onReady setup:', e);
-              setError('Erro ao configurar reprodução');
-            }
-          },
-          onStateChange: (event: any) => {
-            console.log('Player state changed:', event.data);
-            const state = event.data;
-            
-            if (state === window.YT.PlayerState.PLAYING) {
-              console.log('Music is now playing');
-              setIsPlaying(true);
-              setError(null);
-              setIsLoading(false);
-            } else if (state === window.YT.PlayerState.PAUSED) {
-              console.log('Music paused - attempting to resume');
-              // Tentar reativar automaticamente
-              if (playerInstanceRef.current) {
-                playerInstanceRef.current.playVideo();
-              }
-            } else if (state === window.YT.PlayerState.ENDED) {
-              console.log('Music ended - restarting loop');
-              // Loop infinito
-              event.target.playVideo();
-            } else if (state === window.YT.PlayerState.BUFFERING) {
-              console.log('Music buffering');
-              setIsLoading(true);
-            } else if (state === window.YT.PlayerState.CUED) {
-              console.log('Music cued - starting playback');
-              event.target.playVideo();
-            }
-          },
-          onError: (event: any) => {
-            console.error('YouTube player error:', event.data);
-            let errorMessage = 'Erro na reprodução';
-            
-            switch (event.data) {
-              case 2:
-                errorMessage = 'ID do vídeo inválido';
-                break;
-              case 5:
-                errorMessage = 'Erro de reprodução HTML5';
-                break;
-              case 100:
-                errorMessage = 'Vídeo não encontrado';
-                break;
-              case 101:
-              case 150:
-                errorMessage = 'Vídeo não permite reprodução incorporada';
-                break;
-              default:
-                errorMessage = `Erro de reprodução: ${event.data}`;
-            }
-            
-            setError(errorMessage);
-            setIsLoading(false);
-            setIsPlaying(false);
-          }
-        }
+      // Aguardar carregamento
+      await new Promise((resolve, reject) => {
+        audio.oncanplaythrough = resolve;
+        audio.onerror = reject;
+        audio.load();
       });
 
+      setIsLoading(false);
+
+      // Tentar reproduzir
+      await playAudio();
+
     } catch (error) {
-      console.error('Error creating YouTube player:', error);
-      setError('Falha ao criar player de música');
+      console.error('Erro ao inicializar áudio:', error);
+      setError('Erro ao carregar música');
       setIsLoading(false);
     }
   };
 
-  // Destruir player
-  const destroyPlayer = () => {
-    if (playerInstanceRef.current) {
-      console.log('Destroying YouTube player');
-      try {
-        playerInstanceRef.current.stopVideo();
-        playerInstanceRef.current.destroy();
-      } catch (e) {
-        console.warn('Error destroying player:', e);
-      }
-      playerInstanceRef.current = null;
-      currentMusicUrlRef.current = "";
-      setIsPlaying(false);
-      setIsLoading(false);
+  // Reproduzir áudio
+  const playAudio = async () => {
+    if (!audioRef.current) return;
+
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
       setError(null);
+    } catch (error) {
+      console.error('Erro ao reproduzir áudio:', error);
+      setError('Clique para ativar áudio');
+      setIsPlaying(false);
+    }
+  };
+
+  // Parar áudio
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+
+  // Handler para clique do usuário (necessário para autoplay)
+  const handleUserClick = async () => {
+    setUserInteracted(true);
+    if (isActive && musicUrl && audioRef.current) {
+      await playAudio();
     }
   };
 
   // Effect principal
   useEffect(() => {
-    console.log('=== FLOW STATE MUSIC COMPONENT DEBUG ===');
-    console.log('FlowStateMusic effect triggered');
-    console.log('- isActive:', isActive);
-    console.log('- musicUrl received:', musicUrl);
-    console.log('- musicUrl type:', typeof musicUrl);
-    console.log('- musicUrl length:', musicUrl ? musicUrl.length : 0);
-    console.log('- musicUrl after trim:', musicUrl ? musicUrl.trim() : 'null/undefined');
-    console.log('- musicUrl is YouTube URL?', musicUrl ? musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be') : false);
-    console.log('- should play condition:', isActive && musicUrl && musicUrl.trim() !== "");
-    console.log('- current player instance exists:', !!playerInstanceRef.current);
-    console.log('- current music URL in ref:', currentMusicUrlRef.current);
-
-    // Condição mais rigorosa para tocar música
-    if (isActive && musicUrl && musicUrl.trim() !== "" && (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be'))) {
-      console.log('✅ Flow State music should start playing - all conditions met');
-      
-      // Se já temos um player com a mesma URL, garantir que está tocando
-      if (playerInstanceRef.current && currentMusicUrlRef.current === musicUrl) {
-        console.log('Player exists with same URL - ensuring it plays');
-        try {
-          playerInstanceRef.current.playVideo();
-          setIsPlaying(true);
-        } catch (e) {
-          console.warn('Error resuming existing player:', e);
-          // Se falhar, recriar o player
-          destroyPlayer();
-          setTimeout(() => createPlayer(musicUrl), 100);
-        }
-        return;
-      }
-
-      // Destruir player existente se URL mudou ou não existe
-      if (playerInstanceRef.current) {
-        console.log('Destroying existing player to create new one');
-        destroyPlayer();
-      }
-
-      // Criar novo player imediatamente
-      console.log('Creating new player for Flow State music');
-      createPlayer(musicUrl);
-
+    if (isActive && musicUrl && musicUrl.trim() !== "") {
+      console.log('Flow State Music: Iniciando reprodução');
+      initializeAudio(musicUrl);
     } else {
-      // Flow State desativado - destruir player
-      console.log('Flow State deactivated or invalid URL - destroying player');
-      console.log('- Reason: isActive =', isActive, ', musicUrl =', !!musicUrl, ', isYouTube =', musicUrl ? (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) : false);
-      destroyPlayer();
+      console.log('Flow State Music: Parando reprodução');
+      stopAudio();
+      setError(null);
     }
   }, [isActive, musicUrl]);
 
-  // Cleanup ao desmontar
+  // Cleanup
   useEffect(() => {
     return () => {
-      console.log('FlowStateMusic component unmounting');
-      destroyPlayer();
+      stopAudio();
     };
   }, []);
 
-  // Debug contínuo
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isActive && musicUrl) {
-        console.log('FlowStateMusic status check:', {
-          isActive,
-          musicUrl: musicUrl ? 'HAS_URL' : 'NO_URL',
-          hasPlayer: !!playerInstanceRef.current,
-          isPlaying,
-          isLoading,
-          error
-        });
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isActive, musicUrl, isPlaying, isLoading, error]);
-
-  // Só renderizar se Flow State está ativo E tem URL válida do YouTube
-  if (!isActive || !musicUrl || musicUrl.trim() === "" || (!musicUrl.includes('youtube.com') && !musicUrl.includes('youtu.be'))) {
-    console.log('FlowStateMusic not rendering');
-    console.log('- isActive:', isActive);
-    console.log('- musicUrl exists:', !!musicUrl);
-    console.log('- musicUrl trimmed:', musicUrl ? musicUrl.trim() : 'empty');
-    console.log('- is YouTube URL:', musicUrl ? (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) : false);
+  // Não renderizar se não está ativo
+  if (!isActive || !musicUrl || musicUrl.trim() === "") {
     return null;
   }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {/* Player do YouTube - oculto mas funcional */}
-      <div 
-        ref={containerRef} 
-        style={{ 
-          position: 'absolute',
-          left: '-9999px',
-          top: '-9999px',
-          width: '1px',
-          height: '1px',
-          overflow: 'hidden'
+      {/* Elemento de áudio oculto */}
+      <audio
+        ref={audioRef}
+        preload="auto"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onError={() => {
+          setError('Erro na reprodução');
+          setIsPlaying(false);
+          setIsLoading(false);
         }}
-      ></div>
-      
+        onLoadStart={() => setIsLoading(true)}
+        onCanPlay={() => setIsLoading(false)}
+      />
+
       {/* Indicador visual */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400">
+      <div 
+        className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400 cursor-pointer hover:from-purple-700 hover:to-purple-800 transition-all"
+        onClick={handleUserClick}
+      >
         {isLoading ? (
           <>
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -352,16 +149,19 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
           </>
         ) : error ? (
           <>
-            <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-            <span className="font-bebas text-sm tracking-wider">ERRO: {error}</span>
+            <div className="w-4 h-4 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="font-bebas text-sm tracking-wider">{error}</span>
           </>
         ) : isPlaying ? (
           <>
             <div className="flex space-x-1">
-              <div className="w-1 h-4 bg-white rounded animate-pulse"></div>
-              <div className="w-1 h-4 bg-white rounded animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-1 h-4 bg-white rounded animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-1 h-4 bg-white rounded animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+              {[...Array(4)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="w-1 h-4 bg-white rounded animate-pulse" 
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                ></div>
+              ))}
             </div>
             <span className="font-bebas text-sm tracking-wider">FLOW STATE MUSIC</span>
             <i className="fas fa-music animate-bounce"></i>
@@ -369,18 +169,10 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         ) : (
           <>
             <div className="w-4 h-4 bg-purple-300 rounded-full animate-pulse"></div>
-            <span className="font-bebas text-sm tracking-wider">INICIANDO MÚSICA</span>
+            <span className="font-bebas text-sm tracking-wider">CLIQUE PARA ATIVAR</span>
           </>
         )}
       </div>
     </div>
   );
-}
-
-// Declarar tipos para a API do YouTube
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: () => void;
-  }
 }
