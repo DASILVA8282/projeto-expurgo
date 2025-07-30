@@ -1,4 +1,27 @@
-PI do YouTube está carregada
+
+import React, { useEffect, useRef, useState } from 'react';
+
+interface FlowStateMusicProps {
+  isActive: boolean;
+  musicUrl?: string;
+}
+
+export function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const playerInstanceRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const apiLoadedRef = useRef(false);
+
+  // Extrair ID do YouTube da URL
+  const extractYouTubeId = (url: string): string | null => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  // Garantir que a API do YouTube está carregada
   const ensureYouTubeAPILoaded = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       // Se já está carregada
