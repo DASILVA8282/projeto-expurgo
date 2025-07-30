@@ -728,12 +728,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin match management
   app.post("/api/admin/matches", requireAdmin, async (req, res) => {
     try {
+      console.log("=== CREATE MATCH DEBUG ===");
+      console.log("Request body:", req.body);
+      console.log("User session:", req.session.userId);
+      
       const matchData = insertMatchSchema.parse(req.body);
+      console.log("Parsed match data:", matchData);
+      
       const newMatch = await storage.createMatch(matchData);
+      console.log("Created match:", newMatch);
+      
       res.json(newMatch);
     } catch (error) {
       console.error("Create match error:", error);
-      res.status(500).json({ message: "Failed to create match" });
+      res.status(500).json({ message: "Failed to create match", error: error instanceof Error ? error.message : "Unknown error" });
     }
   });
 
