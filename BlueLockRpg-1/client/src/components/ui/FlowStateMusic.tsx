@@ -65,17 +65,22 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   // Effect principal para controlar a música
   useEffect(() => {
     console.log('🎵 FlowStateMusic Effect - isActive:', isActive, 'musicUrl:', musicUrl);
+    console.log('🎵 Music URL type:', typeof musicUrl);
+    console.log('🎵 Music URL length:', musicUrl?.length || 0);
+    console.log('🎵 Music URL starts with /uploads?', musicUrl?.startsWith('/uploads/'));
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
       console.log('🎵 Iniciando reprodução da música do Flow State');
+      console.log('🎵 URL final que será reproduzida:', musicUrl);
       
       // Pequeno delay para garantir que a UI esteja pronta
       setTimeout(() => {
-        console.log('🎵 Reproduzindo áudio:', musicUrl);
+        console.log('🎵 Reproduzindo áudio direto:', musicUrl);
         playDirectAudio(musicUrl);
       }, 500);
     } else {
       console.log('🎵 Parando música - Flow State inativo ou sem URL');
+      console.log('🎵 Motivo: isActive =', isActive, ', musicUrl =', musicUrl || 'undefined/null');
       stopMusic();
     }
 
