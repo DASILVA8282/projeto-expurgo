@@ -380,17 +380,26 @@ export default function Match() {
   // Atualiza o estado do Flow State baseado na resposta da API
   useEffect(() => {
     if (userFlowState) {
-      setIsInFlowState(true);
+      console.log('User Flow State detected:', userFlowState);
       setFlowColor(userFlowState.flowColor);
-      // NÃO modifica showFlowCutscene aqui para evitar loops
-    } else {
-      setIsInFlowState(false);
-      // Só limpa cutscene se não estiver em processo de ativação
+      setFlowMusicUrl(userFlowState.flowMusicUrl || "");
+      setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
+      
+      // Só atualiza isInFlowState se não estiver mostrando cutscene
       if (!showFlowCutscene) {
-        // OK para limpar quando não há cutscene ativa
+        setIsInFlowState(true);
+      }
+    } else {
+      console.log('No Flow State for user');
+      // Só limpa estados se não há cutscene ativa
+      if (!showFlowCutscene) {
+        setIsInFlowState(false);
+        setFlowColor("red");
+        setFlowMusicUrl("");
+        setFlowPhrase("É hora de dominar o campo!");
       }
     }
-  }, [userFlowState]);
+  }, [userFlowState, showFlowCutscene]);
 
   // Monitora se há Flow State ativo na partida (para admin)
   useEffect(() => {
@@ -605,25 +614,35 @@ export default function Match() {
 
   // Handler para completar a cutscene do Flow State
   const handleFlowCutsceneComplete = useCallback(() => {
-    console.log("Flow State cutscene completed - returning to match");
+    console.log("Flow State cutscene completed - transitioning to match");
 
-    // Limpar estado da cutscene IMEDIATAMENTE
-    setShowFlowCutscene(false);
+    // Primeiro, garantir que ainda estamos na página de match
+    console.log("Current location should be /match");
     
-    // Garantir que está em Flow State
-    setIsInFlowState(true);
-
-    // Invalidar queries para forçar atualização da UI
-    queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
-    
-    // Show toast após pequeno delay
+    // Definir estados de forma sequencial para evitar conflitos
     setTimeout(() => {
+      setShowFlowCutscene(false);
+      console.log("Cutscene hidden");
+    }, 100);
+    
+    setTimeout(() => {
+      setIsInFlowState(true);
+      console.log("Flow State activated");
+      
+      // Garantir que permanecemos na página de match
+      setLocation("/match");
+      console.log("Forced redirect to /match");
+      
+      // Invalidar queries para atualizar dados
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/${user?.id}`] });
+      
       toast({
         title: "Flow State Ativado!",
         description: "Você está em estado de concentração máxima!",
       });
-    }, 200);
-  }, [toast, queryClient]);
+    }, 300);
+  }, [toast, queryClient, setLocation, match?.id, user?.id]);
 
   // Handler para ativar Flow State manualmente
   const handleManualFlowState = () => {
