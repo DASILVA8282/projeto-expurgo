@@ -894,36 +894,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Notificar todos os usuários conectados que a partida foi finalizada
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({
-            type: "match_finished",
-            matchId: matchId,
-            message: "A partida foi finalizada! Redirecionando para o dashboard..."
-          }));
-        }
-      });
-      
-      console.log(`Match ${matchId} finished and all Flow States cleared`);
-      res.json(updatedMatch);
-    } catch (error) {
-      console.error("Finish match error:", error);
-      res.status(500).json({ message: "Failed to finish match" });
-    }
-  });
-
-  // Goal routes
-  app.post("/api/admin/goals", requireAdmin, async (req, res) => {
-    try {
-      const goalData = insertGoalSchema.parse(req.body);
-      
-      // Verificar se há Flow State ativo e encerrar
-      const activeFlowState = await storage.getActiveFlowState(goalData.matchId);
-      if (activeFlowState) {
-        await storage.endFlowState(goalData.matchId, activeFlowState.playerId);
-        
-        // Notificar via WebSocket que o Flow State acabou
-        wss.clients.forEach((client) => {
+wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify({
               type: "flow_state_ended",
@@ -934,19 +905,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         });
       }
-      
+
       const newGoal = await storage.createGoal(goalData);
-      
+
       // Update match score
       const match = await storage.getMatch(goalData.matchId);
       if (match) {
         const updates = goalData.team === "V" 
           ? { scoreV: match.scoreV + 1 }
           : { scoreZ: match.scoreZ + 1 };
-        
+
         await storage.updateMatch(goalData.matchId, updates);
       }
-      
+
       res.json(newGoal);
     } catch (error) {
       console.error("Create goal error:", error);
@@ -958,24 +929,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flow-state/:matchId/active", requireAuth, async (req, res) => {
     try {
       const { matchId } = req.params;
-      
+
       // Validar se o parâmetro é válido
       if (!matchId || matchId === 'undefined') {
         return res.status(400).json({ message: "Invalid matchId" });
       }
-      
+
       const matchIdNum = Number(matchId);
-      
+
       if (isNaN(matchIdNum)) {
         return res.status(400).json({ message: "matchId must be a valid number" });
       }
-      
+
       const activeFlowState = await storage.getActiveFlowState(matchIdNum);
-      
+
       if (!activeFlowState) {
         return res.status(404).json({ message: "No active flow state" });
       }
-      
+
       res.json(activeFlowState);
     } catch (error) {
       console.error("Get active flow state error:", error);
@@ -986,25 +957,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/flow-state/:matchId/:playerId", async (req, res) => {
     try {
       const { matchId, playerId } = req.params;
-      
+
       // Validar se os parâmetros são válidos
       if (!matchId || !playerId || matchId === 'undefined' || playerId === 'undefined') {
         return res.status(400).json({ message: "Invalid matchId or playerId" });
       }
-      
+
       const matchIdNum = Number(matchId);
       const playerIdNum = Number(playerId);
-      
+
       if (isNaN(matchIdNum) || isNaN(playerIdNum)) {
         return res.status(400).json({ message: "matchId and playerId must be valid numbers" });
       }
-      
+
       const flowState = await storage.getFlowStateForPlayer(matchIdNum, playerIdNum);
-      
+
       if (!flowState) {
         return res.status(404).json({ message: "Flow State not found" });
       }
-      
+
       res.json(flowState);
     } catch (error) {
       console.error("Get flow state error:", error);
@@ -1015,7 +986,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/flow-state", requireAdmin, async (req, res) => {
     try {
       const { matchId, playerId } = req.body;
-      
+
       // Verificar se já existe um Flow State ativo (qualquer jogador)
       const existingFlowState = await storage.getActiveFlowState(matchId);
       if (existingFlowState) {
@@ -1024,27 +995,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           activePlayer: existingFlowState.player?.character?.name || existingFlowState.player?.username
         });
       }
-      
+
       // Verificar se o jogador específico já tem Flow State ativo
       const playerFlowState = await storage.getFlowStateForPlayer(matchId, playerId);
       if (playerFlowState && playerFlowState.isActive) {
         return res.status(400).json({ message: "Player already has active Flow State" });
       }
-      
+
       // Buscar dados do jogador para obter configurações personalizadas
       const player = await storage.getUserWithCharacter(playerId);
-      
+
       // Usar cor personalizada do jogador ou fallback para cor aleatória
       const flowColor = player?.character?.flowColor || "cyan";
       const flowPhrase = player?.character?.flowPhrase || "É hora de dominar o campo!";
-      
+
       // Criar Flow State com dados personalizados
       const flowState = await storage.createFlowState({
         matchId,
         playerId,
         flowColor: flowColor
       });
-      
+
       // Notificar todos os jogadores via WebSocket
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -1058,7 +1029,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }));
         }
       });
-      
+
       res.json(flowState);
     } catch (error) {
       console.error("Create flow state error:", error);
@@ -1070,7 +1041,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/flow-state/deactivate", requireAuth, requireAdmin, async (req, res) => {
     try {
       const { matchId, playerId } = req.body;
-      
+
       if (!matchId || !playerId) {
         return res.status(400).json({ message: "matchId and playerId are required" });
       }
@@ -1090,7 +1061,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Buscar dados do jogador para notificação
       const player = await storage.getUserWithCharacter(playerId);
-      
+
       // Notificar todos os jogadores via WebSocket
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -1114,7 +1085,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/matches/set-time", requireAuth, requireAdmin, async (req, res) => {
     try {
       const { matchId, minutes } = req.body;
-      
+
       if (!matchId || minutes === undefined) {
         return res.status(400).json({ message: "matchId and minutes are required" });
       }
@@ -1150,33 +1121,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-  
+
   // WebSocket setup
   const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
+
   // Store WebSocket connections by user ID
   const userConnections = new Map<number, WebSocket>();
   const matchPageConnections = new Map<number, WebSocket>(); // Usuários específicos na página de partidas
-  
+
   wss.on('connection', (ws, req) => {
     console.log('New WebSocket connection');
-    
+
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message.toString());
         console.log('WebSocket message received:', data);
-        
+
         if (data.type === 'auth' && data.userId) {
           userConnections.set(data.userId, ws);
           console.log(`User ${data.userId} connected via WebSocket`);
         }
-        
+
         // Tracking específico para página de partidas
         if (data.type === 'match_page_connect' && data.userId) {
           matchPageConnections.set(data.userId, ws);
           console.log(`User ${data.userId} connected to match page`);
         }
-        
+
         if (data.type === 'match_page_disconnect' && data.userId) {
           matchPageConnections.delete(data.userId);
           console.log(`User ${data.userId} disconnected from match page`);
@@ -1185,7 +1156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('WebSocket message error:', error);
       }
     });
-    
+
     ws.on('close', () => {
       // Remove connection from both maps when user disconnects
       userConnections.forEach((connection, userId) => {
@@ -1196,7 +1167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     });
   });
-  
+
   // Function to broadcast message to specific user
   function broadcastToUser(userId: number, message: any) {
     const connection = userConnections.get(userId);
@@ -1204,6 +1175,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
       connection.send(JSON.stringify(message));
     }
   }
-  
+
   return httpServer;
 }
+// Ensure uploads directory exists
+  const uploadsDir = path.join(process.cwd(), 'public/uploads/avatars');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+app.post("/api/characters/avatar", requireAuth, upload.single('avatar'), async (req, res) => {
+    try {
+      console.log("Avatar upload request received");
+      console.log("File:", req.file);
+      console.log("User:", req.user);
+
+      if (!req.file) {
+        console.log("No file uploaded");
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const userId = req.user.id;
+
+      // Check if user has a character
+      const character = await storage.getUserWithCharacter(userId);
+      if (!character) {
+        console.log("Character not found for user:", userId);
+        // Clean up uploaded file if character doesn't exist
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
+        return res.status(404).json({ message: "Character not found" });
+      }
+
+      // Delete old avatar file if exists
+      if (character.avatar && character.avatar.startsWith('/uploads/avatars/')) {
+        const oldAvatarPath = path.join(process.cwd(), 'public', character.avatar);
+        if (fs.existsSync(oldAvatarPath)) {
+          try {
+            fs.unlinkSync(oldAvatarPath);
+            console.log("Old avatar deleted:", oldAvatarPath);
+          } catch (err) {
+            console.warn("Failed to delete old avatar:", err);
+          }
+        }
+      }
+
+      // Generate the avatar URL with cache busting
+      const avatarUrl = `/uploads/avatars/${req.file.filename}?t=${Date.now()}`;
+      console.log("Generated avatar URL:", avatarUrl);
+
+      // Update character with new avatar
+      await storage.updateCharacter(userId, { avatar: avatarUrl });
+      console.log("Character updated with avatar:", avatarUrl);
+
+      res.json({ 
+        message: "Avatar uploaded successfully", 
+        avatar: avatarUrl 
+      });
+    } catch (error) {
+      console.error("Avatar upload error:", error);
+      // Clean up uploaded file on error
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      res.status(500).json({ message: "Failed to upload avatar" });
+    }
+  });
