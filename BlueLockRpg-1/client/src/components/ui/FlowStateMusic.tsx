@@ -16,19 +16,25 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const getAudioUrl = (url: string): string => {
     if (!url) return '';
 
+    console.log('=== AUDIO URL PROCESSING ===');
+    console.log('Original URL:', url);
+
     // Se já é um link direto de áudio, usar como está
     if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')) {
+      console.log('Direct audio URL detected');
       return url;
     }
 
-    // Para YouTube, vamos usar um serviço de conversão ou sugerir upload direto
-    // Por enquanto, retornar uma URL de exemplo para teste
+    // Para YouTube, vamos usar um áudio de exemplo por enquanto
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      // Aqui você pode implementar integração com um serviço de conversão
-      // Por enquanto, vou usar um áudio de exemplo
-      return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+      console.log('YouTube URL detected, using example audio');
+      // Por enquanto, usar um áudio de exemplo conhecido que funciona
+      const exampleUrl = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+      console.log('Using example URL:', exampleUrl);
+      return exampleUrl;
     }
 
+    console.log('Unknown URL type, using as-is');
     return url;
   };
 
@@ -98,14 +104,25 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
 
   // Effect principal
   useEffect(() => {
+    console.log('=== FLOW STATE MUSIC EFFECT ===');
+    console.log('isActive:', isActive);
+    console.log('musicUrl:', musicUrl);
+    console.log('musicUrl length:', musicUrl?.length || 0);
+    console.log('musicUrl trimmed:', musicUrl?.trim());
+    console.log('Should play:', isActive && musicUrl && musicUrl.trim() !== "");
+    
     if (isActive && musicUrl && musicUrl.trim() !== "") {
-      console.log('Flow State Music: Iniciando reprodução');
+      console.log('Flow State Music: Iniciando reprodução com URL:', musicUrl);
       initializeAudio(musicUrl);
     } else {
-      console.log('Flow State Music: Parando reprodução');
+      console.log('Flow State Music: Parando reprodução - Motivo:', 
+        !isActive ? 'não ativo' : 
+        !musicUrl ? 'sem URL' : 
+        musicUrl.trim() === "" ? 'URL vazia' : 'desconhecido');
       stopAudio();
       setError(null);
     }
+    console.log('=== END FLOW STATE MUSIC EFFECT ===');
   }, [isActive, musicUrl]);
 
   // Cleanup
