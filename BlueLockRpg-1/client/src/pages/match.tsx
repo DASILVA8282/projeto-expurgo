@@ -245,13 +245,22 @@ export default function Match() {
       console.log("- flowMusicUrl RECEIVED:", lastMessage.flowMusicUrl);
       console.log("- flowMusicUrl is empty?", !lastMessage.flowMusicUrl || lastMessage.flowMusicUrl === "");
       
-      setFlowPlayerName(lastMessage.playerName);
-      setFlowColor(lastMessage.flowColor);
+      // Definir todos os estados do Flow State
+      setFlowPlayerName(lastMessage.playerName || "");
+      setFlowColor(lastMessage.flowColor || "red");
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
       
+      // IMPORTANTE: Definir a URL da música ANTES de ativar o Flow State
       const musicUrl = lastMessage.flowMusicUrl || "";
       console.log("Setting flowMusicUrl to:", musicUrl);
+      console.log("musicUrl length:", musicUrl.length);
+      console.log("musicUrl trimmed:", musicUrl.trim());
       setFlowMusicUrl(musicUrl);
+      
+      // Força um re-render para garantir que a música seja detectada
+      setTimeout(() => {
+        console.log("FlowMusicUrl state after setTimeout:", flowMusicUrl);
+      }, 100);
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
@@ -259,12 +268,19 @@ export default function Match() {
         console.log("Current states before cutscene:", { showFlowCutscene, isInFlowState });
         console.log("Music URL being used for cutscene:", musicUrl);
         
-        // Reset any previous state first
-        setIsInFlowState(false);
-        setShowFlowCutscene(true);
-        console.log("Set showFlowCutscene to true");
+        // IMPORTANTE: Ativar Flow State primeiro para a música começar
+        setIsInFlowState(true);
+        
+        // Depois mostrar a cutscene
+        setTimeout(() => {
+          setShowFlowCutscene(true);
+          console.log("Set showFlowCutscene to true - music should be playing");
+        }, 100);
       } else {
-        // Outros usuários recebem toast notification
+        // Para outros usuários (admin vendo) também ativa o Flow State
+        setIsInFlowState(true);
+        
+        // Toast notification
         toast({
           title: "Flow State Ativado!",
           description: `${lastMessage.playerName} entrou no Flow State!`,
@@ -401,17 +417,26 @@ export default function Match() {
       console.log('- flowMusicUrl from API:', userFlowState.flowMusicUrl);
       console.log('- flowMusicUrl is empty?', !userFlowState.flowMusicUrl || userFlowState.flowMusicUrl === "");
       
-      setFlowColor(userFlowState.flowColor);
-      const apiMusicUrl = userFlowState.flowMusicUrl || "";
-      console.log('Setting flowMusicUrl from API to:', apiMusicUrl);
-      setFlowMusicUrl(apiMusicUrl);
+      // Definir todos os estados primeiro
+      setFlowColor(userFlowState.flowColor || "red");
       setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
       
-      // Sempre ativa Flow State quando detectado pela API, independente da cutscene
+      const apiMusicUrl = userFlowState.flowMusicUrl || "";
+      console.log('Setting flowMusicUrl from API to:', apiMusicUrl);
+      console.log('API Music URL length:', apiMusicUrl.length);
+      setFlowMusicUrl(apiMusicUrl);
+      
+      // Sempre ativa Flow State quando detectado pela API
       setIsInFlowState(true);
+      
+      // Verificar se a música foi definida
+      setTimeout(() => {
+        console.log('FlowMusicUrl after API effect:', flowMusicUrl);
+      }, 100);
+      
       console.log('=== END USER FLOW STATE API DEBUG ===');
     } else {
-      console.log('No Flow State for user');
+      console.log('No Flow State for user from API');
       // Só limpa estados se não há cutscene ativa
       if (!showFlowCutscene) {
         setIsInFlowState(false);
@@ -636,29 +661,25 @@ export default function Match() {
   // Handler para completar a cutscene do Flow State
   const handleFlowCutsceneComplete = useCallback(() => {
     console.log("Flow State cutscene completed - transitioning to match");
+    console.log("Current flowMusicUrl at cutscene completion:", flowMusicUrl);
 
-    // Primeiro, garantir que ainda estamos na página de match
-    console.log("Current location should be /match");
-    
     // Apenas esconder a cutscene, mantendo Flow State ativo para continuar música
-    setTimeout(() => {
-      setShowFlowCutscene(false);
-      console.log("Cutscene hidden - Flow State continues active");
-      
-      // Garantir que permanecemos na página de match
-      setLocation("/match");
-      console.log("Forced redirect to /match");
-      
-      // Invalidar queries para atualizar dados
-      queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/${user?.id}`] });
-      
-      toast({
-        title: "Flow State Ativado!",
-        description: "Você está em estado de concentração máxima!",
-      });
-    }, 100);
-  }, [toast, queryClient, setLocation, match?.id, user?.id]);
+    setShowFlowCutscene(false);
+    console.log("Cutscene hidden - Flow State continues active");
+    console.log("isInFlowState should remain true:", isInFlowState);
+    
+    // Garantir que permanecemos na página de match
+    setLocation("/match");
+    
+    // Invalidar queries para atualizar dados
+    queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+    queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/${user?.id}`] });
+    
+    toast({
+      title: "Flow State Ativado!",
+      description: "Você está em estado de concentração máxima!",
+    });
+  }, [toast, queryClient, setLocation, match?.id, user?.id, flowMusicUrl, isInFlowState]);
 
   // Handler para ativar Flow State manualmente
   const handleManualFlowState = () => {
