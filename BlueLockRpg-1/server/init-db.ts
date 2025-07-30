@@ -448,16 +448,27 @@ async function runMigration() {
     { name: 'adrenalina', type: 'INTEGER', default: '0' },
     { name: 'aura', type: 'INTEGER', default: '0' },
     { name: 'furia', type: 'INTEGER', default: '0' },
-    { name: 'flow_music_url', type: 'TEXT', default: 'NULL' }
+    { name: 'flow_music_url', type: 'TEXT', default: null, nullable: true }
   ];
 
   for (const column of columnsToAdd) {
     try {
       console.log(`Adicionando coluna ${column.name}...`);
-      await db.execute(sql.raw(`
-        ALTER TABLE characters 
-        ADD COLUMN IF NOT EXISTS ${column.name} ${column.type} DEFAULT ${column.default} NOT NULL
-      `));
+      
+      if (column.nullable) {
+        // For nullable columns, don't add NOT NULL constraint
+        await db.execute(sql.raw(`
+          ALTER TABLE characters 
+          ADD COLUMN IF NOT EXISTS ${column.name} ${column.type}
+        `));
+      } else {
+        // For non-nullable columns, add DEFAULT and NOT NULL
+        await db.execute(sql.raw(`
+          ALTER TABLE characters 
+          ADD COLUMN IF NOT EXISTS ${column.name} ${column.type} DEFAULT ${column.default} NOT NULL
+        `));
+      }
+      
       console.log(`Coluna ${column.name} adicionada com sucesso`);
     } catch (error) {
       console.log(`Coluna ${column.name} já existe ou erro ao adicionar:`, error);
