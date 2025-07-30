@@ -32,6 +32,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     cookie: {
       secure: false, // Set to true in production with HTTPS
       httpOnly: false, // Allow JavaScript access for debugging
+      secure: false, // Set to true in production with HTTPS
+      httpOnly: false, // Allow JavaScript access for debugging
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: 'lax', // Better cross-site support
       domain: undefined, // Don't set domain for localhost
@@ -799,6 +801,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Enviar introdução sequencial para todos os usuários conectados
       if (playersWithCharacters.length > 0) {
         console.log("=== SENDING WEBSOCKET MESSAGE ===");
+```
         console.log("Sending to", matchPageConnections.size, "connections");
 
         const message = {
@@ -1191,6 +1194,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (connection && connection.readyState === WebSocket.OPEN) {
       connection.send(JSON.stringify(message));
     }
+  }
+
+    // Function to broadcast message to specific match
+    function broadcastToMatch(matchId: number, message: any) {
+      matchPageConnections.forEach((connection, userId) => {
+          // Fetch the user to get the character data and match ID
+          storage.getUserWithCharacter(userId)
+              .then(user => {
+                  if (user && user.character) {
+                      // Check if the user's character is associated with the given match ID
+                      // NOTE: You'll need to have a way to associate characters with matches
+                      // For example, if you store the match ID in the character object:
+                      // if (user.character.matchId === matchId) {
+                      if (connection.readyState === WebSocket.OPEN) {
+                          connection.send(JSON.stringify(message));
+                      }
+                  }
+              })
+              .catch(error => {
+                  console.error("Error fetching user with character:", error);
+              });
+      });
   }
 
   return httpServer;
