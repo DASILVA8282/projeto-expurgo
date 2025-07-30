@@ -89,25 +89,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Admin check - Session userId:", req.session.userId);
       console.log("Admin check - Session data:", JSON.stringify(req.session, null, 2));
-      
+
       if (!req.session.userId) {
         console.log("Admin check - No userId in session");
         return res.status(401).json({ message: "Unauthorized - No session" });
       }
-      
+
       const user = await storage.getUser(req.session.userId);
       console.log("Admin check - User found:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
-      
+
       if (!user) {
         console.log("Admin check - User not found in database");
         return res.status(401).json({ message: "User not found" });
       }
-      
+
       if (!user.isAdmin) {
         console.log("Admin check - User is not admin");
         return res.status(403).json({ message: "Admin access required" });
       }
-      
+
       console.log("Admin check - Success, user is admin");
       next();
     } catch (error) {
@@ -122,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/register", async (req, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
-      
+
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
@@ -133,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const user = await storage.createUser(userData);
       req.session.userId = user.id;
-      
+
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
@@ -146,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      
+
       if (!username || !password) {
         return res.status(400).json({ message: "Username and password required" });
       }
@@ -162,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       req.session.userId = user.id;
-      
+
       // Don't send password back
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
@@ -186,11 +186,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Get user - Session userId:", req.session.userId);
       const user = await storage.getUserWithCharacter(req.session.userId!);
       console.log("Get user - Found user:", user ? { id: user.id, username: user.username, isAdmin: user.isAdmin } : "not found");
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Don't send password back
       const { password, ...userWithoutPassword } = user;
       console.log("Get user - Sending user data:", { id: userWithoutPassword.id, username: userWithoutPassword.username, isAdmin: userWithoutPassword.isAdmin });
@@ -230,7 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Avatar upload attempt - User ID:", req.session.userId);
       console.log("File received:", req.file ? { filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype } : "No file");
-      
+
       if (!req.file) {
         console.log("No file uploaded");
         return res.status(400).json({ message: "Nenhum arquivo foi enviado" });
@@ -238,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const avatarUrl = `/uploads/avatars/${req.file.filename}`;
       console.log("Generated avatar URL:", avatarUrl);
-      
+
       // Update character with new avatar URL
       const character = await storage.getCharacter(req.session.userId!);
       if (!character) {
@@ -289,23 +289,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Database URL exists:", !!process.env.DATABASE_URL);
       console.log("User ID from session:", req.session.userId);
       console.log("Received character data:", req.body);
-      
+
       // Check if user already has a character first
       const existingCharacter = await storage.getCharacter(req.session.userId!);
       if (existingCharacter) {
         console.log("RENDER DEBUG: Character already exists for user");
         return res.status(400).json({ message: "Character already exists for this user" });
       }
-      
+
       const characterData = insertCharacterSchema.parse({
         ...req.body,
         userId: req.session.userId,
       });
-      
+
       // Auto-assign random ranking between 250-300 ONLY for new characters
       const randomRanking = Math.floor(Math.random() * 51) + 250; // 250-300
       characterData.ranking = randomRanking;
-      
+
       console.log("Parsed character data with auto-ranking:", characterData);
       console.log("RENDER DEBUG: Assigning random ranking:", randomRanking);
 
@@ -330,10 +330,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Environment:", process.env.NODE_ENV);
       console.log("User ID from session:", req.session.userId);
       console.log("Received update data:", req.body);
-      
+
       const updates = updateCharacterSchema.parse(req.body);
       console.log("Parsed update data:", updates);
-      
+
       // Check if character exists
       console.log("RENDER DEBUG: Checking if character exists...");
       const existingCharacter = await storage.getCharacter(req.session.userId!);
@@ -414,9 +414,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const connectedUserIds = Array.from(matchPageConnections.keys());
       const users = [];
-      
+
       console.log("Connected user IDs:", connectedUserIds);
-      
+
       for (const userId of connectedUserIds) {
         const user = await storage.getUserWithCharacter(userId);
         console.log(`User ${userId}:`, user ? { id: user.id, username: user.username, hasCharacter: !!user.character } : "not found");
@@ -424,7 +424,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           users.push(user);
         }
       }
-      
+
       console.log("Final users array:", users.length);
       res.json(users);
     } catch (error) {
@@ -452,7 +452,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  
+
 
   // Wild Card routes
   app.get("/api/admin/eliminated-characters", requireAdmin, async (req, res) => {
@@ -468,7 +468,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/wildcard/invite", requireAdmin, async (req, res) => {
     try {
       const { userId } = req.body;
-      
+
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
@@ -480,7 +480,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       let invitation;
-      
+
       // Check if invitation already exists
       const existingInvitation = await storage.getWildCardInvitation(userId);
       if (existingInvitation) {
@@ -492,7 +492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Create new invitation
         invitation = await storage.createWildCardInvitation({ userId, status: "pending" });
       }
-      
+
       // Send WebSocket notification to the user
       broadcastToUser(userId, {
         type: "wildcard_invitation",
@@ -509,7 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/wildcard/respond", requireAuth, async (req, res) => {
     try {
       const { response } = req.body; // "accepted" or "rejected"
-      
+
       if (!response || !["accepted", "rejected"].includes(response)) {
         return res.status(400).json({ message: "Invalid response" });
       }
@@ -554,18 +554,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/admin/character/:userId/eliminate", requireAdmin, async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      
+
       // Check if character exists
       const character = await storage.getCharacter(userId);
       if (!character) {
         return res.status(404).json({ message: "Character not found" });
       }
-      
+
       // Check if already eliminated
       if (character.isEliminated) {
         return res.status(400).json({ message: "Character already eliminated" });
       }
-      
+
       const updatedCharacter = await storage.updateCharacter(userId, { isEliminated: true });
       res.json(updatedCharacter);
     } catch (error) {
@@ -579,17 +579,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       const { newRank } = req.body;
-      
+
       if (!newRank || newRank < 1 || newRank > 300) {
         return res.status(400).json({ message: "Invalid rank. Must be between 1 and 300" });
       }
-      
+
       // Check if character exists
       const character = await storage.getCharacter(userId);
       if (!character) {
         return res.status(404).json({ message: "Character not found" });
       }
-      
+
       const updatedCharacter = await storage.updateCharacter(userId, { ranking: newRank });
       res.json(updatedCharacter);
     } catch (error) {
@@ -602,7 +602,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/character/:userId/calculate-rank", requireAdmin, async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      
+
       // Check if character exists
       const character = await storage.getCharacter(userId);
       if (!character) {
@@ -615,22 +615,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Factor in goals (each goal reduces rank by 5)
       rankReduction += character.goals * 5;
-      
+
       // Factor in matches (each match reduces rank by 1)
       rankReduction += character.matches * 1;
-      
+
       // Factor in level (each level above 1 reduces rank by 3)
       rankReduction += (character.level - 1) * 3;
-      
+
       // Factor in key stats (total physical stats above 20 gives bonus)
       const totalPhysicalStats = (character.fisico || 0) + (character.velocidade || 0);
       if (totalPhysicalStats > 20) {
         rankReduction += Math.floor((totalPhysicalStats - 20) / 2);
       }
-      
+
       // Calculate final ranking (minimum rank 1)
       const calculatedRank = Math.max(1, baseRank - rankReduction);
-      
+
       const updatedCharacter = await storage.updateCharacter(userId, { ranking: calculatedRank });
       res.json({ ranking: calculatedRank, character: updatedCharacter });
     } catch (error) {
@@ -643,25 +643,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/admin/user/:userId", requireAdmin, async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      
+
       if (isNaN(userId)) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
-      
+
       // Check if user exists
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Prevent deleting admins (safety measure)
       if (user.isAdmin) {
         return res.status(403).json({ message: "Cannot delete admin users" });
       }
-      
+
       // Delete all related data
       await storage.deleteUserPermanently(userId);
-      
+
       console.log(`User ${userId} (${user.username}) has been permanently deleted by admin`);
       res.json({ message: "User deleted permanently", deletedUser: { id: user.id, username: user.username } });
     } catch (error) {
@@ -700,7 +700,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!activeMatch) {
         return res.status(404).json({ message: "No active match" });
       }
-      
+
       const matchWithGoals = await storage.getMatchWithGoals(activeMatch.id);
       res.json(matchWithGoals);
     } catch (error) {
@@ -713,11 +713,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const matchId = parseInt(req.params.id);
       const match = await storage.getMatchWithGoals(matchId);
-      
+
       if (!match) {
         return res.status(404).json({ message: "Match not found" });
       }
-      
+
       res.json(match);
     } catch (error) {
       console.error("Get match error:", error);
@@ -741,7 +741,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const matchId = parseInt(req.params.id);
       const updates = updateMatchSchema.parse(req.body);
-      
+
       const updatedMatch = await storage.updateMatch(matchId, updates);
       res.json(updatedMatch);
     } catch (error) {
@@ -758,14 +758,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         startTime: new Date(),
         currentMinute: 0
       });
-      
+
       // Buscar todos os usuários conectados na página de partidas para enviar introduções
       const connectedUserIds = Array.from(matchPageConnections.keys());
       const playersWithCharacters = [];
-      
+
       console.log("=== PROCESSING CONNECTED USERS FOR CHARACTER SEQUENCE ===");
       console.log("Connected user IDs:", connectedUserIds);
-      
+
       // Coletar apenas jogadores com personagens
       for (const userId of connectedUserIds) {
         const user = await storage.getUserWithCharacter(userId);
@@ -776,7 +776,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           username: user?.username,
           characterName: user?.character?.name
         });
-        
+
         if (user && user.character && !user.isAdmin) {
           playersWithCharacters.push(user.character);
           console.log(`Added character: ${user.character.name} (User: ${user.username})`);
@@ -784,23 +784,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`Skipped user ${userId}: no character or is admin`);
         }
       }
-      
+
       console.log("Final playersWithCharacters:", playersWithCharacters.length);
       console.log("Characters to show:", playersWithCharacters.map(c => c.name));
-      
+
       // Enviar introdução sequencial para todos os usuários conectados
       if (playersWithCharacters.length > 0) {
         console.log("=== SENDING WEBSOCKET MESSAGE ===");
         console.log("Sending to", matchPageConnections.size, "connections");
-        
+
         const message = {
           type: "match_started_character_intro_sequence",
           characters: playersWithCharacters,
           message: "A partida começou! Apresentando os jogadores..."
         };
-        
+
         console.log("Message being sent:", JSON.stringify(message, null, 2));
-        
+
         // Broadcast para todos os conectados
         matchPageConnections.forEach((connection, userId) => {
           if (connection.readyState === WebSocket.OPEN) {
@@ -813,7 +813,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.log("No characters to show, skipping WebSocket broadcast");
       }
-      
+
       res.json(updatedMatch);
     } catch (error) {
       console.error("Start match error:", error);
@@ -824,23 +824,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/matches/:id/finish", requireAdmin, async (req, res) => {
     try {
       const matchId = parseInt(req.params.id);
-      
+
       // Verifica se a partida existe e não está finalizada
       const match = await storage.getMatch(matchId);
       if (!match) {
         return res.status(404).json({ message: "Match not found" });
       }
-      
+
       if (match.status === "finished") {
         return res.status(400).json({ message: "Match already finished" });
       }
-      
+
       // PRIMEIRO: Encerra qualquer Flow State ativo da partida
       const activeFlowState = await storage.getActiveFlowState(matchId);
       if (activeFlowState) {
         await storage.endFlowState(matchId, activeFlowState.playerId);
         console.log(`Flow State ended for player ${activeFlowState.playerId} due to match finish`);
-        
+
         // Notificar via WebSocket que o Flow State acabou
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
@@ -853,13 +853,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         });
       }
-      
+
       // Atualiza o status da partida para finalizada
       const updatedMatch = await storage.updateMatch(matchId, {
         status: "finished",
         endTime: new Date()
       });
-      
+
       // Busca todos os gols da partida para atualizar estatísticas
       const matchWithGoals = await storage.getMatchWithGoals(matchId);
       if (matchWithGoals?.goals) {
@@ -868,7 +868,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           acc[goal.playerId] = (acc[goal.playerId] || 0) + 1;
           return acc;
         }, {} as Record<number, number>);
-        
+
         // Atualiza estatísticas de cada jogador
         for (const [playerId, goalCount] of Object.entries(playerGoals)) {
           const character = await storage.getCharacter(parseInt(playerId));
@@ -879,11 +879,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
         }
-        
+
         // Atualiza matches para todos os outros jogadores que participaram mas não fizeram gols
         const allUsers = await storage.getAllUsersWithCharacters();
         const playersWithGoals = new Set(Object.keys(playerGoals).map(id => parseInt(id)));
-        
+
         for (const user of allUsers) {
           if (user.character && !playersWithGoals.has(user.id)) {
             await storage.updateCharacter(user.id, {
@@ -892,33 +892,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
-      
+
       // Notificar todos os usuários conectados que a partida foi finalizada
-wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({
-              type: "flow_state_ended",
-              playerId: activeFlowState.playerId,
-              playerName: activeFlowState.player.character?.name || activeFlowState.player.username,
-              message: `${activeFlowState.player.character?.name || activeFlowState.player.username} saiu do Flow State!`
-            }));
-          }
-        });
-      }
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({
+            type: "match_finished",
+            matchId: matchId,
+            message: "A partida foi finalizada!"
+          }));
+        }
+      });
 
-      const newGoal = await storage.createGoal(goalData);
-
-      // Update match score
-      const match = await storage.getMatch(goalData.matchId);
-      if (match) {
-        const updates = goalData.team === "V" 
-          ? { scoreV: match.scoreV + 1 }
-          : { scoreZ: match.scoreZ + 1 };
-
-        await storage.updateMatch(goalData.matchId, updates);
-      }
-
-      res.json(newGoal);
+      res.json(updatedMatch);
     } catch (error) {
       console.error("Create goal error:", error);
       res.status(500).json({ message: "Failed to create goal" });
