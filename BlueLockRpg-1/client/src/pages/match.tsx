@@ -395,13 +395,13 @@ export default function Match() {
     throwOnError: false,
   });
 
-  // Verifica se existe Flow State ativo na partida (para admin)
+  // Verifica se existe Flow State ativo na partida (para todos os usuários - música global)
   const { data: activeFlowState, refetch: refetchActiveFlowState } = useQuery<any>({
     queryKey: [`/api/flow-state/${match?.id}/active`],
-    enabled: user?.isAdmin && !!match?.id && match?.status === "active",
+    enabled: !!match?.id && match?.status === "active", // Habilitado para todos os usuários
     retry: false,
     throwOnError: false,
-    refetchInterval: 2000, // Aumentado para 2 segundos para reduzir flicker
+    refetchInterval: 2000,
   });
 
 
@@ -1814,9 +1814,9 @@ export default function Match() {
         onComplete={handleFlowCutsceneComplete}
       />
 
-      {/* Vinheta do Flow State - aparece após a cutscene */}
+      {/* Vinheta do Flow State - aparece após a cutscene - APENAS para o próprio usuário */}
       <FlowStateVignette
-        isActive={isInFlowState && !showFlowCutscene}
+        isActive={userFlowState && !showFlowCutscene}
         flowColor={flowColor}
       />
 
@@ -1829,19 +1829,21 @@ export default function Match() {
         />
       )}
 
-      {/* Sistema de música do Flow State */}
+      {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={isInFlowState && flowMusicUrl !== ""}
-        musicUrl={flowMusicUrl}
+        isActive={activeFlowState && activeFlowState.flowMusicUrl !== ""}
+        musicUrl={activeFlowState?.flowMusicUrl || ""}
       />
       
       {/* Debug info */}
-      {(isInFlowState || showFlowCutscene) && (
+      {(isInFlowState || showFlowCutscene || activeFlowState) && (
         <div className="fixed top-4 left-4 bg-black/80 text-white p-4 rounded-lg text-sm z-50">
-          <div>Flow State: {isInFlowState ? 'ATIVO' : 'INATIVO'}</div>
+          <div>My Flow State: {userFlowState ? 'ATIVO' : 'INATIVO'}</div>
+          <div>Global Flow State: {activeFlowState ? 'ATIVO' : 'INATIVO'}</div>
           <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
-          <div>Music URL: {flowMusicUrl || 'VAZIO'}</div>
-          <div>Music Active: {(isInFlowState && flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
+          <div>Music URL: {activeFlowState?.flowMusicUrl || 'VAZIO'}</div>
+          <div>Music Active: {(activeFlowState && activeFlowState.flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
+          <div>Vignette Active: {userFlowState && !showFlowCutscene ? 'SIM' : 'NÃO'}</div>
         </div>
       )}
     </div>
