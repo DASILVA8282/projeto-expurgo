@@ -39,7 +39,7 @@ export const characters = pgTable("characters", {
   intelecto: integer("intelecto").default(0).notNull(),
   carisma: integer("carisma").default(0).notNull(),
   egoismo: integer("egoismo").default(0).notNull(),
-  
+
   // Perícias (skills) - pontos para distribuir
   chute: integer("chute").default(0).notNull(),
   precisao: integer("precisao").default(0).notNull(),
@@ -50,7 +50,7 @@ export const characters = pgTable("characters", {
   intuicao: integer("intuicao").default(0).notNull(),
   interacao_social: integer("interacao_social").default(0).notNull(),
   lingua_estrangeira: integer("lingua_estrangeira").default(0).notNull(),
-  
+
   // Novas perícias do documento
   corrida: integer("corrida").default(0).notNull(),
   cruzamento: integer("cruzamento").default(0).notNull(),
@@ -59,7 +59,7 @@ export const characters = pgTable("characters", {
   passe: integer("passe").default(0).notNull(),
   performance: integer("performance").default(0).notNull(),
   comemoracao: integer("comemoracao").default(0).notNull(),
-  
+
   // Perícias livres
   fortitude: integer("fortitude").default(0).notNull(),
   finta: integer("finta").default(0).notNull(),
@@ -67,7 +67,7 @@ export const characters = pgTable("characters", {
   iniciativa: integer("iniciativa").default(0).notNull(),
   percepcao: integer("percepcao").default(0).notNull(),
   sorte: integer("sorte").default(0).notNull(),
-  
+
   // Perícias de reação
   dominio: integer("dominio").default(0).notNull(),
   cabeceio: integer("cabeceio").default(0).notNull(),
@@ -76,7 +76,8 @@ export const characters = pgTable("characters", {
   // Flow State personalization
   flowColor: varchar("flow_color", { length: 20 }).default("cyan").notNull(),
   flowPhrase: varchar("flow_phrase", { length: 255 }).default("É hora de dominar o campo!").notNull(),
-  
+  flowMusicUrl: varchar("flow_music_url", { length: 255 }),
+
   // New character stats
   pontos_folego: integer("pontos_folego").default(10).notNull(), // 10 base + fisico
   deslocamento: integer("deslocamento").default(27).notNull(), // 27 + velocidade
@@ -84,7 +85,7 @@ export const characters = pgTable("characters", {
   adrenalina: integer("adrenalina").default(0).notNull(),
   aura: integer("aura").default(0).notNull(),
   furia: integer("furia").default(0).notNull(),
-  
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -189,8 +190,12 @@ export const insertCharacterSchema = createInsertSchema(characters).omit({
   updatedAt: true,
 });
 
-export const updateCharacterSchema = insertCharacterSchema.partial().omit({
+export const updateCharacterSchema = createInsertSchema(characters).partial().omit({
   userId: true,
+}).extend({
+  flowColor: z.string().optional(),
+  flowPhrase: z.string().optional(),
+  flowMusicUrl: z.string().optional(),
 });
 
 export const insertWildCardInvitationSchema = createInsertSchema(wildCardInvitations).omit({
