@@ -214,56 +214,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Avatar upload route
-  app.post("/api/characters/avatar", requireAuth, (req, res, next) => {
-    upload.single('avatar')(req, res, (err) => {
-      if (err) {
-        console.error("Multer upload error:", err);
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          return res.status(400).json({ message: "Arquivo muito grande. Máximo 5MB permitido." });
-        }
-        if (err.code === 'INVALID_FILE_TYPE') {
-          return res.status(400).json({ message: err.message });
-        }
-        return res.status(400).json({ message: "Erro no upload: " + err.message });
-      }
-      next();
-    });
-  }, async (req, res) => {
+  app.post("/api/characters/avatar", upload.single('avatar'), async (req, res) => {
     try {
-      console.log("Avatar upload attempt - User ID:", req.session.userId);
-      console.log("File received:", req.file ? { filename: req.file.filename, size: req.file.size, mimetype: req.file.mimetype } : "No file");
+      if (!req.session?.userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const userId = req.session.userId;
+      console.log(`Avatar upload request from user ${userId}`);
+
+      // Check if character exists
+      const character = await storage.getCharacter(userId);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
 
       if (!req.file) {
-        console.log("No file uploaded");
-        return res.status(400).json({ message: "Nenhum arquivo foi enviado" });
+        return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-      console.log("Generated avatar URL:", avatarUrl);
-
-      // Update character with new avatar URL
-      const character = await storage.getCharacter(req.session.userId!);
-      if (!character) {
-        console.log("Character not found for user:", req.session.userId);
-        return res.status(404).json({ message: "Personagem não encontrado" });
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ 
+          message: "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed." 
+        });
       }
 
-      const updatedCharacter = await storage.updateCharacter(req.session.userId!, {
-        avatar: avatarUrl
+      // Validate file size (5MB limit)
+      if (req.file.size > 5 * 1024 * 1024) {
+        return res.status(400).json({ 
+          message: "File too large. Maximum size is 5MB." 
+        });
+      }
+
+      console.log("File upload details:", {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        filename: req.file.filename
       });
 
-      console.log("Avatar upload successful for user:", req.session.userId);
+      // Update character with avatar URL
+      const avatarUrl = `/uploads/${req.file.filename}`;
+      await storage.updateCharacter(userId, { avatar: avatarUrl });
+
+      console.log(`Avatar updated successfully for user ${userId}: ${avatarUrl}`);
+
       res.json({ 
-        success: true, 
-        avatarUrl: avatarUrl,
-        character: updatedCharacter 
+        message: "Avatar uploaded successfully",
+        avatarUrl: avatarUrl
       });
+
     } catch (error) {
       console.error("Avatar upload error:", error);
-      if (error instanceof Error && error.message.includes('Only PNG and JPEG images are allowed')) {
-        return res.status(400).json({ message: "Apenas imagens PNG e JPEG são permitidas" });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Flow music upload endpoint
+  app.post("/api/characters/flow-music", upload.single('flowMusic'), async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ message: "Authentication required" });
       }
-      res.status(500).json({ message: "Falha no upload da imagem" });
+
+      const userId = req.session.userId;
+      console.log(`Flow music upload request from user ${userId}`);
+
+      // Check if character exists
+      const character = await storage.getCharacter(userId);
+      if (!character) {
+        return res.status(404).json({ message: "Character not found" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      // Validate file type
+      const allowedTypes = [
+        'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 
+        'audio/m4a', 'audio/aac', 'audio/flac', 'audio/webm'
+      ];
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ 
+          message: "Invalid file type. Only MP3, WAV, OGG, M4A, AAC, and FLAC are allowed." 
+        });
+      }
+
+      // Validate file size (10MB limit)
+      if (req.file.size > 10 * 1024 * 1024) {
+        return res.status(400).json({ 
+          message: "File too large. Maximum size is 10MB." 
+        });
+      }
+
+      console.log("Flow music upload details:", {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        filename: req.file.filename
+      });
+
+      // Update character with flow music URL
+      const flowMusicUrl = `/uploads/${req.file.filename}`;
+      await storage.updateCharacter(userId, { flowMusicUrl: flowMusicUrl });
+
+      console.log(`Flow music updated successfully for user ${userId}: ${flowMusicUrl}`);
+
+      res.json({ 
+        message: "Flow music uploaded successfully",
+        flowMusicUrl: flowMusicUrl
+      });
+
+    } catch (error) {
+      console.error("Flow music upload error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 
