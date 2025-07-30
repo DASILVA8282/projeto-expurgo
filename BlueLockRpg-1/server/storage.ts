@@ -460,12 +460,38 @@ export class DatabaseStorage implements IStorage {
 
   async getFlowStateForPlayer(matchId: number, playerId: number): Promise<FlowState | undefined> {
     const [flowState] = await db
-      .select()
+      .select({
+        id: flowStates.id,
+        matchId: flowStates.matchId,
+        playerId: flowStates.playerId,
+        isActive: flowStates.isActive,
+        flowColor: flowStates.flowColor,
+        activatedAt: flowStates.activatedAt,
+        player: {
+          character: {
+            flowColor: characters.flowColor,
+            flowPhrase: characters.flowPhrase,
+            flowMusicUrl: characters.flowMusicUrl
+          }
+        }
+      })
       .from(flowStates)
-      .where(and(eq(flowStates.matchId, matchId), eq(flowStates.playerId, playerId), eq(flowStates.isActive, true)))
+      .leftJoin(users, eq(flowStates.playerId, users.id))
+      .leftJoin(characters, eq(users.id, characters.userId))
+      .where(and(
+        eq(flowStates.matchId, matchId),
+        eq(flowStates.playerId, playerId),
+        eq(flowStates.isActive, true)
+      ))
+      .orderBy(desc(flowStates.activatedAt))
       .limit(1);
 
-    return flowState;
+    return flowState ? {
+      ...flowState,
+      flowColor: flowState.player?.character?.flowColor || flowState.flowColor,
+      flowPhrase: flowState.player?.character?.flowPhrase || "É hora de dominar o campo!",
+      flowMusicUrl: flowState.player?.character?.flowMusicUrl || ""
+    } : undefined;
   }
 }
 
