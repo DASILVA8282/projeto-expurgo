@@ -84,8 +84,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Separate multer configuration for audio files
+  const audioStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      console.log("Audio multer destination check - uploads dir exists:", fs.existsSync(musicUploadsDir));
+      cb(null, musicUploadsDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const filename = 'music-' + uniqueSuffix + path.extname(file.originalname);
+      console.log("Generated audio filename:", filename);
+      cb(null, filename);
+    }
+  });
+
   const uploadAudio = multer({
-    storage: storage_multer,
+    storage: audioStorage,
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit for audio
     fileFilter: (req, file, cb) => {
       console.log("Audio file filter check:", { mimetype: file.mimetype, originalname: file.originalname });
@@ -93,7 +106,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 
         'audio/m4a', 'audio/aac', 'audio/flac', 'audio/webm'
       ];
-      if (allowedTypes.includes(file.mimetype)) {
+      if (allowedTypes.includes(file.mimetype) || file.originalname.toLowerCase().endsWith('.mp3')) {
         cb(null, true);
       } else {
         const error = new Error('Apenas arquivos de áudio são permitidos (MP3, WAV, OGG, M4A, AAC, FLAC)');
@@ -105,22 +118,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve static files from uploads directory with proper MIME types
   app.use('/uploads', express.static('public/uploads', {
-    setHeaders: (res, path) => {
-      if (path.endsWith('.mp3')) {
+    setHeaders: (res, filePath) => {
+      // Set proper MIME types for audio files
+      if (filePath.endsWith('.mp3')) {
         res.setHeader('Content-Type', 'audio/mpeg');
-      } else if (path.endsWith('.wav')) {
+      } else if (filePath.endsWith('.wav')) {
         res.setHeader('Content-Type', 'audio/wav');
-      } else if (path.endsWith('.ogg')) {
+      } else if (filePath.endsWith('.ogg')) {
         res.setHeader('Content-Type', 'audio/ogg');
-      } else if (path.endsWith('.m4a')) {
+      } else if (filePath.endsWith('.m4a')) {
         res.setHeader('Content-Type', 'audio/mp4');
-      } else if (path.endsWith('.aac')) {
+      } else if (filePath.endsWith('.aac')) {
         res.setHeader('Content-Type', 'audio/aac');
-      } else if (path.endsWith('.flac')) {
+      } else if (filePath.endsWith('.flac')) {
         res.setHeader('Content-Type', 'audio/flac');
       }
-      // Permitir acesso cross-origin se necessário
+      
+      // CORS headers for audio files
       res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Range, Content-Type');
+      res.setHeader('Accept-Ranges', 'bytes');
+      
+      // Cache control for audio files
+      if (filePath.match(/\.(mp3|wav|ogg|m4a|aac|flac)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+      }
     }
   }));
 
@@ -314,6 +337,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Avatar upload error:", error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Debug route to test audio file access
+  app.get("/api/debug/audio/:filename", async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const filePath = path.join('public/uploads', filename);
+      
+      console.log('🎵 Debug: Testing audio file access');
+      console.log('🎵 Filename:', filename);
+      console.log('🎵 Full path:', filePath);
+      console.log('🎵 File exists:', fs.existsSync(filePath));
+      
+      if (fs.existsSync(filePath)) {
+        const stats = fs.statSync(filePath);
+        res.json({
+          exists: true,
+          size: stats.size,
+          path: filePath,
+          url: `/uploads/${filename}`
+        });
+      } else {
+        res.status(404).json({
+          exists: false,
+          path: filePath,
+          url: `/uploads/${filename}`
+        });
+      }
+    } catch (error) {
+      console.error('🎵 Debug audio error:', error);
+      res.status(500).json({ error: error.message });
     }
   });
 
