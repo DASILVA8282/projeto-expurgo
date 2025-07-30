@@ -385,10 +385,8 @@ export default function Match() {
       setFlowMusicUrl(userFlowState.flowMusicUrl || "");
       setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
       
-      // Só atualiza isInFlowState se não estiver mostrando cutscene
-      if (!showFlowCutscene) {
-        setIsInFlowState(true);
-      }
+      // Sempre ativa Flow State quando detectado pela API, independente da cutscene
+      setIsInFlowState(true);
     } else {
       console.log('No Flow State for user');
       // Só limpa estados se não há cutscene ativa
@@ -619,15 +617,10 @@ export default function Match() {
     // Primeiro, garantir que ainda estamos na página de match
     console.log("Current location should be /match");
     
-    // Definir estados de forma sequencial para evitar conflitos
+    // Apenas esconder a cutscene, mantendo Flow State ativo para continuar música
     setTimeout(() => {
       setShowFlowCutscene(false);
-      console.log("Cutscene hidden");
-    }, 100);
-    
-    setTimeout(() => {
-      setIsInFlowState(true);
-      console.log("Flow State activated");
+      console.log("Cutscene hidden - Flow State continues active");
       
       // Garantir que permanecemos na página de match
       setLocation("/match");
@@ -641,7 +634,7 @@ export default function Match() {
         title: "Flow State Ativado!",
         description: "Você está em estado de concentração máxima!",
       });
-    }, 300);
+    }, 100);
   }, [toast, queryClient, setLocation, match?.id, user?.id]);
 
   // Handler para ativar Flow State manualmente
@@ -1794,7 +1787,7 @@ export default function Match() {
 
       {/* Sistema de música do Flow State */}
       <FlowStateMusic
-        isActive={(isInFlowState || showFlowCutscene) && flowMusicUrl !== ""}
+        isActive={isInFlowState && flowMusicUrl !== ""}
         musicUrl={flowMusicUrl}
       />
       
@@ -1804,7 +1797,7 @@ export default function Match() {
           <div>Flow State: {isInFlowState ? 'ATIVO' : 'INATIVO'}</div>
           <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
           <div>Music URL: {flowMusicUrl || 'VAZIO'}</div>
-          <div>Music Active: {((isInFlowState || showFlowCutscene) && flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
+          <div>Music Active: {(isInFlowState && flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
         </div>
       )}
     </div>
