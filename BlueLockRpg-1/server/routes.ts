@@ -994,6 +994,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Usar cor personalizada do jogador ou fallback para cor aleatória
       const flowColor = player?.character?.flowColor || "cyan";
       const flowPhrase = player?.character?.flowPhrase || "É hora de dominar o campo!";
+      const flowMusicUrl = player?.character?.flowMusicUrl || "";
 
       // Criar Flow State com dados personalizados
       const flowState = await storage.createFlowState({
@@ -1011,6 +1012,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             playerName: player?.character?.name || player?.username,
             flowColor: flowColor,
             flowPhrase: flowPhrase,
+            flowMusicUrl: flowMusicUrl,
             message: `${player?.character?.name || player?.username} entrou no Flow State!`
           }));
         }
