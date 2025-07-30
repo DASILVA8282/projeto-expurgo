@@ -1832,21 +1832,27 @@ export default function Match() {
 
       {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={activeFlowState && activeFlowState.isActive && activeFlowState.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== ""}
+        isActive={!!activeFlowState && activeFlowState.isActive && !!activeFlowState.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== ""}
         musicUrl={activeFlowState?.flowMusicUrl || ""}
       />
       
       {/* Debug info */}
       {(userFlowState || showFlowCutscene || activeFlowState) && (
-        <div className="fixed top-4 left-4 bg-black/80 text-white p-4 rounded-lg text-sm z-50">
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-4 rounded-lg text-sm z-50 max-w-sm">
+          <div className="text-yellow-400 font-bold mb-2">FLOW STATE DEBUG</div>
           <div>My Flow State: {userFlowState?.isActive ? 'ATIVO' : 'INATIVO'}</div>
           <div>My Flow State Player ID: {userFlowState?.playerId || 'NENHUM'}</div>
           <div>Current User ID: {user?.id || 'NENHUM'}</div>
+          <div className="text-purple-400 font-bold mt-2">GLOBAL FLOW STATE</div>
           <div>Global Flow State: {activeFlowState?.isActive ? 'ATIVO' : 'INATIVO'}</div>
           <div>Global Flow State Player: {activeFlowState?.player?.username || 'NENHUM'}</div>
+          <div className="text-green-400 font-bold mt-2">MUSIC SYSTEM</div>
+          <div>Music URL: {activeFlowState?.flowMusicUrl ? 'TEM URL' : 'SEM URL'}</div>
+          <div>Music URL Length: {activeFlowState?.flowMusicUrl?.length || 0}</div>
+          <div>Is YouTube URL: {activeFlowState?.flowMusicUrl ? (activeFlowState.flowMusicUrl.includes('youtube.com') || activeFlowState.flowMusicUrl.includes('youtu.be') ? 'SIM' : 'NÃO') : 'N/A'}</div>
+          <div>Music Should Play: {(!!activeFlowState && activeFlowState.isActive && !!activeFlowState.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== "") ? 'SIM' : 'NÃO'}</div>
+          <div className="text-blue-400 font-bold mt-2">UI STATES</div>
           <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
-          <div>Music URL: {activeFlowState?.flowMusicUrl || 'VAZIO'}</div>
-          <div>Music Active: {(activeFlowState?.isActive && activeFlowState?.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== "") ? 'SIM' : 'NÃO'}</div>
           <div>Vignette Active: {(userFlowState?.isActive && !showFlowCutscene) ? 'SIM' : 'NÃO'}</div>
         </div>
       )}
