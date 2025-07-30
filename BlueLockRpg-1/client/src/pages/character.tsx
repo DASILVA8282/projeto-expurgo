@@ -1359,9 +1359,7 @@ export default function Character() {
                       placeholder="Cole aqui o link direto do áudio (.mp3, .wav, .ogg)"
                     />
                     <p className="text-slate-500 text-sm mt-2 font-oswald italic">
-                      Use links diretos de arquivos de áudio para melhor compatibilidade. Exemplos: arquivo.mp3, arquivo.wav
-                    </p>
-                      Esta música tocará para todos durante seu Flow State
+                      Use links diretos de arquivos de áudio para melhor compatibilidade. Exemplos: arquivo.mp3, arquivo.wav. Esta música tocará para todos durante seu Flow State
                     </p>
                   </div>
 
