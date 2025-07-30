@@ -23,6 +23,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
 
   // Carregar API do YouTube
   useEffect(() => {
+    console.log('FlowStateMusic: Loading YouTube API');
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
@@ -30,69 +31,87 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
       window.onYouTubeIframeAPIReady = () => {
-        console.log('YouTube API loaded');
+        console.log('YouTube API loaded and ready');
       };
+    } else {
+      console.log('YouTube API already loaded');
     }
   }, []);
 
   // Criar player quando necessário
   useEffect(() => {
-    if (isActive && musicUrl && window.YT && !player) {
+    console.log('FlowStateMusic: Effect triggered', { isActive, musicUrl, hasYT: !!window.YT, hasPlayer: !!player });
+    
+    if (isActive && musicUrl && window.YT && window.YT.Player && !player) {
       const videoId = extractYouTubeId(musicUrl);
+      console.log('FlowStateMusic: Extracted video ID:', videoId);
       
       if (videoId && playerRef.current) {
-        const newPlayer = new window.YT.Player(playerRef.current, {
-          height: '0',
-          width: '0',
-          videoId: videoId,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            loop: 1,
-            playlist: videoId,
-            start: 0,
-            modestbranding: 1,
-            rel: 0,
-            showinfo: 0,
-            iv_load_policy: 3,
-            fs: 0,
-            cc_load_policy: 0,
-            disablekb: 1,
-            autohide: 1
-          },
-          events: {
-            onReady: (event: any) => {
-              console.log('YouTube player ready');
-              event.target.playVideo();
-              setIsPlaying(true);
+        console.log('FlowStateMusic: Creating YouTube player');
+        try {
+          const newPlayer = new window.YT.Player(playerRef.current, {
+            height: '0',
+            width: '0',
+            videoId: videoId,
+            playerVars: {
+              autoplay: 1,
+              controls: 0,
+              loop: 1,
+              playlist: videoId,
+              start: 0,
+              modestbranding: 1,
+              rel: 0,
+              showinfo: 0,
+              iv_load_policy: 3,
+              fs: 0,
+              cc_load_policy: 0,
+              disablekb: 1,
+              autohide: 1
             },
-            onStateChange: (event: any) => {
-              if (event.data === window.YT.PlayerState.PLAYING) {
+            events: {
+              onReady: (event: any) => {
+                console.log('FlowStateMusic: YouTube player ready, starting playback');
+                event.target.playVideo();
                 setIsPlaying(true);
-              } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
-                setIsPlaying(false);
+              },
+              onStateChange: (event: any) => {
+                console.log('FlowStateMusic: Player state changed:', event.data);
+                if (event.data === window.YT.PlayerState.PLAYING) {
+                  setIsPlaying(true);
+                } else if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) {
+                  setIsPlaying(false);
+                }
+              },
+              onError: (event: any) => {
+                console.error('FlowStateMusic: YouTube player error:', event.data);
               }
-            },
-            onError: (event: any) => {
-              console.error('YouTube player error:', event.data);
             }
-          }
-        });
-        
-        setPlayer(newPlayer);
+          });
+          
+          setPlayer(newPlayer);
+        } catch (error) {
+          console.error('FlowStateMusic: Error creating YouTube player:', error);
+        }
+      } else {
+        console.log('FlowStateMusic: Missing requirements', { videoId, hasPlayerRef: !!playerRef.current });
       }
     }
   }, [isActive, musicUrl, player]);
 
   // Controlar reprodução baseado no estado do Flow State
   useEffect(() => {
+    console.log('FlowStateMusic: Playback control effect', { hasPlayer: !!player, isActive, musicUrl });
+    
     if (player) {
       if (isActive && musicUrl) {
+        console.log('FlowStateMusic: Starting playback');
         player.playVideo();
       } else {
+        console.log('FlowStateMusic: Pausing playback');
         player.pauseVideo();
         // Limpar player quando Flow State termina
         if (!isActive) {
+          console.log('FlowStateMusic: Destroying player');
           player.destroy();
           setPlayer(null);
           setIsPlaying(false);
@@ -100,6 +119,27 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       }
     }
   }, [isActive, player, musicUrl]);
+
+  // Retry mechanism para carregar API do YouTube se não estiver disponível
+  useEffect(() => {
+    if (isActive && musicUrl && !window.YT) {
+      console.log('FlowStateMusic: YouTube API not available, retrying in 1 second');
+      const retryTimer = setTimeout(() => {
+        if (!window.YT) {
+          console.log('FlowStateMusic: Still no YouTube API, trying to reload script');
+          const existingScript = document.querySelector('script[src*="youtube.com/iframe_api"]');
+          if (!existingScript) {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+          }
+        }
+      }, 1000);
+      
+      return () => clearTimeout(retryTimer);
+    }
+  }, [isActive, musicUrl]);
 
   if (!isActive || !musicUrl) {
     return null;
