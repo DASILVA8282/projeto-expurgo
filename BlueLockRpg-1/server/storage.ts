@@ -1,6 +1,6 @@
-import { users, characters, wildCardInvitations, matches, goals, flowStates, type User, type InsertUser, type Character, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type WildCardInvitation, type InsertWildCardInvitation, type UpdateWildCardInvitation, type Match, type InsertMatch, type UpdateMatch, type Goal, type InsertGoal, type MatchWithGoals, type InsertFlowState, type FlowState, type FlowStateWithPlayer } from "@shared/schema";
 import { db } from "./db";
-import { eq, or, desc, and } from "drizzle-orm";
+import { users, characters, wildCardInvitations, matches, goals, flowStates, type InsertUser, type InsertCharacter, type UpdateCharacter, type UserWithCharacter, type InsertWildCardInvitation, type UpdateWildCardInvitation, type WildCardInvitation, type InsertMatch, type UpdateMatch, type Match, type MatchWithGoals, type InsertGoal, type Goal, type InsertFlowState, type FlowState, type FlowStateWithPlayer, type User, type Character } from "@shared/schema";
+import { eq, desc, and, or } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -167,30 +167,30 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserPermanently(userId: number): Promise<void> {
     console.log(`=== DELETING USER ${userId} PERMANENTLY ===`);
-    
+
     try {
       // Delete all related records in order (foreign key constraints)
-      
+
       // 1. Delete Flow States
       await db.delete(flowStates).where(eq(flowStates.playerId, userId));
       console.log(`Deleted flow states for user ${userId}`);
-      
+
       // 2. Delete Goals
       await db.delete(goals).where(eq(goals.playerId, userId));
       console.log(`Deleted goals for user ${userId}`);
-      
+
       // 3. Delete Wild Card Invitations
       await db.delete(wildCardInvitations).where(eq(wildCardInvitations.userId, userId));
       console.log(`Deleted wild card invitations for user ${userId}`);
-      
+
       // 4. Delete Character
       await db.delete(characters).where(eq(characters.userId, userId));
       console.log(`Deleted character for user ${userId}`);
-      
+
       // 5. Finally delete the User
       await db.delete(users).where(eq(users.id, userId));
       console.log(`Deleted user ${userId}`);
-      
+
       console.log(`=== USER ${userId} COMPLETELY DELETED ===`);
     } catch (error) {
       console.error(`Error deleting user ${userId}:`, error);
@@ -387,6 +387,8 @@ export class DatabaseStorage implements IStorage {
           id: users.id,
           username: users.username,
           isAdmin: users.isAdmin,
+          password: users.password,
+          cesarMonitorSeen: users.cesarMonitorSeen,
           createdAt: users.createdAt,
           updatedAt: users.updatedAt,
         },
@@ -395,23 +397,29 @@ export class DatabaseStorage implements IStorage {
           userId: characters.userId,
           name: characters.name,
           position: characters.position,
+          motivacao: characters.motivacao,
           age: characters.age,
           height: characters.height,
           bio: characters.bio,
           weapon: characters.weapon,
+          origin: characters.origin,
+          classe: characters.classe,
+          subclasse: characters.subclasse,
           avatar: characters.avatar,
           level: characters.level,
           experience: characters.experience,
           matches: characters.matches,
           goals: characters.goals,
           ranking: characters.ranking,
-          speed: characters.speed,
-          strength: characters.strength,
-          stamina: characters.stamina,
-          shooting: characters.shooting,
-          passing: characters.passing,
-          dribbling: characters.dribbling,
           isEliminated: characters.isEliminated,
+          fisico: characters.fisico,
+          velocidade: characters.velocidade,
+          intelecto: characters.intelecto,
+          carisma: characters.carisma,
+          egoismo: characters.egoismo,
+          flowColor: characters.flowColor,
+          flowPhrase: characters.flowPhrase,
+          flowMusicUrl: characters.flowMusicUrl,
           createdAt: characters.createdAt,
           updatedAt: characters.updatedAt,
         },
