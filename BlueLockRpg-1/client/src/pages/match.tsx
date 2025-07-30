@@ -236,29 +236,28 @@ export default function Match() {
 
     // Flow State ativado
     if (lastMessage?.type === "flow_state_activated") {
+      console.log("🔥 Flow State ativado via WebSocket:", lastMessage);
+      
       setFlowPlayerName(lastMessage.playerName || "");
       setFlowColor(lastMessage.flowColor || "red");
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
       setFlowMusicUrl(lastMessage.flowMusicUrl || "");
       
-      setTimeout(() => {
-          console.log("Music URL after Flow State activation:", flowMusicUrl);
-        }, 100);
+      console.log("🎵 Flow State music URL recebida:", lastMessage.flowMusicUrl);
 
       // Se é o próprio usuário, mostra a cutscene
-      if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
-        console.log("Starting Epic Flow State cutscene for user", user.id);
-        console.log("Current states before cutscene:", { showFlowCutscene, isInFlowState });
-        console.log("Music URL being used for cutscene:", musicUrl);
+      if (user && lastMessage.playerId === user.id) {
+        console.log("🎬 Iniciando cutscene para o usuário:", user.id);
+        console.log("🎵 URL da música para cutscene:", lastMessage.flowMusicUrl);
         
         // IMPORTANTE: Ativar Flow State primeiro para a música começar
         setIsInFlowState(true);
         
-        // Depois mostrar a cutscene
+        // Mostrar a cutscene depois de um pequeno delay
         setTimeout(() => {
           setShowFlowCutscene(true);
-          console.log("Set showFlowCutscene to true - music should be playing");
-        }, 100);
+          console.log("🎬 Cutscene ativada");
+        }, 200);
       } else {
         // Para outros usuários (admin vendo) também ativa o Flow State
         setIsInFlowState(true);
@@ -269,8 +268,6 @@ export default function Match() {
           description: `${lastMessage.playerName} entrou no Flow State!`,
         });
       }
-      
-      console.log("=== END FLOW STATE CLIENT DEBUG ===");
     }
 
     // Flow State encerrado
@@ -644,16 +641,13 @@ export default function Match() {
 
   // Handler para completar a cutscene do Flow State
   const handleFlowCutsceneComplete = useCallback(() => {
-    console.log("Flow State cutscene completed - transitioning to match");
-    console.log("Current flowMusicUrl at cutscene completion:", flowMusicUrl);
+    console.log("🎬 Flow State cutscene completed - voltando para match");
+    console.log("🎵 Flow Music URL ativo:", flowMusicUrl);
 
     // Apenas esconder a cutscene, mantendo Flow State ativo para continuar música
     setShowFlowCutscene(false);
-    console.log("Cutscene hidden - Flow State continues active");
-    console.log("isInFlowState should remain true:", isInFlowState);
-    
-    // Garantir que permanecemos na página de match
-    setLocation("/match");
+    console.log("🎬 Cutscene escondida - Flow State continua ativo");
+    console.log("🔥 isInFlowState permanece:", isInFlowState);
     
     // Invalidar queries para atualizar dados
     queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
@@ -663,7 +657,7 @@ export default function Match() {
       title: "Flow State Ativado!",
       description: "Você está em estado de concentração máxima!",
     });
-  }, [toast, queryClient, setLocation, match?.id, user?.id, flowMusicUrl, isInFlowState]);
+  }, [toast, queryClient, match?.id, user?.id, flowMusicUrl, isInFlowState]);
 
   // Handler para ativar Flow State manualmente
   const handleManualFlowState = () => {
