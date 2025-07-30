@@ -603,9 +603,16 @@ export default function Character() {
                 <div className="text-center mb-6">
                   <div className="relative">
                     <img 
-                      src={(character as any)?.avatar || defaultAvatar}
+                      src={character?.avatar ? `${character.avatar}${character.avatar.includes('?') ? '&' : '?'}t=${Date.now()}` : defaultAvatar}
                       alt="Avatar do personagem" 
-                      className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-500 object-cover"
+                      className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-red-500 object-cover bg-gray-800"
+                      onError={(e) => {
+                        console.log("Avatar failed to load, using default");
+                        (e.target as HTMLImageElement).src = defaultAvatar;
+                      }}
+                      onLoad={() => {
+                        console.log("Avatar loaded successfully");
+                      }}
                     />
                     {uploadAvatarMutation.isPending && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
