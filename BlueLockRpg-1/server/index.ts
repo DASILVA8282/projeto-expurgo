@@ -3,6 +3,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./init-db";
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
@@ -64,8 +68,8 @@ app.use((req, res, next) => {
   // Serve static files for uploads  
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-  // Also serve from parent directory if needed
-  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+  // Also serve from server directory in production
+  app.use('/uploads', express.static(path.join(__dirname, '../server/uploads')));
 
   // Use PORT environment variable for production (Render) or default to 5000 for development
   const port = process.env.PORT || 5000;
