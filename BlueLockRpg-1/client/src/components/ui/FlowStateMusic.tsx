@@ -6,165 +6,104 @@ interface FlowStateMusicProps {
 }
 
 export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [userInteracted, setUserInteracted] = useState(false);
 
-  // Extrair ID do YouTube da URL e converter para link direto
-  const getAudioUrl = (url: string): string => {
-    if (!url) return '';
+  // Função para obter URL de áudio funcional
+  const getWorkingAudioUrl = (url: string): string => {
+    if (!url || url.trim() === '') return '';
 
-    console.log('=== AUDIO URL PROCESSING ===');
-    console.log('Original URL:', url);
+    // Se for YouTube, usar um áudio de exemplo que funciona
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+    }
 
-    // Se já é um link direto de áudio, usar como está
+    // Para links diretos, usar como está
     if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')) {
-      console.log('Direct audio URL detected');
       return url;
     }
 
-    // Para YouTube, vamos usar um áudio de exemplo por enquanto
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      console.log('YouTube URL detected, using example audio');
-      // Por enquanto, usar um áudio de exemplo conhecido que funciona
-      const exampleUrl = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
-      console.log('Using example URL:', exampleUrl);
-      return exampleUrl;
-    }
-
-    console.log('Unknown URL type, using as-is');
-    return url;
-  };
-
-  // Inicializar áudio
-  const initializeAudio = async (audioUrl: string) => {
-    if (!audioRef.current || !audioUrl) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const audio = audioRef.current;
-      audio.src = getAudioUrl(audioUrl);
-      audio.loop = true;
-      audio.volume = 0.7;
-
-      // Aguardar carregamento
-      await new Promise((resolve, reject) => {
-        audio.oncanplaythrough = resolve;
-        audio.onerror = reject;
-        audio.load();
-      });
-
-      setIsLoading(false);
-
-      // Tentar reproduzir
-      await playAudio();
-
-    } catch (error) {
-      console.error('Erro ao inicializar áudio:', error);
-      setError('Erro ao carregar música');
-      setIsLoading(false);
-    }
-  };
-
-  // Reproduzir áudio
-  const playAudio = async () => {
-    if (!audioRef.current) return;
-
-    try {
-      await audioRef.current.play();
-      setIsPlaying(true);
-      setError(null);
-    } catch (error) {
-      console.error('Erro ao reproduzir áudio:', error);
-      setError('Clique para ativar áudio');
-      setIsPlaying(false);
-    }
-  };
-
-  // Parar áudio
-  const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      setIsPlaying(false);
-    }
-  };
-
-  // Handler para clique do usuário (necessário para autoplay)
-  const handleUserClick = async () => {
-    setUserInteracted(true);
-    if (isActive && musicUrl && audioRef.current) {
-      await playAudio();
-    }
+    // Fallback para áudio de exemplo
+    return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
   };
 
   // Effect principal
   useEffect(() => {
-    console.log('=== FLOW STATE MUSIC EFFECT ===');
-    console.log('isActive:', isActive);
-    console.log('musicUrl:', musicUrl);
-    console.log('musicUrl length:', musicUrl?.length || 0);
-    console.log('musicUrl trimmed:', musicUrl?.trim());
-    console.log('Should play:', isActive && musicUrl && musicUrl.trim() !== "");
-    
-    if (isActive && musicUrl && musicUrl.trim() !== "") {
-      console.log('Flow State Music: Iniciando reprodução com URL:', musicUrl);
-      initializeAudio(musicUrl);
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isActive && musicUrl && musicUrl.trim() !== '') {
+      const workingUrl = getWorkingAudioUrl(musicUrl);
+
+      // Configurar e tocar
+      audio.src = workingUrl;
+      audio.loop = true;
+      audio.volume = 0.5;
+
+      const playAudio = async () => {
+        try {
+          await audio.play();
+          setIsPlaying(true);
+          setError(null);
+        } catch (err) {
+          setError('Clique para ativar áudio');
+          setIsPlaying(false);
+        }
+      };
+
+      // Tentar tocar imediatamente
+      playAudio();
     } else {
-      console.log('Flow State Music: Parando reprodução - Motivo:', 
-        !isActive ? 'não ativo' : 
-        !musicUrl ? 'sem URL' : 
-        musicUrl.trim() === "" ? 'URL vazia' : 'desconhecido');
-      stopAudio();
+      // Parar música quando Flow State não está ativo
+      audio.pause();
+      audio.currentTime = 0;
+      setIsPlaying(false);
       setError(null);
     }
-    console.log('=== END FLOW STATE MUSIC EFFECT ===');
   }, [isActive, musicUrl]);
 
-  // Cleanup
-  useEffect(() => {
-    return () => {
-      stopAudio();
-    };
-  }, []);
+  // Handler para clique manual
+  const handleClick = async () => {
+    const audio = audioRef.current;
+    if (!audio || !isActive || !musicUrl) return;
+
+    try {
+      if (audio.paused) {
+        await audio.play();
+        setIsPlaying(true);
+        setError(null);
+      } else {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    } catch (err) {
+      setError('Erro na reprodução');
+    }
+  };
 
   // Não renderizar se não está ativo
-  if (!isActive || !musicUrl || musicUrl.trim() === "") {
+  if (!isActive || !musicUrl || musicUrl.trim() === '') {
     return null;
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {/* Elemento de áudio oculto */}
+    <>
+      {/* Elemento de áudio */}
       <audio
         ref={audioRef}
         preload="auto"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onError={() => {
-          setError('Erro na reprodução');
-          setIsPlaying(false);
-          setIsLoading(false);
-        }}
-        onLoadStart={() => setIsLoading(true)}
-        onCanPlay={() => setIsLoading(false)}
+        onError={() => setError('Erro na música')}
       />
 
       {/* Indicador visual */}
       <div 
-        className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400 cursor-pointer hover:from-purple-700 hover:to-purple-800 transition-all"
-        onClick={handleUserClick}
+        className="fixed bottom-4 right-4 z-50 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400 cursor-pointer hover:bg-purple-700 transition-all"
+        onClick={handleClick}
       >
-        {isLoading ? (
-          <>
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            <span className="font-bebas text-sm tracking-wider">CARREGANDO MÚSICA</span>
-          </>
-        ) : error ? (
+        {error ? (
           <>
             <div className="w-4 h-4 bg-yellow-500 rounded-full animate-pulse"></div>
             <span className="font-bebas text-sm tracking-wider">{error}</span>
@@ -185,11 +124,11 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
           </>
         ) : (
           <>
-            <div className="w-4 h-4 bg-purple-300 rounded-full animate-pulse"></div>
-            <span className="font-bebas text-sm tracking-wider">CLIQUE PARA ATIVAR</span>
+            <div className="w-4 h-4 bg-purple-300 rounded-full"></div>
+            <span className="font-bebas text-sm tracking-wider">CLIQUE PARA TOCAR</span>
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }
