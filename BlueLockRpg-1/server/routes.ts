@@ -1105,7 +1105,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Flow Color:', flowColor);
       console.log('Flow Phrase:', flowPhrase);
       console.log('Flow Music URL from character:', player?.character?.flowMusicUrl);
-      console.log('Flow Music URL being sent:', flowMusicUrl);
+      console.log('Flow Music URL final:', flowMusicUrl);
+
+      // Notificar via WebSocket que Flow State foi ativado
+      const wsMessage = {
+        type: 'flow_state_activated',
+        playerId: playerId,
+        playerName: player?.character?.name || player?.username,
+        flowColor: flowColor,
+        flowPhrase: flowPhrase,
+        flowMusicUrl: flowMusicUrl,
+        matchId: matchId
+      };
+
+      console.log('=== WEBSOCKET MESSAGE DEBUG ===');
+      console.log('Sending WebSocket message:', wsMessage);
+      
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(wsMessage));
+        }
+      });
+
+      res.json({ 
+        message: "Flow State activated successfully",
+        flowState,
+        flowColor,
+        flowPhrase,
+        flowMusicUrl
+      }); URL being sent:', flowMusicUrl);
 
       const websocketMessage = {
         type: "flow_state_activated",
