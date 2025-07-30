@@ -25,190 +25,208 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-8 relative overflow-hidden">
-      {/* Background ambient effects */}
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Scientific grid background */}
       <div className="absolute inset-0">
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(239, 68, 68, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(239, 68, 68, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}
+        />
+        
+        {/* Data points and scientific elements */}
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-red-500/30 rounded-full"
+            className="absolute w-2 h-2 bg-red-500 rounded-full opacity-30"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${15 + i * 7}%`,
+              top: `${20 + (i % 3) * 25}%`,
             }}
             animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1, 0],
-              y: [0, -50, -100],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.5, 1],
             }}
             transition={{
-              duration: 4 + Math.random() * 2,
+              duration: 3 + Math.random() * 2,
               repeat: Infinity,
-              delay: Math.random() * 4,
+              delay: i * 0.5,
             }}
           />
         ))}
-        
-        {/* Ambient glow */}
-        <div className="absolute inset-0 bg-gradient-radial from-red-900/10 via-transparent to-transparent" />
+
+        {/* Scanning lines */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/5 to-transparent h-8"
+          animate={{
+            y: ["-100vh", "100vh"],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 w-full max-w-2xl">
         <motion.div
-          className="relative cursor-pointer"
+          className="relative cursor-pointer mx-auto w-fit"
           onClick={handleEnvelopeClick}
           onHoverStart={() => setIsHovering(true)}
           onHoverEnd={() => setIsHovering(false)}
           whileHover={!isOpened ? { 
-            scale: 1.05,
-            rotateY: 5,
-            rotateX: -5,
+            scale: 1.02,
+            rotateY: 2,
           } : {}}
           transition={{ duration: 0.3 }}
-          style={{
-            perspective: "1000px",
-            transformStyle: "preserve-3d",
-          }}
         >
           {/* Envelope shadow */}
           <motion.div
-            className="absolute inset-0 bg-black/40 blur-xl rounded-lg"
+            className="absolute inset-0 bg-black/60 blur-2xl rounded-lg"
             style={{
-              transform: "translateZ(-50px) translateY(20px)",
+              transform: "translateZ(-20px) translateY(10px)",
             }}
             animate={{
-              opacity: isHovering && !isOpened ? 0.8 : 0.4,
-              scale: isHovering && !isOpened ? 1.1 : 1,
+              opacity: isHovering && !isOpened ? 0.8 : 0.6,
             }}
             transition={{ duration: 0.3 }}
           />
 
-          {/* Wax seal positioned at the center of the envelope */}
+          {/* Scientific seal - positioned correctly */}
           <AnimatePresence>
             {!isOpened && (
               <motion.div
-                className="absolute w-24 h-24 bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-full shadow-2xl flex items-center justify-center border-4 border-red-500 z-20"
+                className="absolute w-16 h-16 bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-full shadow-2xl flex items-center justify-center border-2 border-red-400 z-20"
                 style={{
-                  top: '35%',
+                  top: '40%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  boxShadow: '0 0 30px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 0 20px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(0, 0, 0, 0.3)',
                 }}
                 initial={{ scale: 1, opacity: 1, rotateZ: 0 }}
                 exit={{ 
-                  scale: 0.3, 
+                  scale: 0.2, 
                   opacity: 0, 
                   rotateZ: 180,
-                  y: -100,
+                  y: -80,
                 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 whileHover={{
                   scale: 1.1,
-                  boxShadow: '0 0 40px rgba(239, 68, 68, 0.8), inset 0 0 25px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 0 30px rgba(239, 68, 68, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.3)',
                 }}
               >
-                <div className="w-20 h-20 bg-gradient-to-br from-red-700 to-red-900 rounded-full flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-700 to-red-900 rounded-full flex items-center justify-center shadow-inner">
+                  {/* Scientific DNA helix symbol */}
                   <motion.svg 
-                    width="40" 
-                    height="40" 
-                    viewBox="0 0 40 40" 
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
                     className="text-gray-100"
-                    animate={{ rotateZ: isHovering ? [0, 5, -5, 0] : 0 }}
+                    animate={{ rotateZ: isHovering ? [0, 360] : 0 }}
                     transition={{ duration: 2, repeat: isHovering ? Infinity : 0 }}
                   >
-                    <g transform="translate(20,20) rotate(-20) translate(-20,-20)">
-                      <path d="M8 4 L12 36" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                      <path d="M12 3 L16 35" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                      <path d="M16 2 L20 34" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" fill="none"/>
-                      <path d="M20 3 L24 35" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                      <path d="M24 4 L28 36" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none"/>
-                    </g>
+                    <path d="M4 4 C8 8, 16 8, 20 4" stroke="currentColor" strokeWidth="2" fill="none"/>
+                    <path d="M4 8 C8 12, 16 12, 20 8" stroke="currentColor" strokeWidth="2" fill="none"/>
+                    <path d="M4 12 C8 16, 16 16, 20 12" stroke="currentColor" strokeWidth="2" fill="none"/>
+                    <path d="M4 16 C8 20, 16 20, 20 16" stroke="currentColor" strokeWidth="2" fill="none"/>
+                    <circle cx="6" cy="6" r="1" fill="currentColor"/>
+                    <circle cx="18" cy="6" r="1" fill="currentColor"/>
+                    <circle cx="6" cy="18" r="1" fill="currentColor"/>
+                    <circle cx="18" cy="18" r="1" fill="currentColor"/>
                   </motion.svg>
                 </div>
-                
-                {/* Seal glow effect */}
-                <motion.div
-                  className="absolute inset-0 rounded-full bg-red-500/20"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.6, 0.3],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Envelope Base with enhanced textures */}
+          {/* Envelope Base - fixed proportions */}
           <motion.div
-            className="relative w-[480px] h-[320px] bg-gradient-to-br from-gray-900 via-gray-800 to-black shadow-2xl border-2 border-gray-600"
+            className="relative w-[400px] h-[280px] bg-gradient-to-br from-gray-900 via-gray-800 to-black shadow-2xl border border-gray-600"
             style={{
               clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 15px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
             }}
             animate={{
-              rotateY: isOpened ? 5 : 0,
+              rotateY: isOpened ? 3 : 0,
             }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            {/* Envelope texture overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-700/20 to-gray-900/40" />
+            {/* Technical grid overlay */}
+            <div 
+              className="absolute inset-0 opacity-20"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(239, 68, 68, 0.3) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(239, 68, 68, 0.3) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px'
+              }}
+            />
             
-            {/* Decorative border lines */}
-            <div className="absolute inset-4 border border-gray-600/30 rounded-sm" />
-            <div className="absolute inset-6 border border-gray-500/20 rounded-sm" />
+            {/* Technical border */}
+            <div className="absolute inset-2 border border-red-900/30" />
+            <div className="absolute inset-4 border border-red-800/20" />
           </motion.div>
 
-          {/* Enhanced envelope flap */}
+          {/* Envelope flap - brutal design */}
           <motion.div
-            className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 shadow-inner border-b-2 border-gray-500"
+            className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 shadow-inner border-b border-red-800/50"
             style={{
               clipPath: "polygon(0 0, 50% 50%, 100% 0, 100% 0, 0 0)",
               transformOrigin: "50% 0%",
-              boxShadow: 'inset 0 -5px 15px rgba(0, 0, 0, 0.5)',
+              boxShadow: 'inset 0 -3px 10px rgba(0, 0, 0, 0.5)',
             }}
             animate={isOpened ? {
               rotateX: -160,
-              scale: 1.02,
+              scale: 1.01,
             } : {}}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            {/* Flap texture */}
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-800/50 to-transparent" />
+            {/* Technical pattern on flap */}
+            <div className="absolute inset-0 bg-gradient-to-t from-red-900/20 to-transparent" />
+            <div 
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: `linear-gradient(45deg, rgba(239, 68, 68, 0.3) 2px, transparent 2px)`,
+                backgroundSize: '15px 15px'
+              }}
+            />
           </motion.div>
 
-          {/* Enhanced envelope back flap */}
+          {/* Envelope back flap */}
           <motion.div
-            className="absolute top-0 left-0 w-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 border-b-2 border-gray-500"
+            className="absolute top-0 left-0 w-full bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 border-b border-red-800/50"
             style={{
               height: "50%",
               clipPath: "polygon(0 0, 50% 100%, 100% 0)",
               transformOrigin: "50% 0%",
-              boxShadow: '0 5px 20px rgba(0, 0, 0, 0.6)',
+              boxShadow: '0 3px 15px rgba(0, 0, 0, 0.6)',
             }}
             animate={isOpened ? {
               rotateX: -140,
-              scale: 1.08,
-              y: -10,
+              scale: 1.05,
+              y: -8,
             } : {}}
             transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
           />
 
-          {/* Letter inside with enhanced design */}
+          {/* Letter inside - fixed sizing and brutal design */}
           <AnimatePresence>
             {showLetter && (
               <motion.div
-                className="absolute inset-6 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 shadow-2xl overflow-hidden border-4 border-red-800 rounded-lg"
+                className="absolute inset-4 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 shadow-2xl overflow-hidden border-2 border-red-800"
                 initial={{ 
-                  scale: 0.7, 
+                  scale: 0.8, 
                   opacity: 0, 
-                  y: 30,
-                  rotateX: -15,
+                  y: 20,
+                  rotateX: -10,
                 }}
                 animate={{ 
                   scale: 1, 
@@ -218,45 +236,43 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 style={{
-                  boxShadow: '0 0 50px rgba(239, 68, 68, 0.3), inset 0 0 30px rgba(239, 68, 68, 0.1)',
+                  boxShadow: '0 0 30px rgba(239, 68, 68, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.05)',
                 }}
               >
-                {/* Parchment texture */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 to-orange-100/20" />
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
-                                   radial-gradient(circle at 80% 20%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
-                                   radial-gradient(circle at 40% 80%, rgba(139, 69, 19, 0.03) 0%, transparent 50%)`,
-                }} />
+                {/* Technical document texture */}
+                <div 
+                  className="absolute inset-0 opacity-5"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '15px 15px'
+                  }}
+                />
 
-                <div className="p-8 text-xs text-gray-800 font-mono leading-relaxed h-full overflow-y-auto relative z-10">
-                  {/* Enhanced Header */}
-                  <div className="text-center border-b-2 border-red-700 pb-6 mb-6">
+                <div className="p-4 text-xs text-gray-900 font-mono leading-tight h-full overflow-y-auto relative z-10">
+                  {/* Scientific Header */}
+                  <div className="text-center border-b-2 border-red-800 pb-3 mb-4">
                     <motion.div 
-                      className="flex justify-center mb-4"
-                      initial={{ scale: 0, rotateZ: -180 }}
+                      className="flex justify-center mb-2"
+                      initial={{ scale: 0, rotateZ: -90 }}
                       animate={{ scale: 1, rotateZ: 0 }}
-                      transition={{ duration: 1, delay: 0.5, type: "spring" }}
+                      transition={{ duration: 0.8, delay: 0.5, type: "spring" }}
                     >
-                      <div className="w-16 h-16 bg-gradient-to-br from-red-600 via-red-700 to-red-900 rounded-full flex items-center justify-center shadow-lg border-4 border-red-500 relative">
-                        <svg width="28" height="28" viewBox="0 0 28 28" className="text-gray-100">
-                          <g transform="translate(14,14) rotate(-20) translate(-14,-14)">
-                            <path d="M6 3 L8 25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                            <path d="M9 2.5 L11 24.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                            <path d="M12 2 L14 24" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-                            <path d="M15 2.5 L17 24.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                            <path d="M18 3 L20 25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                          </g>
+                      <div className="w-12 h-12 bg-gradient-to-br from-red-700 via-red-800 to-red-900 flex items-center justify-center border-2 border-red-600 relative">
+                        {/* Scientific symbol */}
+                        <svg width="20" height="20" viewBox="0 0 20 20" className="text-gray-100">
+                          <path d="M2 2 L18 18 M18 2 L2 18" stroke="currentColor" strokeWidth="2"/>
+                          <circle cx="10" cy="10" r="6" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                          <circle cx="10" cy="10" r="2" fill="currentColor"/>
                         </svg>
-                        
-                        {/* Seal inner glow */}
-                        <div className="absolute inset-0 rounded-full bg-red-400/20 animate-pulse" />
                       </div>
                     </motion.div>
                     
                     <motion.h1 
-                      className="text-2xl font-bold text-red-600 tracking-wider font-orbitron mb-2"
-                      initial={{ opacity: 0, y: 20 }}
+                      className="text-lg font-bold text-red-700 tracking-widest font-mono mb-1"
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: 0.7 }}
                     >
@@ -264,96 +280,105 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                     </motion.h1>
                     
                     <motion.p 
-                      className="text-sm text-red-500 mt-2 font-oswald tracking-widest"
+                      className="text-xs text-red-600 font-mono tracking-wider"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.6, delay: 0.9 }}
                     >
-                      DOCUMENTO OFICIAL CONFIDENCIAL
+                      CLASSIFICAÇÃO: ULTRA-CONFIDENCIAL
                     </motion.p>
+                    
+                    <div className="flex justify-between text-xs text-gray-600 mt-2 font-mono">
+                      <span>ID: EXP-001</span>
+                      <span>VER: 2.1</span>
+                    </div>
                   </div>
 
-                  {/* Enhanced Title */}
+                  {/* Scientific title */}
                   <motion.h2 
-                    className="text-center text-base font-bold text-red-500 mb-6 tracking-wide font-bebas"
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    className="text-center text-sm font-bold text-red-600 mb-4 tracking-wide font-mono"
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 1.1 }}
                   >
-                    CONVITE PARA A ELITE DO FUTEBOL BRASILEIRO
+                    PROTOCOLO DE SELEÇÃO GENÉTICA
                   </motion.h2>
 
-                  {/* Letter content with staggered animation */}
+                  {/* Letter content - scientific style */}
                   <motion.div 
-                    className="space-y-4 text-justify"
+                    className="space-y-3 text-justify text-xs"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 1.3 }}
                   >
                     <p>
-                      <span className="font-semibold text-red-500">Prezado destinatário,</span>
+                      <span className="font-bold text-red-600">[SUBJECT: GENETIC SELECTION CANDIDATE]</span>
                     </p>
 
-                    <p>
-                      É com enorme satisfação que o Projeto Expurgo convida você a fazer parte de uma iniciativa sem precedentes no futebol nacional. Seu talento, seu faro de gol e, acima de tudo, sua fome insaciável não passaram despercebidos.
+                    <p className="leading-relaxed">
+                      Nossa análise biométrica identificou em seu perfil genético marcadores únicos de <strong>potencial atlético excepcional</strong>. Os dados coletados indicam uma compatibilidade de <span className="text-red-600 font-bold">97.3%</span> com os parâmetros do Projeto Expurgo.
                     </p>
 
-                    <p>
-                      Este não é um convite qualquer. É a sua chance de ir além do comum, de se livrar das correntes da mediocridade que ainda travam o nosso esporte. Estamos reunindo a verdadeira elite do talento brasileiro para moldar os predadores do futuro.
+                    <p className="leading-relaxed">
+                      Esta não é uma convocação aleatória. Seus índices de <strong>capacidade cardiopulmonar</strong>, <strong>densidade muscular</strong> e <strong>coordenação neuromotora</strong> estão dentro dos percentis superiores da população brasileira.
                     </p>
 
-                    <p>
-                      Compareça ao <span className="font-semibold text-red-700">Centro de Excelência Eclipse</span>, localizado na <strong>EPIA – Estrada Parque Indústria e Abastecimento</strong>, 1350 - Setor Industrial, Brasília - DF, CEP: 72220-140. Chegue pontualmente às <span className="font-semibold">06:00</span> de <span className="font-semibold">segunda-feira</span>. Um ônibus exclusivo estará esperando para levá-lo até o centro.
+                    <div className="bg-red-50 border-l-4 border-red-600 p-2 my-3">
+                      <p className="text-red-800 font-bold text-xs">
+                        LOCALIZAÇÃO: Centro de Excelência Eclipse<br/>
+                        COORDENADAS: EPIA 1350 - Setor Industrial, BSB-DF<br/>
+                        HORÁRIO: 06:00 - SEGUNDA-FEIRA<br/>
+                        TRANSPORTE: Fornecido pela organização
+                      </p>
+                    </div>
+
+                    <p className="leading-relaxed">
+                      O protocolo de seleção envolve <strong>testes psicofísicos avançados</strong> para identificar os espécimes mais aptos. Somente indivíduos com capacidades excepcionais serão integrados ao programa.
                     </p>
 
-                    <p>
-                      Essa é uma peneira diferente de tudo o que você já viu, onde só os mais determinados terão a chance de fazer parte da nova geração de atletas que transformará o futebol brasileiro. Sua presença é mais que essencial...
+                    <p className="text-red-600 font-bold text-center border border-red-600 p-2 bg-red-50">
+                      COMPAREÇA APENAS COM DOCUMENTOS DE IDENTIFICAÇÃO
                     </p>
 
-                    <p className="font-semibold text-red-500">
-                      Não leve distrações. Leve apenas sua vontade.
-                    </p>
-
-                    <div className="mt-8 pt-6 border-t-2 border-red-800">
-                      <p className="text-right">
-                        <span className="font-bold text-red-500 font-orbitron text-lg">César "O Carniceiro" Valente</span><br/>
-                        <span className="text-sm text-gray-600 font-oswald">Diretor Executivo</span><br/>
-                        <span className="text-sm text-gray-600 font-oswald">Projeto Expurgo</span>
+                    <div className="mt-4 pt-3 border-t border-red-800 text-right">
+                      <p>
+                        <span className="font-bold text-red-600 font-mono">Dr. César Valente</span><br/>
+                        <span className="text-xs text-gray-700">Diretor Científico</span><br/>
+                        <span className="text-xs text-gray-700">Divisão de Genética Esportiva</span>
                       </p>
                     </div>
                   </motion.div>
 
-                  {/* Enhanced accept button */}
+                  {/* Accept button - brutal style */}
                   <motion.div 
-                    className="mt-8 text-center"
-                    initial={{ opacity: 0, y: 30 }}
+                    className="mt-4 text-center"
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 1.8 }}
                   >
                     <motion.button
-                      className="px-12 py-4 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white font-bold rounded-xl shadow-2xl hover:from-red-700 hover:to-red-900 transition-all duration-300 tracking-wide font-bebas text-xl border-2 border-red-500 relative overflow-hidden"
+                      className="px-8 py-3 bg-gradient-to-r from-red-700 to-red-800 text-white font-bold shadow-xl hover:from-red-800 hover:to-red-900 transition-all duration-300 tracking-wider font-mono text-sm border border-red-600 relative overflow-hidden"
                       whileHover={{ 
-                        scale: 1.08, 
-                        boxShadow: "0 0 30px rgba(239, 68, 68, 0.8)",
-                        y: -2,
+                        scale: 1.05, 
+                        boxShadow: "0 0 25px rgba(239, 68, 68, 0.7)",
                       }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleAccept}
                     >
-                      {/* Button glow effect */}
+                      <span className="relative z-10">CONFIRMAR PARTICIPAÇÃO</span>
+                      
+                      {/* Scanning effect */}
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 rounded-xl"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
                         animate={{
-                          opacity: [0.5, 1, 0.5],
+                          x: ["-100%", "100%"],
                         }}
                         transition={{
                           duration: 2,
                           repeat: Infinity,
-                          ease: "easeInOut",
+                          ease: "linear",
                         }}
                       />
-                      
-                      <span className="relative z-10">ACEITAR CONVITE</span>
                     </motion.button>
                   </motion.div>
                 </div>
@@ -362,21 +387,20 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
           </AnimatePresence>
         </motion.div>
 
-        {/* Enhanced instruction text */}
+        {/* Scientific instruction */}
         <AnimatePresence>
           {!isOpened && (
             <motion.div
-              className="absolute -bottom-24 left-1/2 transform -translate-x-1/2 text-center"
+              className="absolute -bottom-20 left-1/2 transform -translate-x-1/2 text-center"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.6, delay: 2 }}
             >
               <motion.p 
-                className="text-red-400 font-orbitron text-xl tracking-wide mb-2"
+                className="text-red-400 font-mono text-lg tracking-wider mb-2"
                 animate={{
-                  opacity: [0.7, 1, 0.7],
-                  scale: [1, 1.05, 1],
+                  opacity: [0.6, 1, 0.6],
                 }}
                 transition={{
                   duration: 2,
@@ -384,13 +408,13 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                   ease: "easeInOut",
                 }}
               >
-                CLIQUE NO ENVELOPE PARA ABRIR
+                [CLIQUE PARA ABRIR DOCUMENTO]
               </motion.p>
               
               <motion.div
-                className="w-8 h-8 mx-auto border-2 border-red-400 rounded-full flex items-center justify-center"
+                className="w-6 h-6 mx-auto border border-red-400 flex items-center justify-center"
                 animate={{
-                  y: [0, 10, 0],
+                  y: [0, 8, 0],
                 }}
                 transition={{
                   duration: 1.5,
@@ -398,15 +422,7 @@ export function InvitationEnvelope({ onAccept }: InvitationEnvelopeProps) {
                   ease: "easeInOut",
                 }}
               >
-                <motion.svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  className="text-red-400"
-                  fill="currentColor"
-                >
-                  <path d="M8 12l-4-4h8l-4 4z"/>
-                </motion.svg>
+                <div className="w-2 h-2 bg-red-400 rotate-45" />
               </motion.div>
             </motion.div>
           )}
