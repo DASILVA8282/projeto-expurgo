@@ -644,7 +644,7 @@ export default function Character() {
 
       {/* Header Section - Redesenhado */}
       <div className="relative bg-gradient-to-r from-black via-red-950/30 to-black py-12 border-b-2 border-red-600/50">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M30 30L30 0M30 30L60 30M30 30L30 60M30 30L0 30" stroke="%23991b1b" stroke-width="0.5" opacity="0.1"/%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M30%2030L30%200M30%2030L60%2030M30%2030L30%2060M30%2030L0%2030%22%20stroke%3D%22%23991b1b%22%20stroke-width%3D%220.5%22%20opacity%3D%220.1%22/%3E%3C/svg%3E')] opacity-20"></div>
         <div className="container mx-auto px-4 relative">
           <div className="text-center space-y-6">
             <div className="relative inline-block">
