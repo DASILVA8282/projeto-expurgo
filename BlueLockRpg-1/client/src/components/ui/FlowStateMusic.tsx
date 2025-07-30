@@ -37,43 +37,105 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
       console.log('🎵 Tentando reproduzir áudio direto:', fullUrl);
       console.log('🎵 URL original:', url);
       
+      // Verificar se a URL está acessível primeiro
+      const testResponse = await fetch(fullUrl, { method: 'HEAD' });
+      if (!testResponse.ok) {
+        throw new Error(`Arquivo não encontrado: ${testResponse.status}`);
+      }
+      console.log('🎵 Arquivo de áudio encontrado no servidor');
+      
       // Limpar qualquer src anterior
+      audio.pause();
       audio.src = '';
       audio.load();
       
-      // Definir nova URL
-      audio.src = fullUrl;
+      // Configurar áudio
+      audio.crossOrigin = 'anonymous';
+      audio.preload = 'auto';
       audio.loop = true;
       audio.volume = 0.7;
-      audio.preload = 'auto';
+      
+      // Definir nova URL
+      audio.src = fullUrl;
 
-      // Aguardar carregamento
+      // Aguardar carregamento com timeout
       await new Promise((resolve, reject) => {
-        const handleCanPlay = () => {
-          audio.removeEventListener('canplay', handleCanPlay);
+        const timeout = setTimeout(() => {
+          audio.removeEventListener('canplaythrough', handleCanPlay);
           audio.removeEventListener('error', handleError);
+          reject(new Error('Timeout ao carregar áudio'));
+        }, 10000); // 10 segundos timeout
+
+        const handleCanPlay = () => {
+          clearTimeout(timeout);
+          audio.removeEventListener('canplaythrough', handleCanPlay);
+          audio.removeEventListener('error', handleError);
+          console.log('🎵 Áudio carregado e pronto para reprodução');
           resolve(true);
         };
         
         const handleError = (e: any) => {
-          audio.removeEventListener('canplay', handleCanPlay);
+          clearTimeout(timeout);
+          audio.removeEventListener('canplaythrough', handleCanPlay);
           audio.removeEventListener('error', handleError);
+          console.error('🎵 Erro no carregamento do áudio:', e);
           reject(e);
         };
         
-        audio.addEventListener('canplay', handleCanPlay);
+        audio.addEventListener('canplaythrough', handleCanPlay);
         audio.addEventListener('error', handleError);
         
         audio.load();
       });
 
-      const playPromise = audio.play();
-      
-      if (playPromise !== undefined) {
-        await playPromise;
-        console.log('🎵 Áudio direto reproduzindo com sucesso');
-        setIsPlaying(true);
-        setError(null);
+      // Tentar reproduzir com interação do usuário se necessário
+      try {
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+          await playPromise;
+          console.log('🎵 Áudio direto reproduzindo com sucesso');
+          setIsPlaying(true);
+          setError(null);
+        }
+      } catch (playError) {
+        console.log('🎵 Reprodução automática bloqueada, tentando com clique do usuário');
+        // Criar botão invisível para interação do usuário
+        const playButton = document.createElement('button');
+        playButton.style.position = 'fixed';
+        playButton.style.top = '50%';
+        playButton.style.left = '50%';
+        playButton.style.zIndex = '10000';
+        playButton.style.padding = '10px 20px';
+        playButton.style.backgroundColor = '#8B5CF6';
+        playButton.style.color = 'white';
+        playButton.style.border = 'none';
+        playButton.style.borderRadius = '5px';
+        playButton.style.cursor = 'pointer';
+        playButton.innerHTML = '🎵 Clique para tocar música do Flow State';
+        
+        document.body.appendChild(playButton);
+        
+        playButton.onclick = async () => {
+          try {
+            await audio.play();
+            setIsPlaying(true);
+            setError(null);
+            document.body.removeChild(playButton);
+            console.log('🎵 Áudio iniciado após clique do usuário');
+          } catch (err) {
+            console.error('🎵 Erro mesmo após clique:', err);
+            setError('Erro na reprodução');
+            document.body.removeChild(playButton);
+          }
+        };
+        
+        // Remover botão automaticamente após 10 segundos
+        setTimeout(() => {
+          if (document.body.contains(playButton)) {
+            document.body.removeChild(playButton);
+          }
+        }, 10000);
       }
 
     } catch (err) {
