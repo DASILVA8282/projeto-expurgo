@@ -278,9 +278,36 @@ export default function Match() {
   // Busca a partida ativa
   const { data: match, isLoading, error, isFetched } = useQuery<MatchWithGoals>({
     queryKey: ["/api/matches/active"],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest("GET", "/api/matches/active");
+
+        if (response.status === 404) {
+          // Não há partida ativa, retornar null
+          return null;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Active match data:", data);
+        return data;
+      } catch (error) {
+        console.error("Error fetching active match:", error);
+        // Se for 404, retornar null ao invés de falhar
+        if (error instanceof Error && error.message.includes('404')) {
+          return null;
+        }
+        throw error;
+      }
+    },
     refetchInterval: 2000, // Atualiza a cada 2 segundos
     retry: false, // Não tenta novamente se não há partida ativa
     throwOnError: false, // Não lança erro quando retorna 404
+    staleTime: 0, // Sempre considerar dados como obsoletos para forçar refetch
+    gcTime: 0, // Substituindo cacheTime (deprecated) por gcTime
   });
 
   // Busca usuários conectados na página de partidas para seleção de jogador
@@ -414,10 +441,34 @@ export default function Match() {
   // Mutação para criar nova partida
   const createMatchMutation = useMutation({
     mutationFn: async (matchData: { teamV: string; teamZ: string }) => {
-      return await apiRequest("POST", "/api/admin/matches", matchData);
+      const response = await apiRequest("POST", "/api/admin/matches", matchData);
+
+      // Verificar se a resposta foi bem-sucedida
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (newMatch) => {
+      console.log("Match created successfully:", newMatch);
+
+      // Limpar cache e invalidar queries
+      queryClient.removeQueries({ queryKey: ["/api/matches/active"] });
       queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/matches"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/matches"] });
+
+      // Forçar refetch imediato e múltiplo para garantir atualização
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ["/api/matches/active"] });
+      }, 100);
+
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ["/api/matches/active"] });
+      }, 1000);
+
       toast({ title: "Partida criada com sucesso!" });
     },
     onError: (error) => {
@@ -734,7 +785,7 @@ export default function Match() {
                 className="w-full bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-500"
               >
                 Criar Personagem
-              </Button>
+                            </Button>
             </CardContent>
           </Card>
         </motion.div>
