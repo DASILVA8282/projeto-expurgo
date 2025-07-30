@@ -18,6 +18,7 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 import FlowStateCutsceneSimple from "@/components/ui/FlowStateCutsceneSimple";
 import FlowStateVignette from "@/components/ui/FlowStateVignette";
 import CharacterIntroduction from "@/components/ui/CharacterIntroduction";
+import FlowStateMusic from "@/components/ui/FlowStateMusic";
 
 export default function Match() {
   const { user } = useAuth();
@@ -42,6 +43,7 @@ export default function Match() {
   const [flowPlayerName, setFlowPlayerName] = useState("");
   const [flowColor, setFlowColor] = useState("red");
   const [flowPhrase, setFlowPhrase] = useState("É hora de dominar o campo!");
+  const [flowMusicUrl, setFlowMusicUrl] = useState("");
   const [isInFlowState, setIsInFlowState] = useState(false);
   const [flowStateTriggered, setFlowStateTriggered] = useState(false);
   const [flowStatePlayer, setFlowStatePlayer] = useState<string>("");
@@ -167,6 +169,7 @@ export default function Match() {
       setFlowPlayerName("");
       setFlowColor("red");
       setFlowPhrase("É hora de dominar o campo!");
+      setFlowMusicUrl("");
       setFlowStateTriggered(false);
       setFlowStatePlayer("");
 
@@ -237,6 +240,7 @@ export default function Match() {
       setFlowPlayerName(lastMessage.playerName);
       setFlowColor(lastMessage.flowColor);
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
+      setFlowMusicUrl(lastMessage.flowMusicUrl || "");
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
@@ -263,6 +267,7 @@ export default function Match() {
       setFlowPlayerName("");
       setFlowColor("red");
       setFlowPhrase("É hora de dominar o campo!");
+      setFlowMusicUrl("");
       toast({
         title: "Flow State Encerrado",
         description: lastMessage.message,
@@ -512,6 +517,7 @@ export default function Match() {
       setIsInFlowState(false);
       setFlowPlayerName("");
       setFlowColor("");
+      setFlowMusicUrl("");
       setShowFlowCutscene(false);
 
       // Evitar reativação automática imediata definindo um cooldown
@@ -1708,6 +1714,12 @@ export default function Match() {
           onComplete={handleCharacterIntroComplete}
         />
       )}
+
+      {/* Sistema de música do Flow State */}
+      <FlowStateMusic
+        isActive={isInFlowState && !showFlowCutscene}
+        musicUrl={flowMusicUrl}
+      />
     </div>
   );
 }
