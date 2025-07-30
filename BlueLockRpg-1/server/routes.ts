@@ -1001,27 +1001,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Buscar dados do jogador para obter configurações personalizadas
       const player = await storage.getUserWithCharacter(playerId);
 
-      console.log("=== FLOW STATE SERVER DEBUG ===");
-      console.log("Player data:", player ? {
-        id: player.id,
-        username: player.username,
-        character: player.character ? {
-          name: player.character.name,
-          flowColor: player.character.flowColor,
-          flowPhrase: player.character.flowPhrase,
-          flowMusicUrl: player.character.flowMusicUrl
-        } : "no character"
-      } : "no player");
-
-      // Usar cor personalizada do jogador ou fallback para cor aleatória
       const flowColor = player?.character?.flowColor || "cyan";
       const flowPhrase = player?.character?.flowPhrase || "É hora de dominar o campo!";
       const flowMusicUrl = player?.character?.flowMusicUrl || "";
-
-      console.log("Flow State values being sent:");
-      console.log("- flowColor:", flowColor);
-      console.log("- flowPhrase:", flowPhrase);
-      console.log("- flowMusicUrl:", flowMusicUrl);
 
       // Criar Flow State com dados personalizados
       const flowState = await storage.createFlowState({
@@ -1040,7 +1022,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: `${player?.character?.name || player?.username} entrou no Flow State!`
       };
 
-      console.log("WebSocket message being sent:", JSON.stringify(websocketMessage, null, 2));
+      
 
       // Notificar todos os jogadores via WebSocket
       wss.clients.forEach((client) => {
