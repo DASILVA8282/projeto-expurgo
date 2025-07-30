@@ -236,17 +236,28 @@ export default function Match() {
 
     // Flow State ativado
     if (lastMessage?.type === "flow_state_activated") {
+      console.log("=== FLOW STATE CLIENT DEBUG ===");
       console.log("Flow State activated WebSocket message received:", lastMessage);
+      console.log("Message data breakdown:");
+      console.log("- playerName:", lastMessage.playerName);
+      console.log("- flowColor:", lastMessage.flowColor);
+      console.log("- flowPhrase:", lastMessage.flowPhrase);
+      console.log("- flowMusicUrl RECEIVED:", lastMessage.flowMusicUrl);
+      console.log("- flowMusicUrl is empty?", !lastMessage.flowMusicUrl || lastMessage.flowMusicUrl === "");
+      
       setFlowPlayerName(lastMessage.playerName);
       setFlowColor(lastMessage.flowColor);
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
-      setFlowMusicUrl(lastMessage.flowMusicUrl || "");
+      
+      const musicUrl = lastMessage.flowMusicUrl || "";
+      console.log("Setting flowMusicUrl to:", musicUrl);
+      setFlowMusicUrl(musicUrl);
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
         console.log("Starting Epic Flow State cutscene for user", user.id);
         console.log("Current states before cutscene:", { showFlowCutscene, isInFlowState });
-        console.log("Music URL received:", lastMessage.flowMusicUrl);
+        console.log("Music URL being used for cutscene:", musicUrl);
         
         // Reset any previous state first
         setIsInFlowState(false);
@@ -259,6 +270,8 @@ export default function Match() {
           description: `${lastMessage.playerName} entrou no Flow State!`,
         });
       }
+      
+      console.log("=== END FLOW STATE CLIENT DEBUG ===");
     }
 
     // Flow State encerrado
@@ -380,13 +393,23 @@ export default function Match() {
   // Atualiza o estado do Flow State baseado na resposta da API
   useEffect(() => {
     if (userFlowState) {
+      console.log('=== USER FLOW STATE API DEBUG ===');
       console.log('User Flow State detected:', userFlowState);
+      console.log('API response breakdown:');
+      console.log('- flowColor:', userFlowState.flowColor);
+      console.log('- flowPhrase:', userFlowState.flowPhrase);
+      console.log('- flowMusicUrl from API:', userFlowState.flowMusicUrl);
+      console.log('- flowMusicUrl is empty?', !userFlowState.flowMusicUrl || userFlowState.flowMusicUrl === "");
+      
       setFlowColor(userFlowState.flowColor);
-      setFlowMusicUrl(userFlowState.flowMusicUrl || "");
+      const apiMusicUrl = userFlowState.flowMusicUrl || "";
+      console.log('Setting flowMusicUrl from API to:', apiMusicUrl);
+      setFlowMusicUrl(apiMusicUrl);
       setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
       
       // Sempre ativa Flow State quando detectado pela API, independente da cutscene
       setIsInFlowState(true);
+      console.log('=== END USER FLOW STATE API DEBUG ===');
     } else {
       console.log('No Flow State for user');
       // Só limpa estados se não há cutscene ativa
