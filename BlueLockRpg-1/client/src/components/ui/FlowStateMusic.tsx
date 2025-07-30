@@ -239,7 +239,10 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     console.log('- musicUrl type:', typeof musicUrl);
     console.log('- musicUrl length:', musicUrl ? musicUrl.length : 0);
     console.log('- musicUrl after trim:', musicUrl ? musicUrl.trim() : 'null/undefined');
+    console.log('- musicUrl is YouTube URL?', musicUrl ? musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be') : false);
     console.log('- should play condition:', isActive && musicUrl && musicUrl.trim() !== "");
+    console.log('- current player instance exists:', !!playerInstanceRef.current);
+    console.log('- current music URL in ref:', currentMusicUrlRef.current);
 
     if (isActive && musicUrl && musicUrl.trim() !== "") {
       console.log('✅ Flow State music should start playing');
