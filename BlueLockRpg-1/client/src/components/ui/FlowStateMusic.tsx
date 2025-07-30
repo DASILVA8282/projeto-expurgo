@@ -10,22 +10,33 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Função para obter URL de áudio funcional
-  const getWorkingAudioUrl = (url: string): string => {
+  // Função para converter YouTube URL para embed de áudio
+  const getEmbedAudioUrl = (url: string): string => {
     if (!url || url.trim() === '') return '';
 
-    // Se for YouTube, usar um áudio de exemplo que funciona
+    // Se for YouTube, converter para embed
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+      let videoId = '';
+      
+      if (url.includes('youtube.com/watch?v=')) {
+        videoId = url.split('v=')[1].split('&')[0];
+      } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+      }
+      
+      if (videoId) {
+        // Usar API do YouTube para obter o áudio
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&showinfo=0`;
+      }
     }
 
-    // Para links diretos, usar como está
-    if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg')) {
+    // Para links diretos de áudio
+    if (url.includes('.mp3') || url.includes('.wav') || url.includes('.ogg') || url.includes('.m4a')) {
       return url;
     }
 
-    // Fallback para áudio de exemplo
-    return 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+    // Fallback - usar um áudio de exemplo que funciona
+    return 'https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg';
   };
 
   // Effect principal
@@ -34,48 +45,111 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     if (!audio) return;
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
-      const workingUrl = getWorkingAudioUrl(musicUrl);
+      console.log('🎵 Flow State Music: Iniciando reprodução');
+      console.log('🎵 URL original:', musicUrl);
+      
+      const workingUrl = getEmbedAudioUrl(musicUrl);
+      console.log('🎵 URL processada:', workingUrl);
 
-      // Configurar e tocar
-      audio.src = workingUrl;
-      audio.loop = true;
-      audio.volume = 0.5;
-
-      const playAudio = async () => {
-        try {
-          await audio.play();
-          setIsPlaying(true);
-          setError(null);
-        } catch (err) {
-          setError('Clique para ativar áudio');
-          setIsPlaying(false);
+      // Se for YouTube, usar iframe em vez de audio
+      if (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) {
+        console.log('🎵 Detectado YouTube - usando iframe');
+        // Para YouTube, criar um iframe oculto
+        const existingIframe = document.getElementById('flow-music-iframe');
+        if (existingIframe) {
+          existingIframe.remove();
         }
-      };
 
-      // Tentar tocar imediatamente
-      playAudio();
+        const iframe = document.createElement('iframe');
+        iframe.id = 'flow-music-iframe';
+        iframe.src = workingUrl;
+        iframe.style.position = 'fixed';
+        iframe.style.top = '-1000px';
+        iframe.style.left = '-1000px';
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+        iframe.style.border = 'none';
+        iframe.allow = 'autoplay';
+        document.body.appendChild(iframe);
+        
+        setIsPlaying(true);
+        setError(null);
+      } else {
+        // Para áudio direto
+        audio.src = workingUrl;
+        audio.loop = true;
+        audio.volume = 0.7;
+
+        const playAudio = async () => {
+          try {
+            console.log('🎵 Tentando reproduzir áudio direto');
+            await audio.play();
+            setIsPlaying(true);
+            setError(null);
+            console.log('🎵 Áudio reproduzindo com sucesso');
+          } catch (err) {
+            console.error('🎵 Erro ao reproduzir:', err);
+            setError('Clique para ativar áudio');
+            setIsPlaying(false);
+          }
+        };
+
+        playAudio();
+      }
     } else {
+      console.log('🎵 Flow State Music: Parando reprodução');
+      
       // Parar música quando Flow State não está ativo
       audio.pause();
       audio.currentTime = 0;
       setIsPlaying(false);
       setError(null);
+      
+      // Remover iframe se existir
+      const existingIframe = document.getElementById('flow-music-iframe');
+      if (existingIframe) {
+        existingIframe.remove();
+      }
     }
   }, [isActive, musicUrl]);
 
   // Handler para clique manual
   const handleClick = async () => {
     const audio = audioRef.current;
-    if (!audio || !isActive || !musicUrl) return;
+    if (!isActive || !musicUrl) return;
 
     try {
-      if (audio.paused) {
-        await audio.play();
+      if (musicUrl.includes('youtube.com') || musicUrl.includes('youtu.be')) {
+        // Para YouTube, recriar o iframe
+        const existingIframe = document.getElementById('flow-music-iframe');
+        if (existingIframe) {
+          existingIframe.remove();
+        }
+
+        const workingUrl = getEmbedAudioUrl(musicUrl);
+        const iframe = document.createElement('iframe');
+        iframe.id = 'flow-music-iframe';
+        iframe.src = workingUrl;
+        iframe.style.position = 'fixed';
+        iframe.style.top = '-1000px';
+        iframe.style.left = '-1000px';
+        iframe.style.width = '1px';
+        iframe.style.height = '1px';
+        iframe.style.border = 'none';
+        iframe.allow = 'autoplay';
+        document.body.appendChild(iframe);
+        
         setIsPlaying(true);
         setError(null);
       } else {
-        audio.pause();
-        setIsPlaying(false);
+        if (audio.paused) {
+          await audio.play();
+          setIsPlaying(true);
+          setError(null);
+        } else {
+          audio.pause();
+          setIsPlaying(false);
+        }
       }
     } catch (err) {
       setError('Erro na reprodução');
@@ -83,13 +157,13 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   };
 
   // Não renderizar se não está ativo
-  if (!isActive || !musicUrl || musicUrl.trim() === '') {
+  if (!isActive) {
     return null;
   }
 
   return (
     <>
-      {/* Elemento de áudio */}
+      {/* Elemento de áudio para arquivos diretos */}
       <audio
         ref={audioRef}
         preload="auto"
@@ -98,9 +172,9 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         onError={() => setError('Erro na música')}
       />
 
-      {/* Indicador visual */}
+      {/* Indicador visual sempre visível quando Flow State ativo */}
       <div 
-        className="fixed bottom-4 right-4 z-50 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400 cursor-pointer hover:bg-purple-700 transition-all"
+        className="fixed bottom-4 right-4 z-[9999] bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-3 border-2 border-purple-400 cursor-pointer hover:bg-purple-700 transition-all"
         onClick={handleClick}
       >
         {error ? (
