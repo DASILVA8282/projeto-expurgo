@@ -390,9 +390,10 @@ export default function Match() {
   // Verifica se o usuário atual está em Flow State
   const { data: userFlowState } = useQuery<any>({
     queryKey: [`/api/flow-state/${match?.id}/${user?.id}`],
-    enabled: !user?.isAdmin && !!match?.id && !!user?.id && match?.status === "active",
+    enabled: !!match?.id && !!user?.id && match?.status === "active", // Habilitado para todos
     retry: false,
     throwOnError: false,
+    refetchInterval: 2000, // Polling regular
   });
 
   // Verifica se existe Flow State ativo na partida (para todos os usuários - música global)
@@ -1816,8 +1817,8 @@ export default function Match() {
 
       {/* Vinheta do Flow State - aparece após a cutscene - APENAS para o próprio usuário */}
       <FlowStateVignette
-        isActive={userFlowState && !showFlowCutscene}
-        flowColor={flowColor}
+        isActive={userFlowState && userFlowState.isActive && !showFlowCutscene}
+        flowColor={userFlowState?.flowColor || flowColor}
       />
 
       {/* Introdução de personagem quando a partida inicia */}
@@ -1831,19 +1832,22 @@ export default function Match() {
 
       {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={activeFlowState && activeFlowState.flowMusicUrl !== ""}
+        isActive={activeFlowState && activeFlowState.isActive && activeFlowState.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== ""}
         musicUrl={activeFlowState?.flowMusicUrl || ""}
       />
       
       {/* Debug info */}
-      {(isInFlowState || showFlowCutscene || activeFlowState) && (
+      {(userFlowState || showFlowCutscene || activeFlowState) && (
         <div className="fixed top-4 left-4 bg-black/80 text-white p-4 rounded-lg text-sm z-50">
-          <div>My Flow State: {userFlowState ? 'ATIVO' : 'INATIVO'}</div>
-          <div>Global Flow State: {activeFlowState ? 'ATIVO' : 'INATIVO'}</div>
+          <div>My Flow State: {userFlowState?.isActive ? 'ATIVO' : 'INATIVO'}</div>
+          <div>My Flow State Player ID: {userFlowState?.playerId || 'NENHUM'}</div>
+          <div>Current User ID: {user?.id || 'NENHUM'}</div>
+          <div>Global Flow State: {activeFlowState?.isActive ? 'ATIVO' : 'INATIVO'}</div>
+          <div>Global Flow State Player: {activeFlowState?.player?.username || 'NENHUM'}</div>
           <div>Cutscene: {showFlowCutscene ? 'ATIVO' : 'INATIVO'}</div>
           <div>Music URL: {activeFlowState?.flowMusicUrl || 'VAZIO'}</div>
-          <div>Music Active: {(activeFlowState && activeFlowState.flowMusicUrl !== "") ? 'SIM' : 'NÃO'}</div>
-          <div>Vignette Active: {userFlowState && !showFlowCutscene ? 'SIM' : 'NÃO'}</div>
+          <div>Music Active: {(activeFlowState?.isActive && activeFlowState?.flowMusicUrl && activeFlowState.flowMusicUrl.trim() !== "") ? 'SIM' : 'NÃO'}</div>
+          <div>Vignette Active: {(userFlowState?.isActive && !showFlowCutscene) ? 'SIM' : 'NÃO'}</div>
         </div>
       )}
     </div>
