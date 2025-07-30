@@ -246,6 +246,8 @@ export default function Match() {
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
         console.log("Starting Epic Flow State cutscene for user", user.id);
         console.log("Current states before cutscene:", { showFlowCutscene, isInFlowState });
+        console.log("Music URL received:", lastMessage.flowMusicUrl);
+        
         // Reset any previous state first
         setIsInFlowState(false);
         setShowFlowCutscene(true);
@@ -605,10 +607,15 @@ export default function Match() {
   const handleFlowCutsceneComplete = useCallback(() => {
     console.log("Flow State cutscene completed - returning to match");
 
-    // Limpar estado da cutscene IMEDIATAMENTE e forçar re-render
+    // Limpar estado da cutscene IMEDIATAMENTE
     setShowFlowCutscene(false);
+    
+    // Garantir que está em Flow State
     setIsInFlowState(true);
 
+    // Invalidar queries para forçar atualização da UI
+    queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
+    
     // Show toast após pequeno delay
     setTimeout(() => {
       toast({
@@ -616,7 +623,7 @@ export default function Match() {
         description: "Você está em estado de concentração máxima!",
       });
     }, 200);
-  }, [toast]);
+  }, [toast, queryClient]);
 
   // Handler para ativar Flow State manualmente
   const handleManualFlowState = () => {
@@ -1768,7 +1775,7 @@ export default function Match() {
 
       {/* Sistema de música do Flow State */}
       <FlowStateMusic
-        isActive={isInFlowState && !showFlowCutscene}
+        isActive={(isInFlowState || showFlowCutscene) && flowMusicUrl !== ""}
         musicUrl={flowMusicUrl}
       />
     </div>
