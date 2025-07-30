@@ -447,7 +447,8 @@ async function runMigration() {
     { name: 'fama', type: 'INTEGER', default: '0' },
     { name: 'adrenalina', type: 'INTEGER', default: '0' },
     { name: 'aura', type: 'INTEGER', default: '0' },
-    { name: 'furia', type: 'INTEGER', default: '0' }
+    { name: 'furia', type: 'INTEGER', default: '0' },
+    { name: 'flow_music_url', type: 'TEXT', default: 'NULL' }
   ];
 
   for (const column of columnsToAdd) {
