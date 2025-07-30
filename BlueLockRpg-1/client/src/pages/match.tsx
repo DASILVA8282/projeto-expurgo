@@ -241,8 +241,9 @@ export default function Match() {
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
       setFlowMusicUrl(lastMessage.flowMusicUrl || "");
       
-      setTimeout(() => {ut:", flowMusicUrl);
-      }, 100);
+      setTimeout(() => {
+          console.log("Music URL after Flow State activation:", flowMusicUrl);
+        }, 100);
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id && !showFlowCutscene) {
