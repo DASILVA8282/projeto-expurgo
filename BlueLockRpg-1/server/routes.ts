@@ -372,6 +372,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test route to serve MP3 directly
+  app.get("/api/test-audio/:filename", async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const filePath = path.join('public/uploads', filename);
+      
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+      
+      const stats = fs.statSync(filePath);
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Length', stats.size);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      
+      const stream = fs.createReadStream(filePath);
+      stream.pipe(res);
+    } catch (error) {
+      console.error('🎵 Test audio error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Flow music upload endpoint
   app.post("/api/characters/flow-music", uploadAudio.single('flowMusic'), async (req, res) => {
     try {
