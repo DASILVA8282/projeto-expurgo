@@ -8,20 +8,15 @@ interface FlowStateMusicProps {
 export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userInteractionNeeded, setUserInteractionNeeded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Função simplificada para tocar áudio
+  // Função para tocar áudio
   const playAudio = async () => {
     const audio = audioRef.current;
     if (!audio || !musicUrl) return;
 
     try {
-      console.log('🎵 Iniciando reprodução de:', musicUrl);
-
-      // Limpar áudio anterior
-      audio.pause();
-      audio.currentTime = 0;
+      console.log('🎵 Tentando tocar música:', musicUrl);
 
       // Configurar áudio
       audio.src = musicUrl;
@@ -52,60 +47,33 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         audio.load();
       });
 
-      // Tentar reproduzir automaticamente sem mostrar modal
-      const playPromise = audio.play();
+      // Tentar reproduzir
+      await audio.play();
+      console.log('🎵 Música tocando com sucesso!');
+      setIsPlaying(true);
+      setError(null);
 
-      if (playPromise !== undefined) {
-        await playPromise;
-        console.log('🎵 Música tocando com sucesso automaticamente!');
-        setIsPlaying(true);
-        setError(null);
-        setUserInteractionNeeded(false);
-      }
     } catch (err) {
-      console.log('🎵 Reprodução automática bloqueada pelo navegador, tentando reproduzir silenciosamente...');
-      
-      // Em vez de mostrar modal, tenta reproduzir com volume baixo primeiro
-      try {
+      console.log('🎵 Reprodução automática bloqueada, tentando com interação do usuário...');
+
+      // Adicionar listener para próxima interação
+      const startOnInteraction = () => {
         const audio = audioRef.current;
-        if (audio) {
-          audio.volume = 0.1; // Volume muito baixo
-          await audio.play();
-          
-          // Gradualmente aumenta o volume
-          setTimeout(() => {
-            if (audio && !audio.paused) {
-              audio.volume = 0.7;
-              setIsPlaying(true);
-              setError(null);
-              setUserInteractionNeeded(false);
-              console.log('🎵 Música tocando após ajuste de volume!');
-            }
-          }, 500);
+        if (audio && musicUrl) {
+          audio.play().then(() => {
+            setIsPlaying(true);
+            setError(null);
+            console.log('🎵 Música iniciada após interação!');
+          }).catch(console.error);
         }
-      } catch (secondErr) {
-        console.log('🎵 Ainda não foi possível reproduzir, música será iniciada no próximo clique do usuário');
-        // Define um listener para iniciar a música no próximo clique/toque na página
-        const startMusicOnInteraction = () => {
-          const audio = audioRef.current;
-          if (audio && musicUrl) {
-            audio.play().then(() => {
-              setIsPlaying(true);
-              setError(null);
-              setUserInteractionNeeded(false);
-              console.log('🎵 Música iniciada após interação do usuário!');
-            }).catch(console.error);
-          }
-          document.removeEventListener('click', startMusicOnInteraction);
-          document.removeEventListener('touchstart', startMusicOnInteraction);
-        };
-        
-        document.addEventListener('click', startMusicOnInteraction);
-        document.addEventListener('touchstart', startMusicOnInteraction);
-        
-        setError('Música será iniciada automaticamente');
-        setUserInteractionNeeded(false); // Não mostra modal
-      }
+        document.removeEventListener('click', startOnInteraction);
+        document.removeEventListener('touchstart', startOnInteraction);
+      };
+
+      document.addEventListener('click', startOnInteraction);
+      document.addEventListener('touchstart', startOnInteraction);
+
+      setError('Clique para iniciar música');
     }
   };
 
@@ -119,42 +87,17 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     }
     setIsPlaying(false);
     setError(null);
-    setUserInteractionNeeded(false);
-  };
-
-  // Handler para clique do usuário
-  const handleUserPlay = async () => {
-    const audio = audioRef.current;
-    if (!audio || !musicUrl) return;
-
-    try {
-      if (audio.src !== musicUrl) {
-        audio.src = musicUrl;
-        audio.load();
-      }
-
-      await audio.play();
-      setIsPlaying(true);
-      setError(null);
-      setUserInteractionNeeded(false);
-      console.log('🎵 Música iniciada pelo usuário!');
-    } catch (err) {
-      console.error('🎵 Erro mesmo com interação do usuário:', err);
-      setError('Erro na reprodução');
-    }
   };
 
   // Effect principal
   useEffect(() => {
     console.log('🎵 FlowStateMusic - isActive:', isActive, 'musicUrl:', musicUrl);
-    console.log('🎵 FlowStateMusic - musicUrl length:', musicUrl?.length || 0);
-    console.log('🎵 FlowStateMusic - musicUrl trimmed:', musicUrl?.trim());
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
-      console.log('🎵 Tentando tocar música para TODOS os usuários:', musicUrl);
+      console.log('🎵 Iniciando reprodução para todos os usuários');
       playAudio();
     } else {
-      console.log('🎵 Parando música - isActive:', isActive, 'musicUrl exists:', !!musicUrl);
+      console.log('🎵 Parando música');
       stopAudio();
     }
 
@@ -169,6 +112,16 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   useEffect(() => {
     return () => stopAudio();
   }, []);
+
+  // Handler para clique manual
+  const handleManualPlay = () => {
+    if (audioRef.current && musicUrl) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        setError(null);
+      }).catch(console.error);
+    }
+  };
 
   if (!isActive) {
     return null;
@@ -187,17 +140,23 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         }}
       />
 
-      
+      {/* Botão manual se houver erro */}
+      {error && (
+        <div className="fixed bottom-4 right-4 z-[9999]">
+          <button
+            onClick={handleManualPlay}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500/50 flex items-center space-x-2"
+          >
+            <div className="w-3 h-3 bg-white rounded-full"></div>
+            <span className="text-sm font-medium">▶ Tocar música</span>
+          </button>
+        </div>
+      )}
 
       {/* Indicador visual */}
       <div className="fixed top-4 right-4 z-[9998] pointer-events-none">
         <div className="bg-black/80 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500/50 flex items-center space-x-3">
-          {error && !userInteractionNeeded ? (
-            <>
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-sm font-medium">Erro na música</span>
-            </>
-          ) : isPlaying ? (
+          {isPlaying ? (
             <>
               <div className="flex space-x-1">
                 {[...Array(3)].map((_, i) => (
@@ -210,10 +169,10 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
               </div>
               <span className="text-sm font-medium">♪ Flow State</span>
             </>
-          ) : userInteractionNeeded ? (
+          ) : error ? (
             <>
               <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium">Clique para tocar</span>
+              <span className="text-sm font-medium">Música aguardando</span>
             </>
           ) : (
             <>
