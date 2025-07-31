@@ -452,8 +452,10 @@ export default function Match() {
 
   // Sincroniza dados do Flow State ativo para TODOS os usuários (música global)
   useEffect(() => {
-    if (activeFlowState && !userFlowState) {
-      console.log('🎵 Sincronizando Flow State ativo para todos os usuários:', activeFlowState);
+    console.log('🎵 Sincronização Flow State - activeFlowState:', !!activeFlowState, 'userFlowState:', !!userFlowState);
+    
+    if (activeFlowState) {
+      console.log('🎵 Sincronizando Flow State ativo para TODOS os usuários:', activeFlowState);
       console.log('🎵 Active Flow State player:', activeFlowState.player?.character?.name || activeFlowState.player?.username);
       console.log('🎵 Active Flow State musicUrl:', activeFlowState.flowMusicUrl);
       
@@ -469,7 +471,7 @@ export default function Match() {
       // Ativa o Flow State para todos escutarem a música
       setIsInFlowState(true);
       
-      console.log('🎵 Flow State sincronizado para usuário não-proprietário');
+      console.log('🎵 Flow State sincronizado - música deve tocar para todos');
     } else if (!activeFlowState && !userFlowState) {
       // Limpa apenas se não há Flow State nem pessoal nem global
       console.log('🎵 Limpando Flow State - sem estado ativo');
