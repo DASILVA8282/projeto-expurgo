@@ -400,43 +400,18 @@ export default function Match() {
   // Atualiza o estado do Flow State baseado na resposta da API
   useEffect(() => {
     if (userFlowState) {
-      console.log('=== USER FLOW STATE API DEBUG ===');
-      console.log('User Flow State detected:', userFlowState);
-      console.log('API response breakdown:');
-      console.log('- flowColor:', userFlowState.flowColor);
-      console.log('- flowPhrase:', userFlowState.flowPhrase);
-      console.log('- flowMusicUrl from API:', userFlowState.flowMusicUrl);
-      console.log('- flowMusicUrl is empty?', !userFlowState.flowMusicUrl || userFlowState.flowMusicUrl === "");
-
-      // Definir todos os estados primeiro
+      console.log('🎵 User Flow State detectado:', userFlowState.flowMusicUrl);
       setFlowColor(userFlowState.flowColor || "red");
       setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
-
-      const apiMusicUrl = userFlowState.flowMusicUrl || "";
-      console.log('Setting flowMusicUrl from API to:', apiMusicUrl);
-      console.log('API Music URL length:', apiMusicUrl.length);
-      setFlowMusicUrl(apiMusicUrl);
-
-      // Sempre ativa Flow State quando detectado pela API
+      setFlowMusicUrl(userFlowState.flowMusicUrl || "");
       setIsInFlowState(true);
-
-      // Verificar se a música foi definida
-      setTimeout(() => {
-        console.log('FlowMusicUrl after API effect:', flowMusicUrl);
-      }, 100);
-
-      console.log('=== END USER FLOW STATE API DEBUG ===');
-    } else {
-      console.log('No Flow State for user from API');
-      // Só limpa estados se não há cutscene ativa E não há Flow State ativo na partida
-      if (!showFlowCutscene && !activeFlowState) {
-        setIsInFlowState(false);
-        setFlowColor("red");
-        setFlowMusicUrl("");
-        setFlowPhrase("É hora de dominar o campo!");
-      }
+    } else if (!activeFlowState) {
+      setIsInFlowState(false);
+      setFlowColor("red");
+      setFlowMusicUrl("");
+      setFlowPhrase("É hora de dominar o campo!");
     }
-  }, [userFlowState, showFlowCutscene, activeFlowState]);
+  }, [userFlowState, activeFlowState]);
 
   // Monitora se há Flow State ativo na partida (para admin)
   useEffect(() => {
@@ -453,34 +428,15 @@ export default function Match() {
 
   // Sincroniza dados do Flow State ativo para TODOS os usuários (música global)
   useEffect(() => {
-    if (activeFlowState && !userFlowState) {
-      console.log('🎵 Sincronizando Flow State ativo para todos os usuários:', activeFlowState);
-      console.log('🎵 Active Flow State player:', activeFlowState.player?.character?.name || activeFlowState.player?.username);
-      console.log('🎵 Active Flow State musicUrl:', activeFlowState.flowMusicUrl);
-      
-      // Define os dados do Flow State para todos verem/ouvirem
+    if (activeFlowState) {
+      console.log('🎵 Flow State ativo para todos:', activeFlowState.flowMusicUrl);
       setFlowPlayerName(activeFlowState.player?.character?.name || activeFlowState.player?.username || "");
       setFlowColor(activeFlowState.flowColor || "red");
       setFlowPhrase(activeFlowState.flowPhrase || "É hora de dominar o campo!");
-      
-      const activeMusicUrl = activeFlowState.flowMusicUrl || "";
-      console.log('🎵 Setting global flowMusicUrl to:', activeMusicUrl);
-      setFlowMusicUrl(activeMusicUrl);
-      
-      // Ativa o Flow State para todos escutarem a música
+      setFlowMusicUrl(activeFlowState.flowMusicUrl || "");
       setIsInFlowState(true);
-      
-      console.log('🎵 Flow State sincronizado para usuário não-proprietário');
-    } else if (!activeFlowState && !userFlowState) {
-      // Limpa apenas se não há Flow State nem pessoal nem global
-      console.log('🎵 Limpando Flow State - sem estado ativo');
-      setIsInFlowState(false);
-      setFlowPlayerName("");
-      setFlowColor("red");
-      setFlowMusicUrl("");
-      setFlowPhrase("É hora de dominar o campo!");
     }
-  }, [activeFlowState, userFlowState]);
+  }, [activeFlowState]);
 
   // Lógica para ativação automática do Flow State aos 30 minutos
   useEffect(() => {
@@ -1850,8 +1806,8 @@ export default function Match() {
 
       {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={isInFlowState || !!activeFlowState}
-        musicUrl={flowMusicUrl || activeFlowState?.flowMusicUrl || ""}
+        isActive={isInFlowState && !!flowMusicUrl}
+        musicUrl={flowMusicUrl}
       />
     </div>
   );
