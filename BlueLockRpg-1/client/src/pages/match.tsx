@@ -836,7 +836,7 @@ export default function Match() {
                 className="w-full bg-gradient-to-r from-red-600 to-red-600 hover:from-red-500 hover:to-red-500"
               >
                 Criar Personagem
-                            </Button>
+              </Button>
             </CardContent>
           </Card>
         </motion.div>
@@ -1717,8 +1717,8 @@ export default function Match() {
                             Flow State automático aos 30 minutos
                           </span>
                         </div>
-                      </motion.div>
-                    )}
+                      </div>
+                    </motion.div>
                   </motion.div>
                 )}
               </motion.div>
