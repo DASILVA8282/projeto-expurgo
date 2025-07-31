@@ -244,25 +244,25 @@ export default function Match() {
       console.log("- flowMusicUrl:", lastMessage.flowMusicUrl);
       console.log("- flowMusicUrl type:", typeof lastMessage.flowMusicUrl);
       console.log("- flowMusicUrl length:", lastMessage.flowMusicUrl?.length || 0);
-      
+
       setFlowPlayerName(lastMessage.playerName || "");
       setFlowColor(lastMessage.flowColor || "red");
       setFlowPhrase(lastMessage.flowPhrase || "É hora de dominar o campo!");
-      
+
       const musicUrl = lastMessage.flowMusicUrl || "";
       console.log("🎵 Setting flowMusicUrl state to:", musicUrl);
       setFlowMusicUrl(musicUrl);
-      
+
       console.log("🎵 Flow State music URL recebida via WebSocket:", musicUrl);
 
       // Se é o próprio usuário, mostra a cutscene
       if (user && lastMessage.playerId === user.id) {
         console.log("🎬 Iniciando cutscene para o usuário:", user.id);
         console.log("🎵 URL da música para cutscene:", lastMessage.flowMusicUrl);
-        
+
         // IMPORTANTE: Ativar Flow State primeiro para a música começar
         setIsInFlowState(true);
-        
+
         // Mostrar a cutscene depois de um pequeno delay
         setTimeout(() => {
           setShowFlowCutscene(true);
@@ -271,7 +271,7 @@ export default function Match() {
       } else {
         // Para outros usuários (admin vendo) também ativa o Flow State
         setIsInFlowState(true);
-        
+
         // Toast notification
         toast({
           title: "Flow State Ativado!",
@@ -407,24 +407,24 @@ export default function Match() {
       console.log('- flowPhrase:', userFlowState.flowPhrase);
       console.log('- flowMusicUrl from API:', userFlowState.flowMusicUrl);
       console.log('- flowMusicUrl is empty?', !userFlowState.flowMusicUrl || userFlowState.flowMusicUrl === "");
-      
+
       // Definir todos os estados primeiro
       setFlowColor(userFlowState.flowColor || "red");
       setFlowPhrase(userFlowState.flowPhrase || "É hora de dominar o campo!");
-      
+
       const apiMusicUrl = userFlowState.flowMusicUrl || "";
       console.log('Setting flowMusicUrl from API to:', apiMusicUrl);
       console.log('API Music URL length:', apiMusicUrl.length);
       setFlowMusicUrl(apiMusicUrl);
-      
+
       // Sempre ativa Flow State quando detectado pela API
       setIsInFlowState(true);
-      
+
       // Verificar se a música foi definida
       setTimeout(() => {
         console.log('FlowMusicUrl after API effect:', flowMusicUrl);
       }, 100);
-      
+
       console.log('=== END USER FLOW STATE API DEBUG ===');
     } else {
       console.log('No Flow State for user from API');
@@ -658,11 +658,11 @@ export default function Match() {
     setShowFlowCutscene(false);
     console.log("🎬 Cutscene escondida - Flow State continua ativo");
     console.log("🔥 isInFlowState permanece:", isInFlowState);
-    
+
     // Invalidar queries para atualizar dados
     queryClient.invalidateQueries({ queryKey: ["/api/matches/active"] });
     queryClient.invalidateQueries({ queryKey: [`/api/flow-state/${match?.id}/${user?.id}`] });
-    
+
     toast({
       title: "Flow State Ativado!",
       description: "Você está em estado de concentração máxima!",
@@ -1447,6 +1447,7 @@ export default function Match() {
                             <SelectValue placeholder="Selecione o jogador" />
                           </SelectTrigger>
                           <SelectContent>
+                            ```python
                             {matchPageUsers?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
                               <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
                                 {userWithCharacter.character.name} ({userWithCharacter.username}) • ONLINE
@@ -1717,8 +1718,8 @@ export default function Match() {
                             Flow State automático aos 30 minutos
                           </span>
                         </div>
-                      </div>
-                    </motion.div>
+                      </motion.div>
+                    )}
                   </motion.div>
                 )}
               </motion.div>
