@@ -1447,7 +1447,6 @@ export default function Match() {
                             <SelectValue placeholder="Selecione o jogador" />
                           </SelectTrigger>
                           <SelectContent>
-                            ```python
                             {matchPageUsers?.filter(u => u.character && !u.isAdmin).map((userWithCharacter) => (
                               <SelectItem key={userWithCharacter.id} value={userWithCharacter.id.toString()}>
                                 {userWithCharacter.character.name} ({userWithCharacter.username}) • ONLINE
