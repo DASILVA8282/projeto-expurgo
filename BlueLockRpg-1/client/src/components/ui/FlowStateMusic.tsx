@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 
 interface FlowStateMusicProps {
@@ -89,15 +90,16 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     setError(null);
   };
 
-  // Effect principal
+  // Effect principal - VERSÃO FUNCIONANDO
   useEffect(() => {
     console.log('🎵 FlowStateMusic - isActive:', isActive, 'musicUrl:', musicUrl);
+    console.log('🎵 FlowStateMusic - musicUrl length:', musicUrl?.length || 0);
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
-      console.log('🎵 Iniciando reprodução para todos os usuários');
+      console.log('🎵 Tentando tocar música para TODOS os usuários:', musicUrl);
       playAudio();
     } else {
-      console.log('🎵 Parando música');
+      console.log('🎵 Parando música - isActive:', isActive, 'musicUrl exists:', !!musicUrl);
       stopAudio();
     }
 
