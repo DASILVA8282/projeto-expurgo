@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 
 interface FlowStateMusicProps {
@@ -9,244 +8,165 @@ interface FlowStateMusicProps {
 export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userInteractionNeeded, setUserInteractionNeeded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Função para verificar se é áudio direto (agora incluindo uploads locais)
-  const isDirectAudioUrl = (url: string): boolean => {
-    return /\.(mp3|wav|ogg|m4a|aac|flac)(\?.*)?$/i.test(url) || url.startsWith('/uploads/');
-  };
-
-  // Função para construir URL completa para arquivos de upload
-  const buildAudioUrl = (url: string): string => {
-    if (url.startsWith('/uploads/')) {
-      // Se a URL já começa com /uploads/, usar diretamente
-      return url;
-    }
-    return url;
-  };
-
-  
-
-  // Função para tocar áudio direto
-  const playDirectAudio = async (url: string) => {
+  // Função simplificada para tocar áudio
+  const playAudio = async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !musicUrl) return;
 
     try {
-      const fullUrl = buildAudioUrl(url);
-      console.log('🎵 Tentando reproduzir áudio direto:', fullUrl);
-      console.log('🎵 URL original:', url);
-      
-      // Verificar se a URL está acessível primeiro
-      const testResponse = await fetch(fullUrl, { method: 'HEAD' });
-      if (!testResponse.ok) {
-        throw new Error(`Arquivo não encontrado: ${testResponse.status}`);
-      }
-      console.log('🎵 Arquivo de áudio encontrado no servidor');
-      
-      // Limpar qualquer src anterior
+      console.log('🎵 Iniciando reprodução de:', musicUrl);
+
+      // Limpar áudio anterior
       audio.pause();
-      audio.src = '';
-      audio.load();
-      
+      audio.currentTime = 0;
+
       // Configurar áudio
-      audio.crossOrigin = 'anonymous';
-      audio.preload = 'auto';
+      audio.src = musicUrl;
       audio.loop = true;
       audio.volume = 0.7;
-      
-      // Definir nova URL
-      audio.src = fullUrl;
+      audio.preload = 'auto';
 
-      // Aguardar carregamento com timeout
+      // Aguardar carregamento
       await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          audio.removeEventListener('canplaythrough', handleCanPlay);
-          audio.removeEventListener('error', handleError);
-          reject(new Error('Timeout ao carregar áudio'));
-        }, 10000); // 10 segundos timeout
+        const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
 
-        const handleCanPlay = () => {
+        const onCanPlay = () => {
           clearTimeout(timeout);
-          audio.removeEventListener('canplaythrough', handleCanPlay);
-          audio.removeEventListener('error', handleError);
-          console.log('🎵 Áudio carregado e pronto para reprodução');
+          audio.removeEventListener('canplaythrough', onCanPlay);
+          audio.removeEventListener('error', onError);
           resolve(true);
         };
-        
-        const handleError = (e: any) => {
+
+        const onError = (e: any) => {
           clearTimeout(timeout);
-          audio.removeEventListener('canplaythrough', handleCanPlay);
-          audio.removeEventListener('error', handleError);
-          console.error('🎵 Erro no carregamento do áudio:', e);
+          audio.removeEventListener('canplaythrough', onCanPlay);
+          audio.removeEventListener('error', onError);
           reject(e);
         };
-        
-        audio.addEventListener('canplaythrough', handleCanPlay);
-        audio.addEventListener('error', handleError);
-        
+
+        audio.addEventListener('canplaythrough', onCanPlay);
+        audio.addEventListener('error', onError);
         audio.load();
       });
 
-      // Tentar reproduzir com interação do usuário se necessário
-      try {
-        const playPromise = audio.play();
-        
-        if (playPromise !== undefined) {
-          await playPromise;
-          console.log('🎵 Áudio direto reproduzindo com sucesso');
-          setIsPlaying(true);
-          setError(null);
-        }
-      } catch (playError) {
-        console.log('🎵 Reprodução automática bloqueada, tentando com clique do usuário');
-        // Criar botão invisível para interação do usuário
-        const playButton = document.createElement('button');
-        playButton.style.position = 'fixed';
-        playButton.style.top = '50%';
-        playButton.style.left = '50%';
-        playButton.style.zIndex = '10000';
-        playButton.style.padding = '10px 20px';
-        playButton.style.backgroundColor = '#8B5CF6';
-        playButton.style.color = 'white';
-        playButton.style.border = 'none';
-        playButton.style.borderRadius = '5px';
-        playButton.style.cursor = 'pointer';
-        playButton.innerHTML = '🎵 Clique para tocar música do Flow State';
-        
-        document.body.appendChild(playButton);
-        
-        playButton.onclick = async () => {
-          try {
-            await audio.play();
-            setIsPlaying(true);
-            setError(null);
-            document.body.removeChild(playButton);
-            console.log('🎵 Áudio iniciado após clique do usuário');
-          } catch (err) {
-            console.error('🎵 Erro mesmo após clique:', err);
-            setError('Erro na reprodução');
-            document.body.removeChild(playButton);
-          }
-        };
-        
-        // Remover botão automaticamente após 10 segundos
-        setTimeout(() => {
-          if (document.body.contains(playButton)) {
-            document.body.removeChild(playButton);
-          }
-        }, 10000);
-      }
+      // Tentar reproduzir
+      const playPromise = audio.play();
 
+      if (playPromise !== undefined) {
+        await playPromise;
+        console.log('🎵 Música tocando com sucesso!');
+        setIsPlaying(true);
+        setError(null);
+        setUserInteractionNeeded(false);
+      }
     } catch (err) {
-      console.error('🎵 Erro ao reproduzir áudio direto:', err);
-      console.error('🎵 Detalhes do erro:', err);
-      setError('Erro na reprodução');
-      setIsPlaying(false);
+      console.error('🎵 Erro na reprodução automática:', err);
+      setUserInteractionNeeded(true);
+      setError('Clique para tocar');
     }
   };
 
-  // Função para parar toda música
-  const stopMusic = () => {
-    console.log('🎵 Parando toda reprodução de música');
-
-    // Parar áudio direto
+  // Função para parar música
+  const stopAudio = () => {
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
       audio.currentTime = 0;
       audio.src = '';
     }
-
     setIsPlaying(false);
     setError(null);
+    setUserInteractionNeeded(false);
   };
 
-  // Effect principal para controlar a música
+  // Handler para clique do usuário
+  const handleUserPlay = async () => {
+    const audio = audioRef.current;
+    if (!audio || !musicUrl) return;
+
+    try {
+      if (audio.src !== musicUrl) {
+        audio.src = musicUrl;
+        audio.load();
+      }
+
+      await audio.play();
+      setIsPlaying(true);
+      setError(null);
+      setUserInteractionNeeded(false);
+      console.log('🎵 Música iniciada pelo usuário!');
+    } catch (err) {
+      console.error('🎵 Erro mesmo com interação do usuário:', err);
+      setError('Erro na reprodução');
+    }
+  };
+
+  // Effect principal
   useEffect(() => {
-    console.log('🎵 FlowStateMusic Effect - isActive:', isActive, 'musicUrl:', musicUrl);
-    console.log('🎵 Music URL type:', typeof musicUrl);
-    console.log('🎵 Music URL length:', musicUrl?.length || 0);
-    console.log('🎵 Music URL starts with /uploads?', musicUrl?.startsWith('/uploads/'));
-    console.log('🎵 Is direct audio URL?', musicUrl ? isDirectAudioUrl(musicUrl) : false);
+    console.log('🎵 FlowStateMusic - isActive:', isActive, 'musicUrl:', musicUrl);
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
-      console.log('🎵 Iniciando reprodução da música do Flow State');
-      console.log('🎵 URL final que será reproduzida:', musicUrl);
-      console.log('🎵 URL construída:', buildAudioUrl(musicUrl));
-      
-      // Pequeno delay para garantir que a UI esteja pronta
-      setTimeout(() => {
-        console.log('🎵 Reproduzindo áudio direto:', musicUrl);
-        playDirectAudio(musicUrl);
-      }, 500);
+      console.log('🎵 Tentando tocar música:', musicUrl);
+      playAudio();
     } else {
-      console.log('🎵 Parando música - Flow State inativo ou sem URL');
-      console.log('🎵 Motivo: isActive =', isActive, ', musicUrl =', musicUrl || 'undefined/null');
-      stopMusic();
+      console.log('🎵 Parando música');
+      stopAudio();
     }
 
-    // Cleanup quando componente desmonta ou Flow State muda
     return () => {
       if (!isActive) {
-        stopMusic();
+        stopAudio();
       }
     };
   }, [isActive, musicUrl]);
 
   // Cleanup no unmount
   useEffect(() => {
-    return () => {
-      stopMusic();
-    };
+    return () => stopAudio();
   }, []);
 
-  // Não renderizar nada se não está ativo
   if (!isActive) {
     return null;
   }
 
   return (
     <>
-      {/* Elemento de áudio para arquivos diretos */}
+      {/* Elemento de áudio */}
       <audio
         ref={audioRef}
-        preload="auto"
-        onPlay={() => {
-          console.log('🎵 Áudio direto iniciou reprodução');
-          setIsPlaying(true);
-        }}
-        onPause={() => {
-          console.log('🎵 Áudio direto pausado');
-          setIsPlaying(false);
-        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onError={(e) => {
-          console.error('🎵 Erro no elemento audio:', e);
-          console.error('🎵 Audio element src:', audioRef.current?.src);
-          console.error('🎵 Audio element error code:', e.currentTarget.error?.code);
-          console.error('🎵 Audio element error message:', e.currentTarget.error?.message);
+          console.error('🎵 Erro no áudio:', e);
           setError('Erro na música');
         }}
-        onLoadStart={() => {
-          console.log('🎵 Carregamento do áudio iniciado');
-          console.log('🎵 Audio src:', audioRef.current?.src);
-        }}
-        onCanPlay={() => {
-          console.log('🎵 Áudio pode ser reproduzido');
-          console.log('🎵 Audio duration:', audioRef.current?.duration);
-        }}
-        onLoadedData={() => console.log('🎵 Dados do áudio carregados')}
-        onLoadedMetadata={() => console.log('🎵 Metadados do áudio carregados')}
-        onProgress={() => console.log('🎵 Progresso do carregamento do áudio')}
-        onSuspend={() => console.log('🎵 Carregamento do áudio suspenso')}
-        onAbort={() => console.log('🎵 Carregamento do áudio abortado')}
-        onStalled={() => console.log('🎵 Carregamento do áudio travado')}
       />
 
-      {/* Indicador visual discreto */}
+      {/* Botão para interação do usuário se necessário */}
+      {userInteractionNeeded && (
+        <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center">
+          <div className="bg-slate-800 border border-purple-500 rounded-lg p-6 text-center">
+            <div className="text-white mb-4">
+              <h3 className="text-xl font-bold mb-2">🎵 Flow State Music</h3>
+              <p className="text-gray-300">Clique para iniciar a música</p>
+            </div>
+            <button
+              onClick={handleUserPlay}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+            >
+              ▶️ Tocar Música
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Indicador visual */}
       <div className="fixed top-4 right-4 z-[9998] pointer-events-none">
         <div className="bg-black/80 text-white px-4 py-2 rounded-lg shadow-lg border border-purple-500/50 flex items-center space-x-3">
-          {error ? (
+          {error && !userInteractionNeeded ? (
             <>
               <div className="w-3 h-3 bg-red-500 rounded-full"></div>
               <span className="text-sm font-medium">Erro na música</span>
@@ -263,6 +183,11 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
                 ))}
               </div>
               <span className="text-sm font-medium">♪ Flow State</span>
+            </>
+          ) : userInteractionNeeded ? (
+            <>
+              <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Clique para tocar</span>
             </>
           ) : (
             <>
