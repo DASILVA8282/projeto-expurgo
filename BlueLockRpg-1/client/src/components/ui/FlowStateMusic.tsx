@@ -147,12 +147,14 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
   // Effect principal
   useEffect(() => {
     console.log('🎵 FlowStateMusic - isActive:', isActive, 'musicUrl:', musicUrl);
+    console.log('🎵 FlowStateMusic - musicUrl length:', musicUrl?.length || 0);
+    console.log('🎵 FlowStateMusic - musicUrl trimmed:', musicUrl?.trim());
 
     if (isActive && musicUrl && musicUrl.trim() !== '') {
-      console.log('🎵 Tentando tocar música:', musicUrl);
+      console.log('🎵 Tentando tocar música para TODOS os usuários:', musicUrl);
       playAudio();
     } else {
-      console.log('🎵 Parando música');
+      console.log('🎵 Parando música - isActive:', isActive, 'musicUrl exists:', !!musicUrl);
       stopAudio();
     }
 
