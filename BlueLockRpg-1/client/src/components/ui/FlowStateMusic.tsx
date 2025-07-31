@@ -90,12 +90,15 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
     setError(null);
   };
 
-  // Effect principal - VERSÃO FUNCIONANDO
+  // Effect principal - MÚSICA PARA TODOS OS USUÁRIOS
   useEffect(() => {
     console.log('🎵 FlowStateMusic - isActive:', isActive, 'musicUrl:', musicUrl);
     console.log('🎵 FlowStateMusic - musicUrl length:', musicUrl?.length || 0);
 
-    if (isActive && musicUrl && musicUrl.trim() !== '') {
+    // Toca música se há Flow State ativo E há URL de música válida
+    const shouldPlayMusic = isActive && musicUrl && musicUrl.trim() !== '';
+    
+    if (shouldPlayMusic) {
       console.log('🎵 Tentando tocar música para TODOS os usuários:', musicUrl);
       playAudio();
     } else {
