@@ -52,20 +52,60 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         audio.load();
       });
 
-      // Tentar reproduzir
+      // Tentar reproduzir automaticamente sem mostrar modal
       const playPromise = audio.play();
 
       if (playPromise !== undefined) {
         await playPromise;
-        console.log('🎵 Música tocando com sucesso!');
+        console.log('🎵 Música tocando com sucesso automaticamente!');
         setIsPlaying(true);
         setError(null);
         setUserInteractionNeeded(false);
       }
     } catch (err) {
-      console.error('🎵 Erro na reprodução automática:', err);
-      setUserInteractionNeeded(true);
-      setError('Clique para tocar');
+      console.log('🎵 Reprodução automática bloqueada pelo navegador, tentando reproduzir silenciosamente...');
+      
+      // Em vez de mostrar modal, tenta reproduzir com volume baixo primeiro
+      try {
+        const audio = audioRef.current;
+        if (audio) {
+          audio.volume = 0.1; // Volume muito baixo
+          await audio.play();
+          
+          // Gradualmente aumenta o volume
+          setTimeout(() => {
+            if (audio && !audio.paused) {
+              audio.volume = 0.7;
+              setIsPlaying(true);
+              setError(null);
+              setUserInteractionNeeded(false);
+              console.log('🎵 Música tocando após ajuste de volume!');
+            }
+          }, 500);
+        }
+      } catch (secondErr) {
+        console.log('🎵 Ainda não foi possível reproduzir, música será iniciada no próximo clique do usuário');
+        // Define um listener para iniciar a música no próximo clique/toque na página
+        const startMusicOnInteraction = () => {
+          const audio = audioRef.current;
+          if (audio && musicUrl) {
+            audio.play().then(() => {
+              setIsPlaying(true);
+              setError(null);
+              setUserInteractionNeeded(false);
+              console.log('🎵 Música iniciada após interação do usuário!');
+            }).catch(console.error);
+          }
+          document.removeEventListener('click', startMusicOnInteraction);
+          document.removeEventListener('touchstart', startMusicOnInteraction);
+        };
+        
+        document.addEventListener('click', startMusicOnInteraction);
+        document.addEventListener('touchstart', startMusicOnInteraction);
+        
+        setError('Música será iniciada automaticamente');
+        setUserInteractionNeeded(false); // Não mostra modal
+      }
     }
   };
 
@@ -145,23 +185,7 @@ export default function FlowStateMusic({ isActive, musicUrl }: FlowStateMusicPro
         }}
       />
 
-      {/* Botão para interação do usuário se necessário */}
-      {userInteractionNeeded && (
-        <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center">
-          <div className="bg-slate-800 border border-purple-500 rounded-lg p-6 text-center">
-            <div className="text-white mb-4">
-              <h3 className="text-xl font-bold mb-2">🎵 Flow State Music</h3>
-              <p className="text-gray-300">Clique para iniciar a música</p>
-            </div>
-            <button
-              onClick={handleUserPlay}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition-colors"
-            >
-              ▶️ Tocar Música
-            </button>
-          </div>
-        </div>
-      )}
+      
 
       {/* Indicador visual */}
       <div className="fixed top-4 right-4 z-[9998] pointer-events-none">
