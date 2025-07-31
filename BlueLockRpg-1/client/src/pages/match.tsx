@@ -428,15 +428,15 @@ export default function Match() {
       console.log('=== END USER FLOW STATE API DEBUG ===');
     } else {
       console.log('No Flow State for user from API');
-      // Só limpa estados se não há cutscene ativa
-      if (!showFlowCutscene) {
+      // Só limpa estados se não há cutscene ativa E não há Flow State ativo na partida
+      if (!showFlowCutscene && !activeFlowState) {
         setIsInFlowState(false);
         setFlowColor("red");
         setFlowMusicUrl("");
         setFlowPhrase("É hora de dominar o campo!");
       }
     }
-  }, [userFlowState, showFlowCutscene]);
+  }, [userFlowState, showFlowCutscene, activeFlowState]);
 
   // Monitora se há Flow State ativo na partida (para admin)
   useEffect(() => {
@@ -450,6 +450,37 @@ export default function Match() {
       }, 1000);
     }
   }, [activeFlowState]);
+
+  // Sincroniza dados do Flow State ativo para TODOS os usuários (música global)
+  useEffect(() => {
+    if (activeFlowState && !userFlowState) {
+      console.log('🎵 Sincronizando Flow State ativo para todos os usuários:', activeFlowState);
+      console.log('🎵 Active Flow State player:', activeFlowState.player?.character?.name || activeFlowState.player?.username);
+      console.log('🎵 Active Flow State musicUrl:', activeFlowState.flowMusicUrl);
+      
+      // Define os dados do Flow State para todos verem/ouvirem
+      setFlowPlayerName(activeFlowState.player?.character?.name || activeFlowState.player?.username || "");
+      setFlowColor(activeFlowState.flowColor || "red");
+      setFlowPhrase(activeFlowState.flowPhrase || "É hora de dominar o campo!");
+      
+      const activeMusicUrl = activeFlowState.flowMusicUrl || "";
+      console.log('🎵 Setting global flowMusicUrl to:', activeMusicUrl);
+      setFlowMusicUrl(activeMusicUrl);
+      
+      // Ativa o Flow State para todos escutarem a música
+      setIsInFlowState(true);
+      
+      console.log('🎵 Flow State sincronizado para usuário não-proprietário');
+    } else if (!activeFlowState && !userFlowState) {
+      // Limpa apenas se não há Flow State nem pessoal nem global
+      console.log('🎵 Limpando Flow State - sem estado ativo');
+      setIsInFlowState(false);
+      setFlowPlayerName("");
+      setFlowColor("red");
+      setFlowMusicUrl("");
+      setFlowPhrase("É hora de dominar o campo!");
+    }
+  }, [activeFlowState, userFlowState]);
 
   // Lógica para ativação automática do Flow State aos 30 minutos
   useEffect(() => {
@@ -1819,7 +1850,7 @@ export default function Match() {
 
       {/* Sistema de música do Flow State - Toca para TODOS quando há Flow State ativo */}
       <FlowStateMusic
-        isActive={isInFlowState || !!activeFlowState?.isActive}
+        isActive={isInFlowState || !!activeFlowState}
         musicUrl={flowMusicUrl || activeFlowState?.flowMusicUrl || ""}
       />
     </div>
